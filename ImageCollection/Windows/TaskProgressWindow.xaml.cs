@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using ImageCollection.Structures;
+using System.Security.Cryptography;
 
 namespace ImageCollection
 {
@@ -44,11 +45,14 @@ namespace ImageCollection
                 case TaskType.OpenFolder:
                     currentOperation = new Task(() => OpenFolderTaskAction((string)args[0], (SearchOption)args[1], (string)args[2], (string)args[3]));
                     break;
-                default:
+                case TaskType.Distribution:
                     if (string.IsNullOrEmpty(CollectionStore.DistributionDirectory))
                         currentOperation = new Task(() => StdDistributionTaskAction());
                     else
                         currentOperation = new Task(() => DistributionTaskAction());
+                    break;
+                case TaskType.СlearImageCache:
+                    currentOperation = new Task(() => СlearImageCacheAction());
                     break;
             }
         }
@@ -58,6 +62,39 @@ namespace ImageCollection
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => e.Cancel = inProgress;
 
         #region Task Actions
+        private void СlearImageCacheAction()
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = true;
+                    progressBar_Progress.IsIndeterminate = true;
+                    logParagraph.Inlines.Add("Очистка...\r\n");
+                });
+                string pathBaseMin = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview";
+                if (Directory.Exists(pathBaseMin))
+                    Directory.Delete(pathBaseMin, true);
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = false;
+                    Close();
+                });
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke((Action<string>)((valueError) =>
+                {
+                    inProgress = false;
+                    Run run = new Run(valueError)
+                    {
+                        Foreground = Brushes.Red,
+                    };
+                    logParagraph.Inlines.Add(run);
+                }), ex.Message);
+            }
+        }
+
         private void OpenCollectionsTaskAction(string baseDirectory)
         {
             try
@@ -101,7 +138,7 @@ namespace ImageCollection
                     Dispatcher.Invoke((Action<string, string>)((string paramCollectionName, string paramIcd) => logParagraph.Inlines.Add($"Чтение метаданных коллекции \"{paramCollectionName}\" ({paramIcd})...\r\n")), collectionName, pathIcd);
                     using (StreamReader streamReader = new StreamReader(pathIcd, Encoding.UTF8))
                     {
-                        collection.Guid = Guid.Parse(streamReader.ReadLine());
+                        collection.Id = Guid.Parse(streamReader.ReadLine());
                         collection.Description = streamReader.ReadLine();
                         string filePath;
                         int command;
@@ -175,7 +212,7 @@ namespace ImageCollection
                 {
                     using (StreamWriter streamWriter = new StreamWriter($"{metaDirectoryPath}\\{collectionName}.icd", false, Encoding.UTF8))
                     {
-                        streamWriter.WriteLine(collection.Guid);
+                        streamWriter.WriteLine(collection.Id);
                         streamWriter.WriteLine(collection.Description);
                         Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Запись актуальных элементов коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
                         foreach (string item in collection.ActualItems)
@@ -329,13 +366,16 @@ namespace ImageCollection
                     else
                         Directory.CreateDirectory($"{CollectionStore.BaseDirectory}\\{collectionName}");
                     Collection collection = CollectionStore.Get(collectionName);
-                    //if (!collection.IsChanged)
-                    //{
                     List<string> actualItemsTemp = new List<string>(collection.ActualItems);
+                    MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+                    string toPath;
                     string fromPath;
                     string fromFileName;
                     string toFileName;
-                    string toPath;
+                    byte[] oldPreviewNameB;
+                    byte[] newPreviewNameB;
+                    StringBuilder oldPreviewNameS;
+                    StringBuilder newPreviewNameS;
                     foreach (string item in actualItemsTemp)
                     {
                         CollectionItemMeta itemMeta = collection.GetMeta(item);
@@ -352,8 +392,24 @@ namespace ImageCollection
                             toPath = $"{CollectionStore.BaseDirectory}\\{toPrefix}{toFileName}";
                             index++;
                         }
+                        
                         Dispatcher.Invoke((Action<string, string>)((string paramFromPath, string paramToPath) => logParagraph.Inlines.Add($"Перемещение \"{paramFromPath}\" -> \"{paramToPath}\"...\r\n")), fromPath, toPath);
                         File.Move(fromPath, toPath);
+                        try
+                        {
+                            oldPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(item));
+                            newPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(toPrefix + toFileName));
+                            oldPreviewNameS = new StringBuilder(oldPreviewNameB.Length * 2);
+                            newPreviewNameS = new StringBuilder(newPreviewNameB.Length * 2);
+                            for (int i = 0; i < oldPreviewNameB.Length; i++)
+                            {
+                                oldPreviewNameS.Append(oldPreviewNameB[i].ToString("X2"));
+                                newPreviewNameS.Append(newPreviewNameB[i].ToString("X2"));
+                            }
+                            File.Move($"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{oldPreviewNameS}.jpg",
+                                $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
+                        }
+                        catch { }
                         collection.RemoveIgnoreAll(item);
                         collection.AddIgnoreAll(toPrefix + toFileName, true, null);
                         collection.IsChanged = true;
@@ -364,7 +420,6 @@ namespace ImageCollection
                         File.WriteAllText($"{CollectionStore.BaseDirectory}\\{toPrefix}description.txt", collection.Description, Encoding.UTF8);
                     }
                     collection.IrrelevantItemsClear();
-                    //}
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка удаленных коллекции...\r\n"));
                 foreach (string collectionName in CollectionStore.IrrelevantCollections)
@@ -413,6 +468,11 @@ namespace ImageCollection
                 };
                 Collection collection = CollectionStore.Get(collectionName);
                 List<string> actualItems = new List<string>(collection.ActualItems);
+                MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+                byte[] oldPreviewNameB;
+                byte[] newPreviewNameB;
+                StringBuilder oldPreviewNameS;
+                StringBuilder newPreviewNameS;
                 while (actualItems.Count != 0)
                 {
                     string item = actualItems[0];
@@ -430,6 +490,21 @@ namespace ImageCollection
                         string toPath = $"{CollectionStore.BaseDirectory}\\{newName}";
                         Dispatcher.Invoke((Action<string, string>)((string paramFrom, string paramTo) => logParagraph.Inlines.Add($"Переименование: \"{paramFrom}\" -> \"{paramTo}\"...\r\n")), fromPath, toPath);
                         File.Move(fromPath, toPath);
+                        try
+                        {
+                            oldPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(item));
+                            newPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(newName));
+                            oldPreviewNameS = new StringBuilder(oldPreviewNameB.Length * 2);
+                            newPreviewNameS = new StringBuilder(newPreviewNameB.Length * 2);
+                            for (int i = 0; i < oldPreviewNameB.Length; i++)
+                            {
+                                oldPreviewNameS.Append(oldPreviewNameB[i].ToString("X2"));
+                                newPreviewNameS.Append(newPreviewNameB[i].ToString("X2"));
+                            }
+                            File.Move($"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{oldPreviewNameS}.jpg",
+                                $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
+                        }
+                        catch { }
                         collection.RenameItem(item, newName);
                         actualItems.RemoveAt(0);
                     }
@@ -469,7 +544,7 @@ namespace ImageCollection
                     .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"));
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Инициализация хранилища...\r\n"));
                 CollectionStore.Init(baseDirectory, distributionDirectory);
-                Collection collection = new Collection();
+                Collection collection = new Collection { Id = Guid.Parse(CollectionStore.BaseCollectionGuid) };
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка файлов...\r\n"));
                 foreach (FileInfo file in files)
                 {

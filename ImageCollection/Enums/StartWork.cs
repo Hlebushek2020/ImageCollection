@@ -6,5 +6,10 @@ using System.Threading.Tasks;
 
 namespace ImageCollection.Enums
 {
-    public enum StartWork : byte { OpenFolder, OpenCollection, None }
+    public enum StartWork : byte
+    {
+        OpenFolder,
+        OpenCollection,
+        None
+    }
 }

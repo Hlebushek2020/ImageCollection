@@ -8,7 +8,7 @@ namespace ImageCollection.Classes
 {
     public class Collection
     {
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
         public IEnumerable<string> ActualItems { get => actualItems.Keys; }
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
         public string Description { get; set; } = string.Empty;
@@ -27,7 +27,7 @@ namespace ImageCollection.Classes
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">В своей папке находится элемент или нет</param>
-        /// <param name="fromColltction">Идентификатор папки (коллекции) в которой находится элемент, если не в своей папке (коллекции)</param>
+        /// <param name="parent">Идентификатор папки (коллекции) в которой находится элемент, если не в своей папке (коллекции)</param>
         public void AddNoFlag(string item, bool inCurrentFolder, Guid? parent)
         {
             actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
@@ -40,7 +40,7 @@ namespace ImageCollection.Classes
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">В своей папке находится элемент или нет</param>
-        /// <param name="fromColltction">Идентификатор папки (коллекции) в которой находится элемент, если не в своей папке (коллекции)</param>
+        /// <param name="parent">Идентификатор папки (коллекции) в которой находится элемент, если не в своей папке (коллекции)</param>
         public void AddIgnoreAll(string item, bool inCurrentFolder, Guid? parent) =>
             actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
 
@@ -64,8 +64,6 @@ namespace ImageCollection.Classes
         /// Удаляет элемент из актуальных игнорируя изменение состояния и исключенные элементы
         /// </summary>
         /// <param name="item">Элемент</param>
-        /// <param name="inCurrentFolder">В своей папке находится элемент или нет</param>
-        /// <param name="fromColltction">Идентификатор папки (коллекции) в которой находится элемент, если не в своей папке (коллекции)</param>
         public void RemoveIgnoreAll(string item) =>
             actualItems.Remove(item);
 
@@ -98,17 +96,8 @@ namespace ImageCollection.Classes
             CollectionItemMeta itemMeta = actualItems[oldName];
             actualItems.Remove(oldName);
             actualItems.Add(newName, itemMeta);
-            //IsChanged = true;
+            IsChanged = true;
         }
-
-        ///// <summary>
-        ///// Очищает коллекцию
-        ///// </summary>
-        //public void Clear()
-        //{
-        //    actualItems.Clear();
-        //    irrelevantItems.Clear();
-        //}
 
     }
 }

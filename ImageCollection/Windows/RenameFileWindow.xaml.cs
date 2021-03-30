@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ namespace ImageCollection
         private const string NewFileMaskNamePlaceholder = "Маска имени файла";
 
         public bool IsApply { get; private set; } = false;
+        public string NewFileName { get; private set; }
 
         private readonly string oldFileName;
         private readonly string collectionName;
@@ -99,7 +101,6 @@ namespace ImageCollection
             }
             string dirName = Path.GetDirectoryName(oldFileName);
             newFileName = $"{(string.IsNullOrEmpty(dirName) ? "" : $"{dirName}\\")}{newFileName}{Path.GetExtension(oldFileName)}";
-            string fromPath = $"{CollectionStore.BaseDirectory}\\{oldFileName}";
             string toPath = $"{CollectionStore.BaseDirectory}\\{newFileName}";
             if (File.Exists(toPath))
             {
@@ -109,9 +110,26 @@ namespace ImageCollection
             try
             {
                 Collection collection = CollectionStore.Get(collectionName);
-                File.Move(fromPath, toPath);
+                File.Move($"{CollectionStore.BaseDirectory}\\{oldFileName}", toPath);
                 collection.RenameItem(oldFileName, newFileName);
+                NewFileName = newFileName;
                 IsApply = true;
+                try
+                {
+                    MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+                    byte[] oldPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(oldFileName));
+                    byte[] newPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(newFileName));
+                    StringBuilder oldPreviewNameS = new StringBuilder(oldPreviewNameB.Length * 2);
+                    StringBuilder newPreviewNameS = new StringBuilder(newPreviewNameB.Length * 2);
+                    for (int i = 0; i < oldPreviewNameB.Length; i++)
+                    {
+                        oldPreviewNameS.Append(oldPreviewNameB[i].ToString("X2"));
+                        newPreviewNameS.Append(newPreviewNameB[i].ToString("X2"));
+                    }
+                    File.Move($"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{oldPreviewNameS}.jpg",
+                        $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
+                }
+                catch { }
                 Close();
             }
             catch (Exception ex)

@@ -1,4 +1,6 @@
-﻿using ImageCollection.Structures;
+﻿using ImageCollection.Classes.ItemMovers;
+using ImageCollection.Structures;
+using System;
 using System.Collections.Generic;
 
 namespace ImageCollection.Classes.Static
@@ -7,13 +9,15 @@ namespace ImageCollection.Classes.Static
     {
         public const string BaseCollectionName = "Все";
         public const string DataDirectoryName = "DATA-IC";
+        public const string BaseCollectionGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
 
         public static string BaseDirectory { get; private set; }
         public static string DistributionDirectory { get; private set; }
         public static IEnumerable<string> IrrelevantCollections { get => irrelevantCollections; }
 
-        private static Dictionary<string, Collection> actualCollections = new Dictionary<string, Collection>();
-        private static HashSet<string> irrelevantCollections = new HashSet<string>();
+        private static readonly Dictionary<string, Collection> actualCollections = new Dictionary<string, Collection>();
+        private static readonly HashSet<string> irrelevantCollections = new HashSet<string>();
+        private static ItemMover itemMover;
 
         /// <summary>
         /// Инициализация хранилища
@@ -76,38 +80,35 @@ namespace ImageCollection.Classes.Static
         /// </summary>
         public static IEnumerable<string> GetCollectionNames() => actualCollections.Keys;
 
+        #region To Collection
         /// <summary>
-        /// Перемещение элемента(ов) в другую коллекцию
+        /// Инициализация внутреннего объекта для начала перемещения в коллекцию
         /// </summary>
-        /// <param name="fromCollectionName">Откуда</param>
-        /// <param name="toCollectionName">Куда</param>
-        /// <param name="items">"Элементы</param>
-        public static void ToCollection(string fromCollectionName, string toCollectionName, IEnumerable<string> items)
+        /// <param name="fromCollectionName">Имя коллекции из которой будет осуществлятся перемещение</param>
+        /// <param name="toCollectionName">Имя коллекции в которую будет осуществлятся перемещение</param>
+        public static void BeginMovingItems(string fromCollectionName, string toCollectionName)
         {
-            Collection fromCollection = actualCollections[fromCollectionName];
-            Collection toCollection = actualCollections[toCollectionName];
-            foreach (string item in items)
+            itemMover = new ItemMover
             {
-                CollectionItemMeta meta = fromCollection.GetMeta(item);
-                fromCollection.RemoveNoFlag(item);
-                if (meta.InCurrentFolder)
-                    toCollection.AddNoFlag(item, false, fromCollection.Guid);
-                else
-                {
-                    if (meta.Parent == null)
-                        toCollection.AddNoFlag(item, false, null);
-                    else
-                    {
-                        if (meta.Parent != toCollection.Guid)
-                            toCollection.AddNoFlag(item, false, meta.Parent);
-                        else
-                            toCollection.AddNoFlag(item, true, null);
-                    }
-                }
-            }
-            fromCollection.IsChanged = true;
-            toCollection.IsChanged = true;
+                FromCollection = actualCollections[fromCollectionName],
+                ToCollection = actualCollections[toCollectionName]
+            };
         }
+        /// <summary>
+        /// Перемещает заданный объект
+        /// </summary>
+        public static void MoveItem(string item) => itemMover.Move(item);
+
+        /// <summary>
+        /// Завершает перемещение
+        /// </summary>
+        public static void EndMovingItems()
+        {
+            itemMover.FromCollection.IsChanged = true;
+            itemMover.ToCollection.IsChanged = true;
+            itemMover = null;
+        }
+        #endregion
 
         /// <summary>
         /// Переименовывает коллекцию
@@ -126,27 +127,15 @@ namespace ImageCollection.Classes.Static
         /// </summary>
         public static void Remove(string collectionName)
         {
-            Collection fromCollection = actualCollections[collectionName];
-            Collection toCollection = actualCollections[BaseCollectionName];
-            foreach (string item in fromCollection.ActualItems)
+            itemMover = new RemoveCollectionItemMover
             {
-                CollectionItemMeta meta = fromCollection.GetMeta(item);
-                if (meta.InCurrentFolder)
-                    toCollection.AddNoFlag(item, false, null);
-                else
-                {
-                    if (meta.Parent == null)
-                        toCollection.AddNoFlag(item, false, null);
-                    else
-                    {
-                        if (meta.Parent != toCollection.Guid)
-                            toCollection.AddNoFlag(item, false, null);
-                        else
-                            toCollection.AddNoFlag(item, true, null);
-                    }
-                }
-            }
-            toCollection.IsChanged = true;
+                FromCollection = actualCollections[collectionName],
+                ToCollection = actualCollections[BaseCollectionName]
+            };
+            foreach (string item in itemMover.FromCollection.ActualItems)
+                itemMover.Move(item);
+            itemMover.ToCollection.IsChanged = true;
+            itemMover = null;
             actualCollections.Remove(collectionName);
             if (!irrelevantCollections.Contains(collectionName))
                 irrelevantCollections.Add(collectionName);

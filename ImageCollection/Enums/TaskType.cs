@@ -6,5 +6,13 @@ using System.Threading.Tasks;
 
 namespace ImageCollection.Enums
 {
-    public enum TaskType : byte { OpenFolder,  OpenCollections, SaveCollections, Distribution, RenameCollectionItems }
+    public enum TaskType : byte
+    {
+        OpenFolder,
+        OpenCollections,
+        SaveCollections,
+        Distribution,
+        RenameCollectionItems,
+        СlearImageCache
+    }
 }

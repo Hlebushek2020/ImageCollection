@@ -84,6 +84,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Collection.cs" />
+    <Compile Include="Classes\ItemMovers\ItemMover.cs" />
+    <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
+    <Compile Include="Classes\ListBoxImageItem.cs" />
     <Compile Include="Classes\Static\CollectionStore.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">

@@ -4,8 +4,10 @@ using ImageCollection.Enums;
 using ImageCollection.Structures;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +18,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ImageCollection
 {
@@ -25,11 +26,81 @@ namespace ImageCollection
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool stopImageTask;
+        private Task imageTask;
+
         public MainWindow()
         {
             InitializeComponent();
             Title = App.Name;
+            
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+        }
+
+        private void ImageTaskAction()
+        {
+            stopImageTask = false;
+
+            int decodeHeight = 94;
+
+            string collectionName = Dispatcher.Invoke<string>(() => { return (string)comboBox_CollectionNames.SelectedItem; });
+            Collection collection = CollectionStore.Get(collectionName);
+            string pathBaseMin = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview";
+            Directory.CreateDirectory(pathBaseMin);
+            MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider(); 
+            for (int i = 0; i < listBox_CollectionItems.Items.Count; i++)
+            {
+                if (stopImageTask) break;
+                string itemName = ((ListBoxImageItem)listBox_CollectionItems.Items[i]).Path;
+                string pathImage = $"{CollectionStore.BaseDirectory}\\{itemName}";
+                byte[] buffer = File.ReadAllBytes(pathImage);
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = new MemoryStream(buffer);
+                bitmapImage.EndInit();
+                string description = $"{bitmapImage.PixelWidth}x{bitmapImage.PixelHeight}; {Math.Round(buffer.Length / 1024.0 / 1024.0, 2)} Мб";
+                byte[] previewName = MD5.ComputeHash(Encoding.UTF8.GetBytes(itemName));
+                StringBuilder stringBuilder = new StringBuilder(previewName.Length * 2);
+                for (int ip = 0; ip < previewName.Length; ip++)
+                    stringBuilder.Append(previewName[ip].ToString("X2"));
+                string pathImageMin = $"{pathBaseMin}\\{stringBuilder}.jpg";
+                if (!File.Exists(pathImageMin))
+                {
+                    if (stopImageTask) break;
+                    int decodeWidth = (int)(1.0 * bitmapImage.PixelWidth / bitmapImage.PixelHeight * decodeHeight);
+                    bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.StreamSource = new MemoryStream(buffer);
+                    bitmapImage.DecodePixelHeight = decodeHeight;
+                    bitmapImage.DecodePixelWidth = decodeWidth;
+                    bitmapImage.EndInit();
+                    JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
+                    jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                    using (FileStream fileStream = new FileStream(pathImageMin, FileMode.Create, FileAccess.Write))
+                        jpegBitmapEncoder.Save(fileStream);
+                }
+                if (stopImageTask) break;
+                i = Dispatcher.Invoke<int>(() =>
+                {
+                    if (listBox_CollectionItems.Items.Count > i)
+                    {
+                        ListBoxImageItem listBoxImage = (ListBoxImageItem)listBox_CollectionItems.Items[i];
+                        if (File.Exists(pathImageMin) && listBoxImage.Path.Equals(itemName))
+                        {
+                            MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(pathImageMin));
+                            BitmapImage preview = new BitmapImage();
+                            preview.BeginInit();
+                            preview.StreamSource = memoryStream;
+                            preview.EndInit();
+                            listBoxImage.Preview = preview;
+                            listBoxImage.Description = description;
+                            return i;
+                        }
+                        return i--;
+                    }
+                    return i;
+                });
+            }
         }
 
         private void RefreshAfterOpening()
@@ -38,7 +109,6 @@ namespace ImageCollection
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
             comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
             if (currentColltctionName != null)
-                //if (((string)currentColltctionName).Equals(CollectionStore.BaseCollectionName))
                 ComboBox_CollectionNames_SelectionChanged(null, null);
         }
 
@@ -89,14 +159,26 @@ namespace ImageCollection
             if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItem != null)
             {
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                string currentCollectionItem = (string)listBox_CollectionItems.SelectedItem;
+                string currentCollectionItem = ((ListBoxImageItem)listBox_CollectionItems.SelectedItem).Path;
+                int currentCollectionItemIndex = listBox_CollectionItems.SelectedIndex;
                 if (MessageBox.Show($"Удалить \"{CollectionStore.BaseDirectory}\\{currentCollectionItem}\"?",
                     App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     Collection collection = CollectionStore.Get(currentCollectionName);
                     File.Delete($"{CollectionStore.BaseDirectory}\\{currentCollectionItem}");
                     collection.RemovePermanently(currentCollectionItem);
-                    listBox_CollectionItems.Items.Refresh();
+                    listBox_CollectionItems.Items.RemoveAt(currentCollectionItemIndex);
+                    Task.Run(() =>
+                    {
+                        MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+                        byte[] previewName = MD5.ComputeHash(Encoding.UTF8.GetBytes(currentCollectionItem));
+                        StringBuilder stringBuilder = new StringBuilder(previewName.Length * 2);
+                        for (int ip = 0; ip < previewName.Length; ip++)
+                            stringBuilder.Append(previewName[ip].ToString("X2"));
+                        string previewFile = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview\\{stringBuilder}.jpg";
+                        if (File.Exists(previewFile))
+                            File.Delete(previewFile);
+                    });
                 }
             }
         }
@@ -106,24 +188,40 @@ namespace ImageCollection
             if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItems.Count > 0)
             {
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                IEnumerable<string> currentCollectionItems = listBox_CollectionItems.SelectedItems.Cast<string>();
                 SelectCollectionWindow selectCollectionWindow = new SelectCollectionWindow(currentCollectionName);
                 selectCollectionWindow.ShowDialog();
                 if (selectCollectionWindow.IsApply)
                 {
                     string toCollectionName = selectCollectionWindow.GetNameSelectedCollection();
-                    CollectionStore.ToCollection(currentCollectionName, toCollectionName, currentCollectionItems);
-                    listBox_CollectionItems.Items.Refresh();
+                    IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
+                    List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
+                    CollectionStore.BeginMovingItems(currentCollectionName, toCollectionName);
+                    foreach (ListBoxImageItem item in selectedItems)
+                    {
+                        listBox_CollectionItems.Items.Remove(item);
+                        CollectionStore.MoveItem(item.Path);
+                    }
+                    CollectionStore.EndMovingItems();
                 }
             }
         }
 
         private void ComboBox_CollectionNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (imageTask != null)
+                if (imageTask.Status == TaskStatus.Running)
+                {
+                    stopImageTask = true;
+                    imageTask.Wait();
+                }
             if (comboBox_CollectionNames.SelectedItem != null)
             {
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                listBox_CollectionItems.ItemsSource = CollectionStore.Get(currentCollectionName).ActualItems;
+                listBox_CollectionItems.Items.Clear();
+                foreach (string item in CollectionStore.Get(currentCollectionName).ActualItems)
+                    listBox_CollectionItems.Items.Add(new ListBoxImageItem(item));
+                imageTask = new Task(ImageTaskAction);
+                imageTask.Start();
             }
             else
                 listBox_CollectionItems.ItemsSource = null;
@@ -133,7 +231,7 @@ namespace ImageCollection
         {
             if (listBox_CollectionItems.SelectedItem != null)
             {
-                string currentCollectionItem = (string)listBox_CollectionItems.SelectedItem;
+                string currentCollectionItem = ((ListBoxImageItem)listBox_CollectionItems.SelectedItem).Path;
                 string pathImage = $"{CollectionStore.BaseDirectory}\\{currentCollectionItem}";
                 byte[] buffer = File.ReadAllBytes(pathImage);
                 BitmapImage bitmapImage = new BitmapImage();
@@ -155,7 +253,7 @@ namespace ImageCollection
                     image_Image.Width = double.NaN;
                     image_Image.Stretch = Stretch.Uniform;
                 }
-                textBlock_Intelligence.Text = $"{bitmapImage.PixelWidth}x{bitmapImage.PixelHeight}; {Math.Round(buffer.Length / 1024.0 / 1024.0, 2)} Мб";
+                textBlock_Intelligence.Text = $"{bitmapImage.PixelWidth}x{bitmapImage.PixelHeight}; {Math.Round(buffer.Length / 1024.0 / 1024.0, 2)} Мб;";
             }
             else
             {
@@ -219,7 +317,7 @@ namespace ImageCollection
         {
             TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.Distribution);
             taskProgressWindow.ShowDialog();
-            listBox_CollectionItems.Items.Refresh();
+            ComboBox_CollectionNames_SelectionChanged(null, null);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -255,11 +353,11 @@ namespace ImageCollection
             if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItem != null)
             {
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                string currentCollectionItem = (string)listBox_CollectionItems.SelectedItem;
-                RenameFileWindow renameFileWindow = new RenameFileWindow(currentCollectionName, currentCollectionItem);
+                ListBoxImageItem listBoxImageItem = (ListBoxImageItem)listBox_CollectionItems.SelectedItem;
+                RenameFileWindow renameFileWindow = new RenameFileWindow(currentCollectionName, listBoxImageItem.Path);
                 renameFileWindow.ShowDialog();
                 if (renameFileWindow.IsApply)
-                    listBox_CollectionItems.Items.Refresh();
+                    listBoxImageItem.Path = renameFileWindow.NewFileName;
             }
         }
 
@@ -271,7 +369,7 @@ namespace ImageCollection
                 RenameFileWindow renameFileWindow = new RenameFileWindow(currentCollectionName);
                 renameFileWindow.ShowDialog();
                 if (renameFileWindow.IsApply)
-                    listBox_CollectionItems.Items.Refresh();
+                    ComboBox_CollectionNames_SelectionChanged(null, null);
             }
         }
 
@@ -284,12 +382,30 @@ namespace ImageCollection
                 {
                     string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
                     Collection collection = CollectionStore.Get(currentCollectionName);
-                    foreach (string item in listBox_CollectionItems.SelectedItems)
+                    IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
+                    List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
+                    foreach (ListBoxImageItem item in selectedItems)
                     {
-                        File.Delete($"{CollectionStore.BaseDirectory}\\{item}");
-                        collection.RemovePermanently(item);
+                        File.Delete($"{CollectionStore.BaseDirectory}\\{item.Path}");
+                        collection.RemovePermanently(item.Path);
+                        listBox_CollectionItems.Items.Remove(item);
                     }
-                    listBox_CollectionItems.Items.Refresh();
+                    Task.Run(() =>
+                    {
+                        MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+                        byte[] previewName;
+                        string previewFile;
+                        foreach (ListBoxImageItem listBoxImageItem in selectedItems)
+                        {
+                            previewName = MD5.ComputeHash(Encoding.UTF8.GetBytes(listBoxImageItem.Path));
+                            StringBuilder stringBuilder = new StringBuilder(previewName.Length * 2);
+                            for (int i = 0; i < previewName.Length; i++)
+                                stringBuilder.Append(previewName[i].ToString("X2"));
+                            previewFile = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview\\{stringBuilder}.jpg";
+                            if (File.Exists(previewFile))
+                                File.Delete(previewFile);
+                        }
+                    });
                 }
             }
         }
@@ -312,7 +428,7 @@ namespace ImageCollection
                     case Key.N:
                         MenuItem_CreateCollection_Click(null, null);
                         break;
-                    case Key.R:
+                    case Key.E:
                         MenuItem_EditCollectionDetails_Click(null, null);
                         break;
                     case Key.D:
@@ -320,6 +436,9 @@ namespace ImageCollection
                         break;
                     case Key.Delete:
                         MenuItem_RemoveAllSelectedFiles_Click(null, null);
+                        break;
+                    case Key.F2:
+                        MenuItem_RenameAllItemsInCollection_Click(null, null);
                         break;
                 }
             }
@@ -332,7 +451,7 @@ namespace ImageCollection
             }
         }
 
-        private void Grid_Image_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (image_Image.Source != null && image_Image.Width != 0)
             {
@@ -347,13 +466,18 @@ namespace ImageCollection
                     image_Image.Stretch = Stretch.Fill;
                     return;
                 }
-                //if (image_Image.Height != double.NaN)
-                //{
                 image_Image.Height = double.NaN;
                 image_Image.Width = double.NaN;
                 image_Image.Stretch = Stretch.Uniform;
-                //}
             }
+        }
+
+        private void MenuItem_СlearImageCache_Click(object sender, RoutedEventArgs e)
+        {
+            stopImageTask = true;
+            imageTask.Wait();
+            TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.СlearImageCache);
+            taskProgressWindow.ShowDialog();
         }
     }
 }
