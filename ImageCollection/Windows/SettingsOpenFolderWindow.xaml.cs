@@ -25,11 +25,19 @@ namespace ImageCollection
 
         private bool isOpenFolder = false;
 
-        public SettingsOpenFolderWindow()
+        public SettingsOpenFolderWindow(string folder = null)
         {
             InitializeComponent();
             Title = App.Name;
-            textBox_baseDirectory.Text = BaseDirectoryPlaceholder;
+
+            if (string.IsNullOrEmpty(folder))
+            {
+                textBox_baseDirectory.Text = BaseDirectoryPlaceholder;
+                textBox_baseDirectory.Foreground = Brushes.Gray;
+            }
+            else
+                textBox_baseDirectory.Text = folder;
+
             textBox_distributionNewFolder.Text = DistributionFolderPlaceholder;
         }
 

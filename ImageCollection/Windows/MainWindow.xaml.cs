@@ -26,7 +26,7 @@ namespace ImageCollection
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool stopImageTask;
+        private volatile bool stopImageTask;
         private Task imageTask;
 
         public MainWindow()
@@ -112,9 +112,12 @@ namespace ImageCollection
                 ComboBox_CollectionNames_SelectionChanged(null, null);
         }
 
-        private void MenuItem_OpenFolder_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_OpenFolder_Click(object sender, RoutedEventArgs e) =>
+            OpenFolderShell();
+
+        private void OpenFolderShell(string folder = null)
         {
-            SettingsOpenFolderWindow settingsOpenFolderWindow = new SettingsOpenFolderWindow();
+            SettingsOpenFolderWindow settingsOpenFolderWindow = new SettingsOpenFolderWindow(folder);
             settingsOpenFolderWindow.ShowDialog();
             OpenFolderArgs openFolderArgs = settingsOpenFolderWindow.GetArgs();
             if (openFolderArgs.ContinueExecution)
@@ -322,16 +325,44 @@ namespace ImageCollection
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            StartWindow startWindow = new StartWindow();
-            startWindow.ShowDialog();
-            switch (startWindow.StartWork)
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
             {
-                case StartWork.OpenFolder:
-                    MenuItem_OpenFolder_Click(null, null);
-                    break;
-                case StartWork.OpenCollection:
-                    MenuItem_OpenCollections_Click(null, null);
-                    break;
+                if (!Directory.Exists(args[1]))
+                    Close();
+
+                if (args.Contains("-oc"))
+                {
+                    if (Directory.Exists($"{args[1]}\\{CollectionStore.DataDirectoryName}"))
+                    {
+                        TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.OpenCollections, new object[] { args[1] });
+                        taskProgressWindow.ShowDialog();
+                        RefreshAfterOpening();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
+                            App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        
+                        Close();
+                    }
+                }
+                else
+                    OpenFolderShell(args[1]);
+            }
+            else
+            {
+                StartWindow startWindow = new StartWindow();
+                startWindow.ShowDialog();
+                switch (startWindow.StartWork)
+                {
+                    case StartWork.OpenFolder:
+                        MenuItem_OpenFolder_Click(null, null);
+                        break;
+                    case StartWork.OpenCollection:
+                        MenuItem_OpenCollections_Click(null, null);
+                        break;
+                }
             }
         }
 
