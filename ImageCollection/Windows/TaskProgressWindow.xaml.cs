@@ -431,7 +431,8 @@ namespace ImageCollection
                         Directory.Delete(path, true);
                     }
                 }
-                if (MessageBox.Show("Сохранить конфигурацию коллекций сейчас?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                MessageBoxResult messageBoxResult = Dispatcher.Invoke(() => MessageBox.Show("Сохранить конфигурацию коллекций сейчас?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question));
+                if (messageBoxResult == MessageBoxResult.Yes)
                     BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
                 {

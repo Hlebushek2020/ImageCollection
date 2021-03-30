@@ -33,7 +33,7 @@ namespace ImageCollection
         {
             InitializeComponent();
             Title = App.Name;
-            
+
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
         }
 
@@ -47,7 +47,7 @@ namespace ImageCollection
             Collection collection = CollectionStore.Get(collectionName);
             string pathBaseMin = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview";
             Directory.CreateDirectory(pathBaseMin);
-            MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider(); 
+            MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
             for (int i = 0; i < listBox_CollectionItems.Items.Count; i++)
             {
                 if (stopImageTask) break;
@@ -171,6 +171,9 @@ namespace ImageCollection
                     File.Delete($"{CollectionStore.BaseDirectory}\\{currentCollectionItem}");
                     collection.RemovePermanently(currentCollectionItem);
                     listBox_CollectionItems.Items.RemoveAt(currentCollectionItemIndex);
+
+                    listBox_CollectionItems.SelectedIndex = Math.Min(currentCollectionItemIndex, listBox_CollectionItems.Items.Count - 1);
+
                     Task.Run(() =>
                     {
                         MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
@@ -197,6 +200,9 @@ namespace ImageCollection
                 {
                     string toCollectionName = selectCollectionWindow.GetNameSelectedCollection();
                     IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
+
+                    int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => listBox_CollectionItems.Items.IndexOf(x));
+
                     List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
                     CollectionStore.BeginMovingItems(currentCollectionName, toCollectionName);
                     foreach (ListBoxImageItem item in selectedItems)
@@ -205,6 +211,8 @@ namespace ImageCollection
                         CollectionStore.MoveItem(item.Path);
                     }
                     CollectionStore.EndMovingItems();
+
+                    listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, listBox_CollectionItems.Items.Count - 1);
                 }
             }
         }
@@ -343,7 +351,7 @@ namespace ImageCollection
                     {
                         MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
                             App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
-                        
+
                         Close();
                     }
                 }
@@ -414,6 +422,9 @@ namespace ImageCollection
                     string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
                     Collection collection = CollectionStore.Get(currentCollectionName);
                     IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
+
+                    int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => listBox_CollectionItems.Items.IndexOf(x));
+
                     List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
                     foreach (ListBoxImageItem item in selectedItems)
                     {
@@ -421,6 +432,9 @@ namespace ImageCollection
                         collection.RemovePermanently(item.Path);
                         listBox_CollectionItems.Items.Remove(item);
                     }
+
+                    listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, listBox_CollectionItems.Items.Count - 1);
+
                     Task.Run(() =>
                     {
                         MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
@@ -509,6 +523,21 @@ namespace ImageCollection
             imageTask.Wait();
             TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.СlearImageCache);
             taskProgressWindow.ShowDialog();
+        }
+
+        private void ListBox_CollectionItems_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                if (e.Key == Key.Up)
+                    if (listBox_CollectionItems.SelectedIndex > 0)
+                        listBox_CollectionItems.Items.MoveCurrentToPrevious();
+                if (e.Key == Key.Down)
+                    if (listBox_CollectionItems.SelectedIndex != listBox_CollectionItems.Items.Count - 1)
+                        listBox_CollectionItems.Items.MoveCurrentToNext();
+                listBox_CollectionItems.ScrollIntoView(listBox_CollectionItems.SelectedItem);
+            }
+            e.Handled = true;
         }
     }
 }
