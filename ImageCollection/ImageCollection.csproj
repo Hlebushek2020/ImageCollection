@@ -110,6 +110,14 @@
     <Compile Include="Windows\TaskProgressWindow.xaml.cs">
       <DependentUpon>TaskProgressWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\CollectionInformationEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
