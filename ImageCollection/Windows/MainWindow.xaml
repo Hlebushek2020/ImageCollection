@@ -15,7 +15,7 @@
     <Grid>
         <Menu VerticalAlignment="Top" FontSize="12">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть папку" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
+                <MenuItem Header="Открыть папку" Background="{DynamicResource test}" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
                 <Separator/>
                 <MenuItem Header="Открыть коллекции" Click="MenuItem_OpenCollections_Click"/>
                 <MenuItem Header="Сохранить коллекции" InputGestureText="Ctrl + S" Click="MenuItem_SaveCollections_Click"/>
@@ -36,6 +36,11 @@
             </MenuItem>
             <MenuItem Header="Опции">
                 <MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
+                <Separator/>
+                <MenuItem Header="Тема">
+                    <MenuItem Header="Светлая" Tag="Light" Click="MenuItem_SetTheme_Click"/>
+                    <MenuItem Header="Темная" Tag="Dark" Click="MenuItem_SetTheme_Click"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <ComboBox x:Name="comboBox_CollectionNames" Margin="10,23,10,0" VerticalAlignment="Top" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ComboBox_CollectionNames_SelectionChanged"/>

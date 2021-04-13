@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/Dark.xaml"/>
+                <!--<ResourceDictionary Source="Themes/Dark.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
             <!-- SCROLL BAR STYLE -->
             <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">

@@ -539,5 +539,19 @@ namespace ImageCollection
             }
             e.Handled = true;
         }
+
+        private void MenuItem_SetTheme_Click(object sender, RoutedEventArgs e)
+        {
+            string theme = ((MenuItem)sender).Tag.ToString();
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            if (!settings.Theme.Equals(theme))
+            {
+                Uri uri = new Uri($"\\Themes\\{theme}.xaml", UriKind.Relative);
+                ResourceDictionary resource = new ResourceDictionary { Source = uri };
+                Application.Current.Resources.Clear();
+                Application.Current.Resources.MergedDictionaries.Add(resource);
+                this.UpdateLayout();
+            }
+        }
     }
 }
