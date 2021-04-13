@@ -546,11 +546,12 @@ namespace ImageCollection
             ProgramSettings settings = ProgramSettings.GetInstance();
             if (!settings.Theme.Equals(theme))
             {
-                Uri uri = new Uri($"\\Themes\\{theme}.xaml", UriKind.Relative);
-                ResourceDictionary resource = new ResourceDictionary { Source = uri };
-                Application.Current.Resources.Clear();
+                Uri uri = new Uri($"Themes/{theme}.xaml", UriKind.Relative);
+                ResourceDictionary resource = (ResourceDictionary)Application.LoadComponent(uri);
+                Application.Current.Resources.MergedDictionaries.Clear();
                 Application.Current.Resources.MergedDictionaries.Add(resource);
-                this.UpdateLayout();
+                settings.Theme = theme;
+                //settings.Save();
             }
         }
     }
