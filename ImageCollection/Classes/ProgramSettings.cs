@@ -19,7 +19,7 @@ namespace ImageCollection.Classes
             App.Name.Replace(" ", ""), "settings.json");
 
         #region Settings
-        public string Theme { get; set; } = "Light";
+        public string Theme { get; set; } = "None";
         #endregion
 
         public static ProgramSettings GetInstance()

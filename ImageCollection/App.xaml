@@ -9,6 +9,20 @@
             <ResourceDictionary.MergedDictionaries>
                 <!--<ResourceDictionary Source="Themes/Dark.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
+			<!-- MENU STYLE -->
+            <Style TargetType="{x:Type Menu}">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Menu}">
+                            <Border BorderBrush="{DynamicResource Menu.BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource Menu.Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <!-- SCROLL BAR STYLE -->
             <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
                 <Setter Property="SnapsToDevicePixels" Value="True"/>

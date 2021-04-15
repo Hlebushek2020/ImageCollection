@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:ImageCollection">
-    <SolidColorBrush x:Key="test" Color="Aqua"/>
-
+    <SolidColorBrush x:Key="Base.Foreground" Color="White"/>
+    <SolidColorBrush x:Key="Menu.Background" Color="#ff191919"/>
+    <SolidColorBrush x:Key="Menu.BorderBrush" Color="#ff191919"/>
 </ResourceDictionary>
