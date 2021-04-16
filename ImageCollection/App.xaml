@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ImageCollection"
              xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
-             StartupUri="Windows\MainWindow.xaml">
+             StartupUri="Windows\MainWindow.xaml"
+             Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -23,6 +24,210 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <!-- MENUITEM STYLE -->
+            <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+                <Border x:Name="Border" Background="Transparent">
+                    <Grid>
+                        <ContentPresenter Margin="3" ContentSource="Header" RecognizesAccessKey="True" />
+                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1" Padding="3" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.BorderBrush}">
+                                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsSuspendingPopupAnimation" Value="true">
+                        <Setter TargetName="Popup" Property="PopupAnimation" Value="None" />
+                    </Trigger>
+                    <Trigger Property="IsHighlighted" Value="true">
+                        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="Background" TargetName="Border" Value="Red"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}"
+                 TargetType="{x:Type MenuItem}">
+                <Border x:Name="Border"
+          BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Icon" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Shortcut" />
+                            <ColumnDefinition Width="13" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="Icon"
+                        Margin="6,0,6,0"
+                        VerticalAlignment="Center"
+                        ContentSource="Icon" />
+                        <ContentPresenter x:Name="HeaderHost"
+                        Grid.Column="1"
+                        ContentSource="Header"
+                        RecognizesAccessKey="True" />
+                        <TextBlock x:Name="InputGestureText"
+                 Grid.Column="2"
+                 Text="{TemplateBinding InputGestureText}"
+                 Margin="5,2,2,2"
+                 DockPanel.Dock="Right" />
+                        <Path Grid.Column="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Data="M 0 0 L 0 7 L 4 3.5 Z">
+                            <Path.Fill>
+                                <SolidColorBrush Color="{DynamicResource GlyphColor}" />
+                            </Path.Fill>
+                        </Path>
+                        <Popup x:Name="Popup"
+             Placement="Right"
+             HorizontalOffset="-4"
+             IsOpen="{TemplateBinding IsSubmenuOpen}"
+             AllowsTransparency="True"
+             Focusable="False"
+             PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder"
+                SnapsToDevicePixels="True"
+                Background="{DynamicResource MenuPopupBrush}"
+                BorderThickness="1">
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                                </Border.BorderBrush>
+                                <ScrollViewer CanContentScroll="True">
+                                    <StackPanel IsItemsHost="True"
+                        KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="Icon"
+             Value="{x:Null}">
+                        <Setter TargetName="Icon"
+              Property="Visibility"
+              Value="Collapsed" />
+                    </Trigger>
+                    <Trigger Property="IsHighlighted"
+             Value="true">
+                        <Setter Property="Background"
+              TargetName="Border">
+                            <Setter.Value>
+                                <LinearGradientBrush EndPoint="0.5,1"
+                               StartPoint="0.5,0">
+                                    <GradientStop Color="Transparent"
+                          Offset="0" />
+                                    <GradientStop Color="{DynamicResource ControlMouseOverColor}"
+                          Offset="1" />
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="BorderBrush"
+              TargetName="Border">
+                            <Setter.Value>
+                                <LinearGradientBrush EndPoint="0.5,1"
+                               StartPoint="0.5,0">
+                                    <GradientStop Color="{DynamicResource BorderMediumColor}"
+                          Offset="0" />
+                                    <GradientStop Color="Transparent"
+                          Offset="1" />
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    <Trigger SourceName="Popup"
+             Property="AllowsTransparency"
+             Value="True">
+                        <Setter TargetName="SubmenuBorder"
+              Property="CornerRadius"
+              Value="4" />
+                        <Setter TargetName="SubmenuBorder"
+              Property="Padding"
+              Value="0,3,0,3" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled"
+             Value="false">
+                        <Setter Property="Foreground">
+                            <Setter.Value>
+                                <SolidColorBrush Color="Yellow" />
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <!--Control colors.-->
+            <Color x:Key="WindowColor">#FFE8EDF9</Color>
+            <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
+            <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
+
+            <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
+            <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
+            <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+
+            <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
+            <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
+
+            <Color x:Key="ControlLightColor">White</Color>
+            <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+            <Color x:Key="ControlDarkColor">#FF211AA9</Color>
+
+            <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+            <Color x:Key="ControlPressedColor">#FF211AA9</Color>
+
+
+            <Color x:Key="GlyphColor">#FF444444</Color>
+            <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+
+            <!--Border colors-->
+            <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+            <Color x:Key="BorderMediumColor">#FF888888</Color>
+            <Color x:Key="BorderDarkColor">#FF444444</Color>
+
+            <Color x:Key="PressedBorderLightColor">#FF888888</Color>
+            <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
+
+            <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
+            <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+            <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
+
+            <!--Control-specific resources.-->
+            <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
+            <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
+            <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
+
+            <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
+
+            <LinearGradientBrush x:Key="MenuPopupBrush"
+                     EndPoint="0.5,1"
+                     StartPoint="0.5,0">
+                <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="0" />
+                <GradientStop Color="{DynamicResource ControlMediumColor}"
+                Offset="0.5" />
+                <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
+                     StartPoint="0,0"
+                     EndPoint="1,0">
+                <LinearGradientBrush.GradientStops>
+                    <GradientStopCollection>
+                        <GradientStop Color="#000000FF"
+                    Offset="0" />
+                        <GradientStop Color="#600000FF"
+                    Offset="0.4" />
+                        <GradientStop Color="#600000FF"
+                    Offset="0.6" />
+                        <GradientStop Color="#000000FF"
+                    Offset="1" />
+                    </GradientStopCollection>
+                </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
             <!-- SCROLL BAR STYLE -->
             <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
