@@ -48,106 +48,41 @@
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
-            <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}"
-                 TargetType="{x:Type MenuItem}">
-                <Border x:Name="Border"
-          BorderThickness="1">
+            <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+                <Border x:Name="Border" BorderThickness="1">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"
-                          SharedSizeGroup="Icon" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto"
-                          SharedSizeGroup="Shortcut" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
                             <ColumnDefinition Width="13" />
                         </Grid.ColumnDefinitions>
-                        <ContentPresenter x:Name="Icon"
-                        Margin="6,0,6,0"
-                        VerticalAlignment="Center"
-                        ContentSource="Icon" />
-                        <ContentPresenter x:Name="HeaderHost"
-                        Grid.Column="1"
-                        ContentSource="Header"
-                        RecognizesAccessKey="True" />
-                        <TextBlock x:Name="InputGestureText"
-                 Grid.Column="2"
-                 Text="{TemplateBinding InputGestureText}"
-                 Margin="5,2,2,2"
-                 DockPanel.Dock="Right" />
-                        <Path Grid.Column="3"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Data="M 0 0 L 0 7 L 4 3.5 Z">
+                        <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                        <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" />
+                        <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,2,2" DockPanel.Dock="Right" />
+                        <Path Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 0 7 L 4 3.5 Z">
                             <Path.Fill>
                                 <SolidColorBrush Color="{DynamicResource GlyphColor}" />
                             </Path.Fill>
                         </Path>
-                        <Popup x:Name="Popup"
-             Placement="Right"
-             HorizontalOffset="-4"
-             IsOpen="{TemplateBinding IsSubmenuOpen}"
-             AllowsTransparency="True"
-             Focusable="False"
-             PopupAnimation="Fade">
-                            <Border x:Name="SubmenuBorder"
-                SnapsToDevicePixels="True"
-                Background="{DynamicResource MenuPopupBrush}"
-                BorderThickness="1">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                </Border.BorderBrush>
-                                <ScrollViewer CanContentScroll="True">
-                                    <StackPanel IsItemsHost="True"
-                        KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        <Popup x:Name="Popup" Placement="Right" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1" Padding="3" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.BorderBrush}">
+                                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle" />
                                 </ScrollViewer>
                             </Border>
                         </Popup>
                     </Grid>
                 </Border>
                 <ControlTemplate.Triggers>
-                    <Trigger Property="Icon"
-             Value="{x:Null}">
-                        <Setter TargetName="Icon"
-              Property="Visibility"
-              Value="Collapsed" />
+                    <Trigger Property="Icon" Value="{x:Null}">
+                        <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                     </Trigger>
-                    <Trigger Property="IsHighlighted"
-             Value="true">
-                        <Setter Property="Background"
-              TargetName="Border">
-                            <Setter.Value>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                               StartPoint="0.5,0">
-                                    <GradientStop Color="Transparent"
-                          Offset="0" />
-                                    <GradientStop Color="{DynamicResource ControlMouseOverColor}"
-                          Offset="1" />
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="BorderBrush"
-              TargetName="Border">
-                            <Setter.Value>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                               StartPoint="0.5,0">
-                                    <GradientStop Color="{DynamicResource BorderMediumColor}"
-                          Offset="0" />
-                                    <GradientStop Color="Transparent"
-                          Offset="1" />
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
+                    <Trigger Property="IsHighlighted" Value="true">
+                        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="Background" TargetName="Border" Value="Red"/>
                     </Trigger>
-                    <Trigger SourceName="Popup"
-             Property="AllowsTransparency"
-             Value="True">
-                        <Setter TargetName="SubmenuBorder"
-              Property="CornerRadius"
-              Value="4" />
-                        <Setter TargetName="SubmenuBorder"
-              Property="Padding"
-              Value="0,3,0,3" />
-                    </Trigger>
+                    
                     <Trigger Property="IsEnabled"
              Value="false">
                         <Setter Property="Foreground">
