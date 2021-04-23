@@ -25,6 +25,24 @@
                 </Setter>
             </Style>
             <!-- MENUITEM STYLE -->
+            <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}"
+       TargetType="{x:Type Separator}">
+                <Setter Property="Height"
+          Value="1" />
+                <Setter Property="Margin"
+          Value="0,3" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Separator}">
+                            <Border BorderThickness="1">
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                                </Border.BorderBrush>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
                 <Border x:Name="Border" Background="Transparent">
                     <Grid Grid.IsSharedSizeScope="True">
