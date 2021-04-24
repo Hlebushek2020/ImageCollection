@@ -4,4 +4,5 @@
     <SolidColorBrush x:Key="Base.Foreground" Color="White"/>
     <SolidColorBrush x:Key="Menu.Background" Color="#ff191919"/>
     <SolidColorBrush x:Key="Menu.BorderBrush" Color="#ff191919"/>
+    <SolidColorBrush x:Key="Menu.Separator" Color="White"/>
 </ResourceDictionary>

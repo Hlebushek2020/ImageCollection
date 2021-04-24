@@ -25,20 +25,15 @@
                 </Setter>
             </Style>
             <!-- MENUITEM STYLE -->
-            <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}"
-       TargetType="{x:Type Separator}">
-                <Setter Property="Height"
-          Value="1" />
-                <Setter Property="Margin"
-          Value="0,3" />
+            <!-- Separator -->
+            <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+                <Setter Property="Height" Value="1" />
+                <Setter Property="Margin" Value="0,3" />
+                <Setter Property="Focusable" Value="False" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Separator}">
-                            <Border BorderThickness="1">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                </Border.BorderBrush>
-                            </Border>
+                            <Border BorderThickness="1" SnapsToDevicePixels="True" BorderBrush="{DynamicResource Menu.Separator}"/>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
