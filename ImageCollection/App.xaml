@@ -8,9 +8,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="Themes/Dark.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
-			<!-- MENU STYLE -->
+			<!-- MENU -->
             <Style TargetType="{x:Type Menu}">
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
@@ -24,8 +23,8 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <!-- MENUITEM STYLE -->
-            <!-- Separator -->
+            <!-- MENUITEM -->
+            <!-- MenuItem.SeparatorStyle -->
             <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
                 <Setter Property="Height" Value="1" />
                 <Setter Property="Margin" Value="0,3" />
@@ -38,9 +37,10 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <!-- MenuItem.TopLevelHeaderTemplate -->
             <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
                 <Border x:Name="Border" Background="Transparent">
-                    <Grid Grid.IsSharedSizeScope="True">
+                    <Grid>
                         <ContentPresenter Margin="3" ContentSource="Header" RecognizesAccessKey="True" />
                         <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                             <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1" Padding="3" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.BorderBrush}">
@@ -56,8 +56,8 @@
                         <Setter TargetName="Popup" Property="PopupAnimation" Value="None" />
                     </Trigger>
                     <Trigger Property="IsHighlighted" Value="true">
-                        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-                        <Setter Property="Background" TargetName="Border" Value="Red"/>
+                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Highlighted.BorderBrush}" />
+                        <Setter TargetName="Border" Property="Background" Value="{DynamicResource Highlighted.Background}"/>
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
@@ -73,22 +73,8 @@
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsHighlighted"
              Value="true">
-                        <Setter Property="Background"
-              TargetName="Border">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0"
-                               EndPoint="0,1">
-                                    <LinearGradientBrush.GradientStops>
-                                        <GradientStopCollection>
-                                            <GradientStop Color="Red" />
-                                            <GradientStop Color="Yellow"
-                                            Offset="1.0" />
-                                        </GradientStopCollection>
-                                    </LinearGradientBrush.GradientStops>
-                                </LinearGradientBrush>
-
-                            </Setter.Value>
-                        </Setter>
+                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Highlighted.BorderBrush}" />
+                        <Setter TargetName="Border" Property="Background" Value="{DynamicResource Highlighted.Background}"/>
                     </Trigger>
                     <Trigger Property="IsEnabled"
              Value="False">
@@ -198,30 +184,8 @@
                     </Trigger>
                     <Trigger Property="IsHighlighted"
              Value="true">
-                        <Setter Property="Background"
-              TargetName="Border">
-                            <Setter.Value>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                               StartPoint="0.5,0">
-                                    <GradientStop Color="Transparent"
-                          Offset="0" />
-                                    <GradientStop Color="{DynamicResource ControlMouseOverColor}"
-                          Offset="1" />
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="BorderBrush"
-              TargetName="Border">
-                            <Setter.Value>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                               StartPoint="0.5,0">
-                                    <GradientStop Color="{DynamicResource BorderMediumColor}"
-                          Offset="0" />
-                                    <GradientStop Color="Transparent"
-                          Offset="1" />
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
+                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Highlighted.BorderBrush}" />
+                        <Setter TargetName="Border" Property="Background" Value="{DynamicResource Highlighted.Background}"/>
                     </Trigger>
                     <Trigger Property="IsEnabled"
              Value="false">
@@ -264,8 +228,8 @@
                         <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                     </Trigger>
                     <Trigger Property="IsHighlighted" Value="true">
-                        <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-                        <Setter Property="Background" TargetName="Border" Value="Red"/>
+                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Highlighted.BorderBrush}" />
+                        <Setter TargetName="Border" Property="Background" Value="{DynamicResource Highlighted.Background}"/>
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
