@@ -7,4 +7,6 @@
     <SolidColorBrush x:Key="Menu.Separator" Color="#ff999999"/>
     <SolidColorBrush x:Key="Highlighted.BorderBrush" Color="#FF26A0DA"/>
     <SolidColorBrush x:Key="Highlighted.Background" Color="#3D26A0DA"/>
+    <SolidColorBrush x:Key="Menu.CheckMark" Color="DarkGray"/>
+    <SolidColorBrush x:Key="Menu.InputGestureText" Color="DarkGray"/>
 </ResourceDictionary>
