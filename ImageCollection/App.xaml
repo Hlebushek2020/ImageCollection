@@ -38,7 +38,7 @@
         <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
             <Border x:Name="Border" Background="Transparent">
                 <Grid>
-                    <ContentPresenter Margin="3" ContentSource="Header" RecognizesAccessKey="True"/>
+                    <ContentPresenter Margin="6,2" ContentSource="Header" RecognizesAccessKey="True"/>
                     <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                         <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1" Padding="3" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.BorderBrush}">
                             <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
@@ -101,7 +101,7 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-        <!--SubmenuHeaderTemplateKey EDIT-->
+        <!--SubmenuHeaderTemplateKey-->
         <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
             <Border x:Name="Border" BorderThickness="1" Padding="5,2">
                 <Grid>
@@ -134,6 +134,23 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <!--CONTEXT MENU-->
+        <Style TargetType="{x:Type ContextMenu}">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+            <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
+            <Setter Property="HasDropShadow" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border x:Name="Border" Padding="3" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.BorderBrush}" BorderThickness="1">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <!-- SCROLL BAR STYLE -->
         <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
             <Setter Property="SnapsToDevicePixels" Value="True"/>
