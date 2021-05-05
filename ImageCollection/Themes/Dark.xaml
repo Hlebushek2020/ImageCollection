@@ -9,4 +9,6 @@
     <SolidColorBrush x:Key="Highlighted.Background" Color="#ff999999"/>
     <SolidColorBrush x:Key="Menu.CheckMark" Color="DarkGray"/>
     <SolidColorBrush x:Key="Menu.InputGestureText" Color="DarkGray"/>
+    <SolidColorBrush x:Key="ComboBox.Background" Color="#ff191919"/>
+    <SolidColorBrush x:Key="ComboBox.BorderBrush" Color="#ff191919"/>
 </ResourceDictionary>

@@ -43,7 +43,7 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <ComboBox x:Name="comboBox_CollectionNames" Margin="10,23,10,0" VerticalAlignment="Top" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ComboBox_CollectionNames_SelectionChanged"/>
+        <ComboBox x:Name="comboBox_CollectionNames" Margin="10,23,10,0" VerticalAlignment="Top" SelectionChanged="ComboBox_CollectionNames_SelectionChanged"/>
         <Grid Margin="10,53,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="350"/>
