@@ -11,4 +11,8 @@
     <SolidColorBrush x:Key="Menu.InputGestureText" Color="DarkGray"/>
     <SolidColorBrush x:Key="ComboBox.Background" Color="#ff191919"/>
     <SolidColorBrush x:Key="ComboBox.BorderBrush" Color="#ff191919"/>
+    <SolidColorBrush x:Key="Base.MouseOver.Background" Color="#ff999999"/>
+    <SolidColorBrush x:Key="Base.MouseOver.BorderBrush" Color="#ff999999"/>
+    <SolidColorBrush x:Key="Base.Pressed.Background" Color="#ff999999"/>
+    <SolidColorBrush x:Key="Base.Pressed.BorderBrush" Color="#ff999999"/>
 </ResourceDictionary>
