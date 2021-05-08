@@ -3,16 +3,23 @@
                     xmlns:local="clr-namespace:ImageCollection">
     <SolidColorBrush x:Key="Base.Foreground" Color="Black"/>
     <SolidColorBrush x:Key="Menu.Background" Color="#fff0f0f0"/>
-    <SolidColorBrush x:Key="Menu.BorderBrush" Color="#ff999999"/>
+    <SolidColorBrush x:Key="Menu.Border" Color="#ff999999"/>
     <SolidColorBrush x:Key="Menu.Separator" Color="#ff999999"/>
-    <SolidColorBrush x:Key="Highlighted.BorderBrush" Color="#FF26A0DA"/>
+    <SolidColorBrush x:Key="Highlighted.Border" Color="#FF26A0DA"/>
     <SolidColorBrush x:Key="Highlighted.Background" Color="#3D26A0DA"/>
     <SolidColorBrush x:Key="Menu.CheckMark" Color="#ff6a6a6a"/>
     <SolidColorBrush x:Key="Menu.InputGestureText" Color="#ff6a6a6a"/>
     <SolidColorBrush x:Key="ComboBox.Background" Color="#fff0f0f0"/>
-    <SolidColorBrush x:Key="ComboBox.BorderBrush" Color="#ff999999"/>
-    <SolidColorBrush x:Key="Base.MouseOver.Background" Color="#3D26A0DA"/>
-    <SolidColorBrush x:Key="Base.MouseOver.BorderBrush" Color="#FF26A0DA"/>
-    <SolidColorBrush x:Key="Base.Pressed.Background" Color="#3D2684da"/>
-    <SolidColorBrush x:Key="Base.Pressed.BorderBrush" Color="#FF2684da"/>
+    <SolidColorBrush x:Key="ComboBox.Border" Color="#ff999999"/>
+    <SolidColorBrush x:Key="ComboBox.Popup.Background" Color="White"/>
+    <LinearGradientBrush x:Key="ComboBox.MouseOver.Background" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FFECF4FC" Offset="0.0"/>
+        <GradientStop Color="#FFDCECFC" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#FF7EB4EA"/>
+    <LinearGradientBrush x:Key="ComboBox.Pressed.Background" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FFDAECFC" Offset="0.0"/>
+        <GradientStop Color="#FFC4E0FC" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF569DE5"/>
 </ResourceDictionary>
