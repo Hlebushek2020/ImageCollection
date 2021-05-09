@@ -15,7 +15,7 @@
     <Grid>
         <Menu VerticalAlignment="Top" FontSize="12">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть папку" Background="{DynamicResource test}" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
+                <MenuItem Header="Открыть папку" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
                 <Separator/>
                 <MenuItem Header="Открыть коллекции" Click="MenuItem_OpenCollections_Click"/>
                 <MenuItem Header="Сохранить коллекции" InputGestureText="Ctrl + S" Click="MenuItem_SaveCollections_Click"/>
@@ -58,7 +58,7 @@
                 </Grid.RowDefinitions>
                 <Image x:Name="image_Image" Grid.Row="0" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
                 <TextBlock x:Name="textBlock_Intelligence" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
-                <Button Grid.Row="2" Content="Удалить" HorizontalAlignment="Center" Margin="0,0,0,0" Width="100" Style="{StaticResource ButtonStyle}" Click="MenuItem_RemoveFile_Click"/>
+                <Button Grid.Row="2" Content="Удалить" HorizontalAlignment="Center" Margin="0,0,0,0" Width="100" Click="MenuItem_RemoveFile_Click"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="3" ShowsPreview="False" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
             <ListBox x:Name="listBox_CollectionItems" Grid.Column="2" Margin="5,0,0,0" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ListBox_CollectionItems_SelectionChanged" PreviewKeyDown="ListBox_CollectionItems_PreviewKeyDown" IsSynchronizedWithCurrentItem="True">

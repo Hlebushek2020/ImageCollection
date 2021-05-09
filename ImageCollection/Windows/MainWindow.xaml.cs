@@ -107,6 +107,7 @@ namespace ImageCollection
         {
             object currentColltctionName = comboBox_CollectionNames.SelectedItem;
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+            comboBox_CollectionNames.Items.Refresh();
             comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
             if (currentColltctionName != null)
                 ComboBox_CollectionNames_SelectionChanged(null, null);
