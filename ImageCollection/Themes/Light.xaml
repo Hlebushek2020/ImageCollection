@@ -3,6 +3,7 @@
                     xmlns:local="clr-namespace:ImageCollection">
     <!--Base-->
     <SolidColorBrush x:Key="Base.Foreground" Color="Black"/>
+    <SolidColorBrush x:Key="Base.Grid.Background" Color="Transparent" />
     <!--Menu-->
     <SolidColorBrush x:Key="Menu.Background" Color="#fff0f0f0"/>
     <SolidColorBrush x:Key="Menu.Border" Color="#ff999999"/>
@@ -52,5 +53,12 @@
     <!--GridSplitter-->
     <SolidColorBrush x:Key="GridSplitter.Background" Color="LightGray"/>
     <!--Button-->
+    <SolidColorBrush x:Key="Button.Background" Color="#FFDDDDDD"/>
+    <SolidColorBrush x:Key="Button.Border" Color="#FF707070"/>
     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+    <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="Gray"/>
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="Gray"/>
 </ResourceDictionary>

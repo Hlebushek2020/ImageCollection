@@ -12,7 +12,7 @@
         FontSize="14"
         PreviewKeyDown="Window_PreviewKeyDown"
         Closing="Window_Closing">
-    <Grid>
+    <Grid Background="{DynamicResource Base.Grid.Background}">
         <Menu VerticalAlignment="Top" FontSize="12">
             <MenuItem Header="Файл">
                 <MenuItem Header="Открыть папку" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
