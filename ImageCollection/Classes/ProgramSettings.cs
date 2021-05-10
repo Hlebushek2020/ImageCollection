@@ -15,11 +15,12 @@ namespace ImageCollection.Classes
         private static ProgramSettings settings;
 
         [JsonIgnore]
-        private static readonly string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-            App.Name.Replace(" ", ""), "settings.json");
+        private static readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
+            "SergeyGovorunov", App.Name.Replace(" ", ""), "settings.json");
 
         #region Settings
-        public string Theme { get; set; } = "Light";
+        //public string Theme { get; set; } = "Light";
+        public string Theme { get; set; } = "Dark";
         #endregion
 
         public static ProgramSettings GetInstance()
@@ -36,6 +37,7 @@ namespace ImageCollection.Classes
 
         public void Save()
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
             using (StreamWriter streamWriter = new StreamWriter(settingsPath, false, Encoding.UTF8))
                 streamWriter.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
         }

@@ -99,7 +99,7 @@
                     <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                 </Trigger>
                 <Trigger Property="IsChecked" Value="true">
-                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                 </Trigger>
                 <Trigger Property="IsHighlighted" Value="True">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
@@ -241,7 +241,7 @@
                             <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,3,26,3" VerticalAlignment="Stretch" HorizontalAlignment="Left"/>
                             <TextBox x:Name="PART_EditableTextBox" Style="{x:Null}" Template="{StaticResource ComboBoxTextBox}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,3,26,3" Focusable="True" Background="Transparent" Visibility="Hidden" IsReadOnly="{TemplateBinding IsReadOnly}" />
                             <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide" VerticalOffset="-1">
-                                <Border x:Name="DropDownBorder" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}" Background="{DynamicResource ComboBox.Popup.Background}" Padding="0" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}">
+                                <Border x:Name="DropDownBorder" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}" Background="{DynamicResource ComboBox.Popup.Background}" Padding="0" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                                     <ScrollViewer SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
@@ -352,7 +352,7 @@
             <Setter Property="Background" Value="{DynamicResource ListBox.Background}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource ListBox.Border}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
             <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
@@ -582,6 +582,10 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        <!--TextBlock-->
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
         </Style>
         <!-- TEXTBOX STYLE -->
         <Style x:Key="TextBoxStyle" TargetType="TextBox">

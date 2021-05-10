@@ -35,6 +35,16 @@ namespace ImageCollection
             Title = App.Name;
 
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            if (settings.Theme.ToLower().Equals("light"))
+            {
+                menuItem_Light.IsChecked = true;
+            }
+            else
+            {
+                menuItem_Dark.IsChecked = true;
+            }
         }
 
         private void ImageTaskAction()
@@ -543,7 +553,11 @@ namespace ImageCollection
 
         private void MenuItem_SetTheme_Click(object sender, RoutedEventArgs e)
         {
-            string theme = ((MenuItem)sender).Tag.ToString();
+            menuItem_Dark.IsChecked = false;
+            menuItem_Light.IsChecked = false;
+            MenuItem current = (MenuItem)sender;
+            current.IsChecked = true;
+            string theme = current.Tag.ToString();
             ProgramSettings settings = ProgramSettings.GetInstance();
             if (!settings.Theme.Equals(theme))
             {
