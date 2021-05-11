@@ -24,11 +24,14 @@ namespace ImageCollection
         private const string DistributionFolderPlaceholder = "Директория для размещения";
 
         private bool isOpenFolder = false;
+        private readonly Brush currentForeground;
 
         public SettingsOpenFolderWindow(string folder = null)
         {
             InitializeComponent();
             Title = App.Name;
+
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
 
             if (string.IsNullOrEmpty(folder))
             {
@@ -49,7 +52,7 @@ namespace ImageCollection
                     folderBrowserDialog.SelectedPath = textBox_baseDirectory.Text;
                 if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    textBox_baseDirectory.Foreground = Brushes.Black;
+                    textBox_baseDirectory.Foreground = currentForeground;
                     textBox_baseDirectory.Text = folderBrowserDialog.SelectedPath;
                 }
             }
@@ -62,7 +65,7 @@ namespace ImageCollection
             if (!textBox_distributionNewFolder.Text.Equals(DistributionFolderPlaceholder))
             {
                 if (enabled)
-                    textBox_distributionNewFolder.Foreground = Brushes.Black;
+                    textBox_distributionNewFolder.Foreground = currentForeground;
                 else
                     textBox_distributionNewFolder.Foreground = Brushes.Gray;
             }
@@ -93,7 +96,7 @@ namespace ImageCollection
                 if (success)
                 {
                     textBox_distributionNewFolder.Text = path;
-                    textBox_distributionNewFolder.Foreground = Brushes.Black;
+                    textBox_distributionNewFolder.Foreground = currentForeground;
                 }
             }
         }
