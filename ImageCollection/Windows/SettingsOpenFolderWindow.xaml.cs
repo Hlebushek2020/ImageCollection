@@ -23,8 +23,9 @@ namespace ImageCollection
         private const string BaseDirectoryPlaceholder = "Базовая директория";
         private const string DistributionFolderPlaceholder = "Директория для размещения";
 
-        private bool isOpenFolder = false;
         private readonly Brush currentForeground;
+		
+		private bool isOpenFolder = false;
 
         public SettingsOpenFolderWindow(string folder = null)
         {
