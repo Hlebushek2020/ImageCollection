@@ -57,7 +57,7 @@
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <Image x:Name="image_Image" Grid.Row="0" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
-                <TextBlock x:Name="textBlock_Intelligence" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
+                <TextBlock x:Name="textBlock_Intelligence" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center" Style="{StaticResource TextBlockStyle}"/>
                 <Button Grid.Row="2" Content="Удалить" HorizontalAlignment="Center" Margin="0,0,0,0" Width="100" Click="MenuItem_RemoveFile_Click"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="3" ShowsPreview="False" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>

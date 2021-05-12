@@ -24,8 +24,9 @@ namespace ImageCollection
         private const string DistributionFolderPlaceholder = "Директория для размещения";
 
         private readonly Brush currentForeground;
-		
-		private bool isOpenFolder = false;
+        private readonly Brush placeholderForeground;
+
+        private bool isOpenFolder = false;
 
         public SettingsOpenFolderWindow(string folder = null)
         {
@@ -33,11 +34,12 @@ namespace ImageCollection
             Title = App.Name;
 
             currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
 
             if (string.IsNullOrEmpty(folder))
             {
                 textBox_baseDirectory.Text = BaseDirectoryPlaceholder;
-                textBox_baseDirectory.Foreground = Brushes.Gray;
+                textBox_baseDirectory.Foreground = placeholderForeground;
             }
             else
                 textBox_baseDirectory.Text = folder;
@@ -68,7 +70,7 @@ namespace ImageCollection
                 if (enabled)
                     textBox_distributionNewFolder.Foreground = currentForeground;
                 else
-                    textBox_distributionNewFolder.Foreground = Brushes.Gray;
+                    textBox_distributionNewFolder.Foreground = placeholderForeground;
             }
             button_distributionNewFolder.IsEnabled = enabled;
         }

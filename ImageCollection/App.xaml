@@ -574,23 +574,18 @@
                                 <Setter Property="Background" TargetName="border" Value="{DynamicResource Button.Pressed.Background}"/>
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Button.Pressed.Border}"/>
                             </Trigger>
-                            <Trigger Property="IsEnabled" Value="True">
-                                <Setter Property="Foreground" Value="Red"/>
+							<Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" TargetName="border" Value="{DynamicResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Button.Disabled.Border}"/>
+                                <Setter Property="TextBlock.Foreground" Value="{DynamicResource Button.Disabled.Foreground}"/>
                             </Trigger>
-							<!--
-							<Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
-                            </Trigger>
-							-->
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <!--TextBlock-->
-        <Style TargetType="{x:Type TextBlock}">
+        <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
         </Style>
         <!--TextBox-->

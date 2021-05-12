@@ -4,6 +4,7 @@
     <!--Base-->
     <SolidColorBrush x:Key="Base.Foreground" Color="#ffc8c8c8"/>
     <SolidColorBrush x:Key="Base.Grid.Background" Color="#ff222222" />
+    <SolidColorBrush x:Key="Base.Placeholder.Foreground" Color="Gray" />
     <!--Menu-->
     <SolidColorBrush x:Key="Menu.Background" Color="#ff191919"/>
     <SolidColorBrush x:Key="Menu.Border" Color="#ff191919"/>
@@ -16,10 +17,10 @@
     <SolidColorBrush x:Key="ComboBox.Background" Color="#ff2d2d2d"/>
     <SolidColorBrush x:Key="ComboBox.Border" Color="#ff414141"/>
     <SolidColorBrush x:Key="ComboBox.Popup.Background" Color="#ff2d2d2d"/>
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#ff464646"/>
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#ff464646"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="#ff464646"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#ff414141"/>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#a826A0Da"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#a826A0Da"/>
     <!--ComboBoxItem-->
     <SolidColorBrush x:Key="ComboBoxItem.Hover.Background" Color="#ff2d2d2d"/>
     <SolidColorBrush x:Key="ComboBoxItem.Hover.Border" Color="#ff2d2d2d"/>
@@ -53,6 +54,9 @@
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#a826A0Da"/>
     <SolidColorBrush x:Key="Button.Pressed.Background" Color="#1F26A0DA"/>
     <SolidColorBrush x:Key="Button.Pressed.Border" Color="#a826A0Da"/>
+    <SolidColorBrush x:Key="Button.Disabled.Background" Color="#ff2d2d2d"/>
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#ff414141"/>
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="Black"/>
     <!--TextBox-->
     <SolidColorBrush x:Key="TextBox.Background" Color="#ff2d2d2d"/>
     <SolidColorBrush x:Key="TextBox.Border" Color="#ff414141"/><!--#ff2d2d2d-->

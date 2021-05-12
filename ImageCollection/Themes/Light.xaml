@@ -4,6 +4,7 @@
     <!--Base-->
     <SolidColorBrush x:Key="Base.Foreground" Color="Black"/>
     <SolidColorBrush x:Key="Base.Grid.Background" Color="Transparent" />
+    <SolidColorBrush x:Key="Base.Placeholder.Foreground" Color="Gray" />
     <!--Menu-->
     <SolidColorBrush x:Key="Menu.Background" Color="#fff0f0f0"/>
     <SolidColorBrush x:Key="Menu.Border" Color="#ff999999"/>
@@ -59,6 +60,9 @@
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
     <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
     <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+    <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
     <!--TextBox-->
     <SolidColorBrush x:Key="TextBox.Background" Color="White"/>
     <SolidColorBrush x:Key="TextBox.Border" Color="#FFABAdB3"/>
