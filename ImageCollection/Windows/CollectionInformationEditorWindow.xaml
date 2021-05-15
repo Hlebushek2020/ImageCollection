@@ -12,8 +12,8 @@
         FontSize="14">
     <Grid Background="{DynamicResource Base.Grid.Background}">
         <TextBox x:Name="textBox_collectionName" Margin="10,10,10,0" VerticalAlignment="Top" GotFocus="TextBox_EditCollectionName_GotFocus" LostFocus="TextBox_EditCollectionName_LostFocus"/>
-        <Button Content="Применить" HorizontalAlignment="Right" Margin="0,116,115,0" VerticalAlignment="Top" Width="150" Height="30" Click="Button_Apply_Click"/>
-        <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,116,10,0" VerticalAlignment="Top" Width="100" Height="30" Click="Button_Close_Click"/>
+        <Button Content="Применить" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="150" Height="30" Click="Button_Apply_Click"/>
+        <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="30" Click="Button_Close_Click"/>
         <TextBox x:Name="textBox_collectionDescription" Height="67" Margin="10,44,10,0" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" GotFocus="TextBox_Description_GotFocus" LostFocus="TextBox_Description_LostFocus"/>
     </Grid>
 </Window>

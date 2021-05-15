@@ -12,7 +12,7 @@
         FontSize="14">
     <Grid Background="{DynamicResource Base.Grid.Background}">
         <ComboBox x:Name="comboBox_CollectionNames"  Margin="10,10,10,0" VerticalAlignment="Top"/>
-        <Button Content="Применить" HorizontalAlignment="Right" Margin="0,40,115,0" VerticalAlignment="Top" Width="150" Height="30" Click="Button_Apply_Click"/>
-        <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,40,10,0" VerticalAlignment="Top" Width="100" Height="30" Click="Button_Close_Click"/>
+        <Button Content="Применить" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="150" Height="30" Click="Button_Apply_Click"/>
+        <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="30" Click="Button_Close_Click"/>
     </Grid>
 </Window>

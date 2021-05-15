@@ -30,6 +30,9 @@ namespace ImageCollection
         public bool IsApply { get; private set; } = false;
         public string NewFileName { get; private set; }
 
+        private readonly Brush currentForeground;
+        private readonly Brush placeholderForeground;
+
         private readonly string oldFileName;
         private readonly string collectionName;
         private readonly string placeholder;
@@ -39,10 +42,14 @@ namespace ImageCollection
         {
             InitializeComponent();
             Title = App.Name;
+
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
+
             isFile = false;
             this.collectionName = collectionName;
             placeholder = NewFileMaskNamePlaceholder;
-            textBox_NewFileName.Foreground = Brushes.Gray;
+            textBox_NewFileName.Foreground = placeholderForeground;
             textBox_NewFileName.Text = placeholder;
         }
 
@@ -50,6 +57,10 @@ namespace ImageCollection
         {
             InitializeComponent();
             Title = App.Name;
+
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
+
             isFile = true;
             placeholder = NewFileNamePlaceholder;
             oldFileName = item;
@@ -61,7 +72,7 @@ namespace ImageCollection
         {
             if (textBox_NewFileName.Text.Equals(placeholder))
             {
-                textBox_NewFileName.Foreground = Brushes.Black;
+                textBox_NewFileName.Foreground = currentForeground;
                 textBox_NewFileName.Text = string.Empty;
             }
         }
@@ -70,7 +81,7 @@ namespace ImageCollection
         {
             if (string.IsNullOrEmpty(textBox_NewFileName.Text))
             {
-                textBox_NewFileName.Foreground = Brushes.Gray;
+                textBox_NewFileName.Foreground = placeholderForeground;
                 textBox_NewFileName.Text = placeholder;
             }
         }
@@ -157,7 +168,7 @@ namespace ImageCollection
                 MessageBox.Show("В маске файла отсутствует комбинация символов для подстановки номера! ({0})", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.RenameCollectionItems, new string[] { collectionName,  maskFileName });
+            TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.RenameCollectionItems, new string[] { collectionName, maskFileName });
             progressWindow.ShowDialog();
             IsApply = true;
             Close();
