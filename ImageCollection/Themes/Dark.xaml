@@ -62,4 +62,17 @@
     <SolidColorBrush x:Key="TextBox.Border" Color="#ff414141"/><!--#ff2d2d2d-->
     <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
     <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+    <!--CheckBox-->
+    <SolidColorBrush x:Key="CheckBox.Mark.Mark" Color="#ffc8c8c8"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Background" Color="Transparent"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Border" Color="#ff414141"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.MouseOver.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.MouseOver.Border" Color="#a826A0Da"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.MouseOver.Mark" Color="#ffc8c8c8"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Disabled.Background" Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Disabled.Border" Color="#FFBCBCBC"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Disabled.Mark" Color="#ffc8c8c8"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Border" Color="#a826A0Da"/>
+    <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Mark" Color="#ffc8c8c8"/>
 </ResourceDictionary>
