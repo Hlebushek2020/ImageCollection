@@ -75,4 +75,11 @@
     <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Background" Color="#1F26A0DA"/>
     <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Border" Color="#a826A0Da"/>
     <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Mark" Color="#ffc8c8c8"/>
+    <!--ProgressBar-->
+    <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025"/>
+    <SolidColorBrush x:Key="ProgressBar.Background" Color="Transparent"/>
+    <SolidColorBrush x:Key="ProgressBar.Border" Color="#ff414141"/>
+    <!--RichTextBox-->
+    <SolidColorBrush x:Key="RichTextBox.Border" Color="#ff2d2d2d"/>
+    <SolidColorBrush x:Key="RichTextBox.Background" Color="Transparent"/>
 </ResourceDictionary>
