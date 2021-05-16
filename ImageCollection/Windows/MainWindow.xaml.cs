@@ -566,7 +566,7 @@ namespace ImageCollection
                 Application.Current.Resources.MergedDictionaries.Clear();
                 Application.Current.Resources.MergedDictionaries.Add(resource);
                 settings.Theme = theme;
-                //settings.Save();
+                settings.Save();
             }
         }
     }

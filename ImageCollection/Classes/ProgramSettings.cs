@@ -19,8 +19,7 @@ namespace ImageCollection.Classes
             "SergeyGovorunov", App.Name.Replace(" ", ""), "settings.json");
 
         #region Settings
-        //public string Theme { get; set; } = "Light";
-        public string Theme { get; set; } = "Dark";
+        public string Theme { get; set; } = "Light";
         #endregion
 
         public static ProgramSettings GetInstance()
