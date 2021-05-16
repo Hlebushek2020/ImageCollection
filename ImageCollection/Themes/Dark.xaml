@@ -35,12 +35,12 @@
     <SolidColorBrush x:Key="ComboBoxItem.HoverFocus.Border" Color="#FF26A0DA"/>
     <!--ListBox-->
     <SolidColorBrush x:Key="ListBox.Background" Color="#ff2d2d2d"/>
-    <SolidColorBrush x:Key="ListBox.Border" Color="#ff414141"/><!--#ff2d2d2d-->
+    <SolidColorBrush x:Key="ListBox.Border" Color="#ff414141"/>
     <!--ListBoxItem-->
     <SolidColorBrush x:Key="ListBoxItem.MouseOver.Background" Color="#1F26A0DA"/>
     <SolidColorBrush x:Key="ListBoxItem.MouseOver.Border" Color="#a826A0Da"/>
-    <SolidColorBrush x:Key="ListBoxItem.SelectedInactive.Background" Color="#ff464646"/><!--#3DDADADA-->
-    <SolidColorBrush x:Key="ListBoxItem.SelectedInactive.Border" Color="#ff464646"/><!--#FFDADADA-->
+    <SolidColorBrush x:Key="ListBoxItem.SelectedInactive.Background" Color="#ff464646"/>
+    <SolidColorBrush x:Key="ListBoxItem.SelectedInactive.Border" Color="#ff464646"/>
     <SolidColorBrush x:Key="ListBoxItem.SelectedActive.Background" Color="#3D26A0DA"/>
     <SolidColorBrush x:Key="ListBoxItem.SelectedActive.Border" Color="#FF26A0DA"/>
     <!--ScrollBar-->
@@ -49,7 +49,7 @@
     <SolidColorBrush x:Key="GridSplitter.Background" Color="#ff2d2d2d"/>
     <!--Button-->
     <SolidColorBrush x:Key="Button.Background" Color="#ff2d2d2d"/>
-    <SolidColorBrush x:Key="Button.Border" Color="#ff414141"/><!--#ff2d2d2d-->
+    <SolidColorBrush x:Key="Button.Border" Color="#ff414141"/>
     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#1F26A0DA"/>
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#a826A0Da"/>
     <SolidColorBrush x:Key="Button.Pressed.Background" Color="#1F26A0DA"/>
@@ -59,7 +59,7 @@
     <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="Black"/>
     <!--TextBox-->
     <SolidColorBrush x:Key="TextBox.Background" Color="#ff2d2d2d"/>
-    <SolidColorBrush x:Key="TextBox.Border" Color="#ff414141"/><!--#ff2d2d2d-->
+    <SolidColorBrush x:Key="TextBox.Border" Color="#ff414141"/>
     <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
     <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
     <!--CheckBox-->
@@ -76,10 +76,10 @@
     <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Border" Color="#a826A0Da"/>
     <SolidColorBrush x:Key="CheckBox.Mark.Pressed.Mark" Color="#ffc8c8c8"/>
     <!--ProgressBar-->
-    <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025"/>
-    <SolidColorBrush x:Key="ProgressBar.Background" Color="Transparent"/>
+    <SolidColorBrush x:Key="ProgressBar.Progress" Color="#ff464646"/>
+    <SolidColorBrush x:Key="ProgressBar.Background" Color="#ff2d2d2d"/>
     <SolidColorBrush x:Key="ProgressBar.Border" Color="#ff414141"/>
     <!--RichTextBox-->
-    <SolidColorBrush x:Key="RichTextBox.Border" Color="#ff2d2d2d"/>
-    <SolidColorBrush x:Key="RichTextBox.Background" Color="Transparent"/>
+    <SolidColorBrush x:Key="RichTextBox.Border" Color="#ff414141"/>
+    <SolidColorBrush x:Key="RichTextBox.Background" Color="#ff2d2d2d"/>
 </ResourceDictionary>
