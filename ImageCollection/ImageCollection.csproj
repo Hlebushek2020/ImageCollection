@@ -61,7 +61,9 @@
     <ApplicationIcon>appIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -86,6 +88,7 @@
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
     <Compile Include="Classes\ListBoxImageItem.cs" />
+    <Compile Include="Classes\ProgramSettings.cs" />
     <Compile Include="Classes\Static\CollectionStore.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
@@ -110,6 +113,14 @@
     <Compile Include="Windows\TaskProgressWindow.xaml.cs">
       <DependentUpon>TaskProgressWindow.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Themes\Light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
     <Page Include="Windows\CollectionInformationEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -165,6 +176,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Themes\StylesUITemp\darkTheme.psd" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -176,6 +189,5 @@
   <ItemGroup>
     <Resource Include="appIcon.ico" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

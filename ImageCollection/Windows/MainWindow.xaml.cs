@@ -35,6 +35,16 @@ namespace ImageCollection
             Title = App.Name;
 
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            if (settings.Theme.ToLower().Equals("light"))
+            {
+                menuItem_Light.IsChecked = true;
+            }
+            else
+            {
+                menuItem_Dark.IsChecked = true;
+            }
         }
 
         private void ImageTaskAction()
@@ -107,6 +117,7 @@ namespace ImageCollection
         {
             object currentColltctionName = comboBox_CollectionNames.SelectedItem;
             comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+            comboBox_CollectionNames.Items.Refresh();
             comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
             if (currentColltctionName != null)
                 ComboBox_CollectionNames_SelectionChanged(null, null);
@@ -538,6 +549,25 @@ namespace ImageCollection
                 listBox_CollectionItems.ScrollIntoView(listBox_CollectionItems.SelectedItem);
             }
             e.Handled = true;
+        }
+
+        private void MenuItem_SetTheme_Click(object sender, RoutedEventArgs e)
+        {
+            menuItem_Dark.IsChecked = false;
+            menuItem_Light.IsChecked = false;
+            MenuItem current = (MenuItem)sender;
+            current.IsChecked = true;
+            string theme = current.Tag.ToString();
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            if (!settings.Theme.Equals(theme))
+            {
+                Uri uri = new Uri($"Themes/{theme}.xaml", UriKind.Relative);
+                ResourceDictionary resource = (ResourceDictionary)Application.LoadComponent(uri);
+                Application.Current.Resources.MergedDictionaries.Clear();
+                Application.Current.Resources.MergedDictionaries.Add(resource);
+                settings.Theme = theme;
+                settings.Save();
+            }
         }
     }
 }

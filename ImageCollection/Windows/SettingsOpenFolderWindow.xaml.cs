@@ -23,6 +23,9 @@ namespace ImageCollection
         private const string BaseDirectoryPlaceholder = "Базовая директория";
         private const string DistributionFolderPlaceholder = "Директория для размещения";
 
+        private readonly Brush currentForeground;
+        private readonly Brush placeholderForeground;
+
         private bool isOpenFolder = false;
 
         public SettingsOpenFolderWindow(string folder = null)
@@ -30,10 +33,13 @@ namespace ImageCollection
             InitializeComponent();
             Title = App.Name;
 
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
+
             if (string.IsNullOrEmpty(folder))
             {
                 textBox_baseDirectory.Text = BaseDirectoryPlaceholder;
-                textBox_baseDirectory.Foreground = Brushes.Gray;
+                textBox_baseDirectory.Foreground = placeholderForeground;
             }
             else
                 textBox_baseDirectory.Text = folder;
@@ -49,7 +55,7 @@ namespace ImageCollection
                     folderBrowserDialog.SelectedPath = textBox_baseDirectory.Text;
                 if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    textBox_baseDirectory.Foreground = Brushes.Black;
+                    textBox_baseDirectory.Foreground = currentForeground;
                     textBox_baseDirectory.Text = folderBrowserDialog.SelectedPath;
                 }
             }
@@ -62,9 +68,9 @@ namespace ImageCollection
             if (!textBox_distributionNewFolder.Text.Equals(DistributionFolderPlaceholder))
             {
                 if (enabled)
-                    textBox_distributionNewFolder.Foreground = Brushes.Black;
+                    textBox_distributionNewFolder.Foreground = currentForeground;
                 else
-                    textBox_distributionNewFolder.Foreground = Brushes.Gray;
+                    textBox_distributionNewFolder.Foreground = placeholderForeground;
             }
             button_distributionNewFolder.IsEnabled = enabled;
         }
@@ -93,7 +99,7 @@ namespace ImageCollection
                 if (success)
                 {
                     textBox_distributionNewFolder.Text = path;
-                    textBox_distributionNewFolder.Foreground = Brushes.Black;
+                    textBox_distributionNewFolder.Foreground = currentForeground;
                 }
             }
         }

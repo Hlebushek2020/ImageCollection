@@ -12,7 +12,7 @@
         FontSize="14"
         PreviewKeyDown="Window_PreviewKeyDown"
         Closing="Window_Closing">
-    <Grid>
+    <Grid Background="{DynamicResource Base.Grid.Background}">
         <Menu VerticalAlignment="Top" FontSize="12">
             <MenuItem Header="Файл">
                 <MenuItem Header="Открыть папку" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
@@ -36,10 +36,15 @@
             </MenuItem>
             <MenuItem Header="Опции">
                 <MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
+                <Separator/>
+                <MenuItem Header="Тема">
+                    <MenuItem x:Name="menuItem_Light" Header="Светлая" Tag="Light" Click="MenuItem_SetTheme_Click"/>
+                    <MenuItem x:Name="menuItem_Dark" Header="Темная" Tag="Dark" Click="MenuItem_SetTheme_Click"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
-        <ComboBox x:Name="comboBox_CollectionNames" Margin="10,23,10,0" VerticalAlignment="Top" Style="{StaticResource ComboBoxStyle}" SelectionChanged="ComboBox_CollectionNames_SelectionChanged"/>
-        <Grid Margin="10,53,10,10">
+        <ComboBox x:Name="comboBox_CollectionNames" Margin="10,25,10,0" VerticalAlignment="Top" SelectionChanged="ComboBox_CollectionNames_SelectionChanged"/>
+        <Grid Margin="10,55,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="350"/>
                 <ColumnDefinition Width="Auto"/>
@@ -52,8 +57,8 @@
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <Image x:Name="image_Image" Grid.Row="0" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
-                <TextBlock x:Name="textBlock_Intelligence" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
-                <Button Grid.Row="2" Content="Удалить" HorizontalAlignment="Center" Margin="0,0,0,0" Width="100" Style="{StaticResource ButtonStyle}" Click="MenuItem_RemoveFile_Click"/>
+                <TextBlock x:Name="textBlock_Intelligence" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center" Style="{StaticResource TextBlockStyle}"/>
+                <Button Grid.Row="2" Content="Удалить" HorizontalAlignment="Center" Margin="0,0,0,0" Width="100" Click="MenuItem_RemoveFile_Click"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="3" ShowsPreview="False" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
             <ListBox x:Name="listBox_CollectionItems" Grid.Column="2" Margin="5,0,0,0" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ListBox_CollectionItems_SelectionChanged" PreviewKeyDown="ListBox_CollectionItems_PreviewKeyDown" IsSynchronizedWithCurrentItem="True">

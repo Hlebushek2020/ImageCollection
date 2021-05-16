@@ -1,5 +1,6 @@
 # DIRECTORIES
 /ImageCollection/VS_Output/*
+/packages/*
 /.vs/*
 # FILES
 *Thumbs.db

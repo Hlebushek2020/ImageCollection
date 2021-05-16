@@ -25,20 +25,25 @@ namespace ImageCollection
         private const string CollectionNamePlaceholder = "Название коллекции";
         private const string CollectionDescriptionPlaceholder = "Описание коллекции (Не обязательно)";
 
+        private readonly Brush currentForeground;
+        private readonly Brush placeholderForeground;
+
         private readonly string collectionName = string.Empty;
         private readonly string collectionDescription = string.Empty;
         private bool changedCollectionName = false;
         private bool changedCollectionDescription = false;
 
-        //public bool IsApply { get; private set; } = false;
-
         public CollectionInformationEditorWindow()
         {
             InitializeComponent();
             Title = App.Name;
-            textBox_collectionName.Foreground = Brushes.Gray;
+
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
+
+            textBox_collectionName.Foreground = placeholderForeground;
             textBox_collectionName.Text = CollectionNamePlaceholder;
-            textBox_collectionDescription.Foreground = Brushes.Gray;
+            textBox_collectionDescription.Foreground = placeholderForeground;
             textBox_collectionDescription.Text = CollectionDescriptionPlaceholder;
         }
 
@@ -57,7 +62,7 @@ namespace ImageCollection
             }
             else
             {
-                textBox_collectionDescription.Foreground = Brushes.Gray;
+                textBox_collectionDescription.Foreground = placeholderForeground;
                 textBox_collectionDescription.Text = CollectionDescriptionPlaceholder;
             }
         }
@@ -103,7 +108,7 @@ namespace ImageCollection
         {
             if (textBox_collectionName.Text.Equals(CollectionNamePlaceholder))
             {
-                textBox_collectionName.Foreground = Brushes.Black;
+                textBox_collectionName.Foreground = currentForeground;
                 textBox_collectionName.Text = string.Empty;
             }
         }
@@ -112,7 +117,7 @@ namespace ImageCollection
         {
             if (string.IsNullOrEmpty(textBox_collectionName.Text))
             {
-                textBox_collectionName.Foreground = Brushes.Gray;
+                textBox_collectionName.Foreground = placeholderForeground;
                 textBox_collectionName.Text = CollectionNamePlaceholder;
             }
         }
@@ -121,7 +126,7 @@ namespace ImageCollection
         {
             if (textBox_collectionDescription.Text.Equals(CollectionDescriptionPlaceholder))
             {
-                textBox_collectionDescription.Foreground = Brushes.Black;
+                textBox_collectionDescription.Foreground = currentForeground;
                 textBox_collectionDescription.Text = string.Empty;
             }
         }
@@ -130,7 +135,7 @@ namespace ImageCollection
         {
             if (string.IsNullOrEmpty(textBox_collectionDescription.Text))
             {
-                textBox_collectionDescription.Foreground = Brushes.Gray;
+                textBox_collectionDescription.Foreground = placeholderForeground;
                 textBox_collectionDescription.Text = CollectionDescriptionPlaceholder;
             }
         }
