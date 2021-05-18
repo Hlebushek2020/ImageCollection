@@ -90,6 +90,7 @@
     <Compile Include="Classes\ListBoxImageItem.cs" />
     <Compile Include="Classes\ProgramSettings.cs" />
     <Compile Include="Classes\Static\CollectionStore.cs" />
+    <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
       <DependentUpon>CollectionInformationEditorWindow.xaml</DependentUpon>
@@ -188,5 +189,6 @@
   <ItemGroup>
     <Resource Include="appIcon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
