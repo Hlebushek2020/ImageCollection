@@ -17,6 +17,6 @@ namespace ImageCollection.Interfaces
         void Remove(string item);
         void Rename(string oldName, string newName);
         T GetMeta(string item);
-        void ClearIrrelevantItems();
+        bool ClearIrrelevantItems();
     }
 }
