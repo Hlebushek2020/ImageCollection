@@ -118,27 +118,26 @@ namespace ImageCollection
                 foreach (string icd in metaFiles)
                 {
                     string collectionName = Path.GetFileNameWithoutExtension(icd);
-                    Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Инициализация коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                    Collection collection = new Collection();
-                    DirectoryInfo collectionInfo;
-                    if (collectionName.Equals(CollectionStore.BaseCollectionName))
-                        collectionInfo = new DirectoryInfo(baseDirectory);
-                    else
-                        collectionInfo = new DirectoryInfo($"{baseDirectory}\\{collectionName}");
-                    if (collectionInfo.Exists)
-                    {
-                        IEnumerable<string> files = collectionInfo.EnumerateFiles()
-                            .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"))
-                            .Select(f => f.FullName);
-                        collection = new Collection();
-                        foreach (string item in files)
-                            collection.AddIgnoreAll(item.Remove(0, baseDirectory.Length + 1), true, null);
-                    }
+
                     string pathIcd = $"{metaDirectoryPath}\\{icd}";
                     Dispatcher.Invoke((Action<string, string>)((string paramCollectionName, string paramIcd) => logParagraph.Inlines.Add($"Чтение метаданных коллекции \"{paramCollectionName}\" ({paramIcd})...\r\n")), collectionName, pathIcd);
                     using (StreamReader streamReader = new StreamReader(pathIcd, Encoding.UTF8))
                     {
-                        collection.Id = Guid.Parse(streamReader.ReadLine());
+                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Инициализация коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
+                        Collection collection = new Collection(Guid.Parse(streamReader.ReadLine()));
+                        DirectoryInfo collectionInfo;
+                        if (collectionName.Equals(CollectionStore.BaseCollectionName))
+                            collectionInfo = new DirectoryInfo(baseDirectory);
+                        else
+                            collectionInfo = new DirectoryInfo($"{baseDirectory}\\{collectionName}");
+                        if (collectionInfo.Exists)
+                        {
+                            IEnumerable<string> files = collectionInfo.EnumerateFiles()
+                                .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"))
+                                .Select(f => f.FullName);
+                            foreach (string item in files)
+                                collection.AddIgnorRules(item.Remove(0, baseDirectory.Length + 1), true, null);
+                        }
                         collection.Description = streamReader.ReadLine();
                         string filePath;
                         int command;
@@ -153,23 +152,23 @@ namespace ImageCollection
                                 {
                                     streamReader.Read(guidBuffer, 0, 36);
                                     filePath = streamReader.ReadLine();
-                                    collection.AddIgnoreAll(filePath, false, Guid.Parse(new string(guidBuffer)));
+                                    collection.AddIgnorRules(filePath, false, Guid.Parse(new string(guidBuffer)));
                                 }
                                 else
                                 {
                                     filePath = streamReader.ReadLine();
-                                    collection.AddIgnoreAll(filePath, false, null);
+                                    collection.AddIgnorRules(filePath, false, null);
                                 }
                             }
                             else
                             {
                                 filePath = streamReader.ReadLine();
-                                collection.RemoveNoFlag(filePath);
+                                collection.Remove(filePath);
                             }
                         }
+                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Добавление коллекции \"{paramCollectionName}\" в хранилище...\r\n")), collectionName);
+                        CollectionStore.Add(collectionName, collection);
                     }
-                    Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Добавление коллекции \"{paramCollectionName}\" в хранилище...\r\n")), collectionName);
-                    CollectionStore.Add(collectionName, collection);
                 }
                 Dispatcher.Invoke(() =>
                 {
@@ -312,10 +311,10 @@ namespace ImageCollection
                         }
                         Dispatcher.Invoke((Action<string, string>)((string paramFromPath, string paramToPath) => logParagraph.Inlines.Add($"Копирование \"{paramFromPath}\" -> \"{paramToPath}\"...\r\n")), fromPath, toPath);
                         File.Copy(fromPath, toPath);
-                        collection.RemoveIgnoreAll(item);
-                        collection.AddIgnoreAll(toPrefix + toFileName, true, null);
+                        collection.RemoveIgnorRules(item);
+                        collection.AddIgnorRules(toPrefix + toFileName, true, null);
                     }
-                    collection.IrrelevantItemsClear();
+                    collection.ClearIrrelevantItems();
                     if (!string.IsNullOrEmpty(collection.Description))
                     {
                         Dispatcher.Invoke(() => logParagraph.Inlines.Add("Запись описания коллекции...\r\n"));
@@ -392,7 +391,7 @@ namespace ImageCollection
                             toPath = $"{CollectionStore.BaseDirectory}\\{toPrefix}{toFileName}";
                             index++;
                         }
-                        
+
                         Dispatcher.Invoke((Action<string, string>)((string paramFromPath, string paramToPath) => logParagraph.Inlines.Add($"Перемещение \"{paramFromPath}\" -> \"{paramToPath}\"...\r\n")), fromPath, toPath);
                         File.Move(fromPath, toPath);
                         try
@@ -410,8 +409,8 @@ namespace ImageCollection
                                 $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
                         }
                         catch { }
-                        collection.RemoveIgnoreAll(item);
-                        collection.AddIgnoreAll(toPrefix + toFileName, true, null);
+                        collection.RemoveIgnorRules(item);
+                        collection.AddIgnorRules(toPrefix + toFileName, true, null);
                         collection.IsChanged = true;
                     }
                     if (!string.IsNullOrEmpty(collection.Description))
@@ -419,7 +418,8 @@ namespace ImageCollection
                         Dispatcher.Invoke(() => logParagraph.Inlines.Add("Запись описания коллекции...\r\n"));
                         File.WriteAllText($"{CollectionStore.BaseDirectory}\\{toPrefix}description.txt", collection.Description, Encoding.UTF8);
                     }
-                    collection.IrrelevantItemsClear();
+                    if (collection.ClearIrrelevantItems())
+                        collection.IsChanged = true;
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка удаленных коллекции...\r\n"));
                 foreach (string collectionName in CollectionStore.IrrelevantCollections)
@@ -506,7 +506,8 @@ namespace ImageCollection
                                 $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
                         }
                         catch { }
-                        collection.RenameItem(item, newName);
+                        collection.Rename(item, newName);
+                        collection.IsChanged = true;
                         actualItems.RemoveAt(0);
                     }
                 }
@@ -545,15 +546,15 @@ namespace ImageCollection
                     .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"));
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Инициализация хранилища...\r\n"));
                 CollectionStore.Init(baseDirectory, distributionDirectory);
-                Collection collection = new Collection { Id = Guid.Parse(CollectionStore.BaseCollectionGuid) };
+                Collection collection = new Collection(Guid.Parse(CollectionStore.BaseCollectionGuid));
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка файлов...\r\n"));
                 foreach (FileInfo file in files)
                 {
                     string path = file.DirectoryName;
                     if (path != baseDirectory)
-                        collection.AddIgnoreAll(file.FullName.Remove(0, baseDirectory.Length + 1), false, null);
+                        collection.AddIgnorRules(file.FullName.Remove(0, baseDirectory.Length + 1), false, null);
                     else
-                        collection.AddIgnoreAll(file.Name, true, null);
+                        collection.AddIgnorRules(file.Name, true, null);
                 }
                 collection.IsChanged = true;
                 CollectionStore.Add(CollectionStore.BaseCollectionName, collection);

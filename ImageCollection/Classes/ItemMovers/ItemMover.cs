@@ -13,19 +13,19 @@ namespace ImageCollection.Classes.ItemMovers
         public virtual void Move(string item)
         {
             CollectionItemMeta meta = FromCollection.GetMeta(item);
-            FromCollection.RemoveNoFlag(item);
+            FromCollection.Remove(item);
             if (meta.InCurrentFolder)
-                ToCollection.AddNoFlag(item, false, FromCollection.Id);
+                ToCollection.Add(item, false, FromCollection.Id);
             else
             {
                 if (meta.Parent == null)
-                    ToCollection.AddNoFlag(item, false, null);
+                    ToCollection.Add(item, false, null);
                 else
                 {
                     if (meta.Parent != ToCollection.Id)
-                        ToCollection.AddNoFlag(item, false, meta.Parent);
+                        ToCollection.Add(item, false, meta.Parent);
                     else
-                        ToCollection.AddNoFlag(item, true, null);
+                        ToCollection.Add(item, true, null);
                 }
             }
         }

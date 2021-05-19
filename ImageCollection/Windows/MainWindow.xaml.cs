@@ -180,7 +180,8 @@ namespace ImageCollection
                 {
                     Collection collection = CollectionStore.Get(currentCollectionName);
                     File.Delete($"{CollectionStore.BaseDirectory}\\{currentCollectionItem}");
-                    collection.RemovePermanently(currentCollectionItem);
+                    collection.RemoveIgnorRules(currentCollectionItem);
+                    collection.IsChanged = true;
                     listBox_CollectionItems.Items.RemoveAt(currentCollectionItemIndex);
 
                     listBox_CollectionItems.SelectedIndex = Math.Min(currentCollectionItemIndex, listBox_CollectionItems.Items.Count - 1);
@@ -440,7 +441,8 @@ namespace ImageCollection
                     foreach (ListBoxImageItem item in selectedItems)
                     {
                         File.Delete($"{CollectionStore.BaseDirectory}\\{item.Path}");
-                        collection.RemovePermanently(item.Path);
+                        collection.RemoveIgnorRules(item.Path);
+                        collection.IsChanged = true;
                         listBox_CollectionItems.Items.Remove(item);
                     }
 

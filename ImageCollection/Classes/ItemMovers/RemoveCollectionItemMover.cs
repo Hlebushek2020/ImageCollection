@@ -12,17 +12,17 @@ namespace ImageCollection.Classes
         {
             CollectionItemMeta meta = FromCollection.GetMeta(item);
             if (meta.InCurrentFolder)
-                ToCollection.AddNoFlag(item, false, null);
+                ToCollection.Add(item, false, null);
             else
             {
                 if (meta.Parent == null)
-                    ToCollection.AddNoFlag(item, false, null);
+                    ToCollection.Add(item, false, null);
                 else
                 {
                     if (meta.Parent != ToCollection.Id)
-                        ToCollection.AddNoFlag(item, false, null);
+                        ToCollection.Add(item, false, null);
                     else
-                        ToCollection.AddNoFlag(item, true, null);
+                        ToCollection.Add(item, true, null);
                 }
             }
         }

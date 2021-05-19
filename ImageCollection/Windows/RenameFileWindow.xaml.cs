@@ -122,7 +122,8 @@ namespace ImageCollection
             {
                 Collection collection = CollectionStore.Get(collectionName);
                 File.Move($"{CollectionStore.BaseDirectory}\\{oldFileName}", toPath);
-                collection.RenameItem(oldFileName, newFileName);
+                collection.Rename(oldFileName, newFileName);
+                collection.IsChanged = true;
                 NewFileName = newFileName;
                 IsApply = true;
                 try
