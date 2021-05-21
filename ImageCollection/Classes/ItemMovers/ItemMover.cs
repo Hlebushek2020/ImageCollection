@@ -12,7 +12,7 @@ namespace ImageCollection.Classes.ItemMovers
 
         public virtual void Move(string item)
         {
-            CollectionItemMeta meta = FromCollection.GetMeta(item);
+            CollectionItemMeta meta = FromCollection[item];
             FromCollection.Remove(item);
             if (meta.InCurrentFolder)
                 ToCollection.Add(item, false, FromCollection.Id);

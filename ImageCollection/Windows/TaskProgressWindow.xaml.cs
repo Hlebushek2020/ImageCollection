@@ -216,7 +216,7 @@ namespace ImageCollection
                         Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Запись актуальных элементов коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
                         foreach (string item in collection.ActualItems)
                         {
-                            CollectionItemMeta itemMeta = collection.GetMeta(item);
+                            CollectionItemMeta itemMeta = collection[item];
                             if (itemMeta.InCurrentFolder)
                                 continue;
                             if (itemMeta.Parent != null)
@@ -297,7 +297,7 @@ namespace ImageCollection
                     //collection.Clear();
                     foreach (string item in actualItemsTemp)
                     {
-                        CollectionItemMeta itemMeta = collection.GetMeta(item);
+                        CollectionItemMeta itemMeta = collection[item];
                         fromPath = $"{CollectionStore.BaseDirectory}\\{item}";
                         fromFileName = Path.GetFileName(item);
                         toFileName = fromFileName;
@@ -377,7 +377,7 @@ namespace ImageCollection
                     StringBuilder newPreviewNameS;
                     foreach (string item in actualItemsTemp)
                     {
-                        CollectionItemMeta itemMeta = collection.GetMeta(item);
+                        CollectionItemMeta itemMeta = collection[item];
                         if (itemMeta.InCurrentFolder)
                             continue;
                         fromPath = $"{CollectionStore.BaseDirectory}\\{item}";

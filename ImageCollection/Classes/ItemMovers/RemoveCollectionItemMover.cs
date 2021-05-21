@@ -10,7 +10,7 @@ namespace ImageCollection.Classes
     { 
         public override void Move(string item)
         {
-            CollectionItemMeta meta = FromCollection.GetMeta(item);
+            CollectionItemMeta meta = FromCollection[item];
             if (meta.InCurrentFolder)
                 ToCollection.Add(item, false, null);
             else

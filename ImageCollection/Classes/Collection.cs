@@ -22,6 +22,13 @@ namespace ImageCollection.Classes
             Id = id;
 
         /// <summary>
+        /// Получение метаданных элемента коллекции
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        /// <returns></returns>
+        public CollectionItemMeta this[string item] { get => actualItems[item]; }
+
+        /// <summary>
         /// Добавляет элемент в коллекцию соблюдая правила добавления
         /// </summary>
         /// <param name="item">Элемент</param>
@@ -57,14 +64,6 @@ namespace ImageCollection.Classes
             }
             return false;
         }
-
-        /// <summary>
-        /// Получение метаданных элемента коллекции
-        /// </summary>
-        /// <param name="item">Элемент</param>
-        /// <returns></returns>
-        public CollectionItemMeta GetMeta(string item) =>
-            actualItems[item];
 
         /// <summary>
         /// Удаляет элемент из коллекции соблюдая правила удаления
