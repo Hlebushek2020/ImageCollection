@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ImageCollection.Classes
+namespace ImageCollection.Classes.Settings
 {
     public class ProgramSettings
     {

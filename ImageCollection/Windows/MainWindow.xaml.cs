@@ -1,4 +1,5 @@
 ﻿using ImageCollection.Classes;
+using ImageCollection.Classes.Settings;
 using ImageCollection.Classes.Static;
 using ImageCollection.Enums;
 using ImageCollection.Structures;

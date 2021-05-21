@@ -88,8 +88,10 @@
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
     <Compile Include="Classes\ListBoxImageItem.cs" />
-    <Compile Include="Classes\ProgramSettings.cs" />
+    <Compile Include="Classes\Settings\ProgramSettings.cs" />
     <Compile Include="Classes\Static\CollectionStore.cs" />
+    <Compile Include="Classes\Settings\StoreSettings.cs" />
+    <Compile Include="Classes\Settings\StoreSettingsJson.cs" />
     <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
