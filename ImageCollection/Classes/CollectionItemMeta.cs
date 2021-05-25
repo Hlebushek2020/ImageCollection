@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageCollection.Structures
+namespace ImageCollection.Classes
 {
-    public struct CollectionItemMeta
+    public class CollectionItemMeta
     {
         public bool InCurrentFolder { get; }
         public Guid? Parent { get; }
+        public string Hash { get; set; }
+        public string Description { get; set; }
         
         public CollectionItemMeta(bool inCurrentFolder, Guid? parent)
         {

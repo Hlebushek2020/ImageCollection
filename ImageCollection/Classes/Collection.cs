@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ImageCollection.Classes
 {
-    public class Collection : Interfaces.ICollection<CollectionItemMeta>
+    public class Collection
     {
         private readonly Dictionary<string, CollectionItemMeta> actualItems = new Dictionary<string, CollectionItemMeta>();
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageCollection.Structures;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace ImageCollection.Classes
     {
         private string path;
         private BitmapImage bitmapImage;
-        private string description;
+        private readonly CollectionItemMeta itemMeta;
 
         public string Path
         {
@@ -37,15 +38,25 @@ namespace ImageCollection.Classes
 
         public string Description
         {
-            get => description;
+            get => itemMeta.Description;
             set
             {
-                description = value;
+                itemMeta.Description = value;
                 OnPropertyChanged();
             }
         }
 
-        public ListBoxImageItem(string path) => this.path = path;
+        public string Hash
+        {
+            get => itemMeta.Hash;
+            set => itemMeta.Hash = value;
+        }
+
+        public ListBoxImageItem(string path, CollectionItemMeta itemMeta)
+        {
+            this.path = path;
+            this.itemMeta = itemMeta;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")

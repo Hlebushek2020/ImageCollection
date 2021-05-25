@@ -243,7 +243,7 @@ namespace ImageCollection
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
                 listBox_CollectionItems.Items.Clear();
                 foreach (string item in CollectionStore.Get(currentCollectionName).ActualItems)
-                    listBox_CollectionItems.Items.Add(new ListBoxImageItem(item));
+                    listBox_CollectionItems.Items.Add(new ListBoxImageItem(item, CollectionStore.Get(currentCollectionName)[item]));
                 imageTask = new Task(ImageTaskAction);
                 imageTask.Start();
             }

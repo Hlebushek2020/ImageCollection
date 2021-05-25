@@ -91,8 +91,6 @@
     <Compile Include="Classes\Settings\ProgramSettings.cs" />
     <Compile Include="Classes\Static\CollectionStore.cs" />
     <Compile Include="Classes\Settings\StoreSettings.cs" />
-    <Compile Include="Classes\Settings\StoreSettingsJson.cs" />
-    <Compile Include="Interfaces\ICollection.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
       <DependentUpon>CollectionInformationEditorWindow.xaml</DependentUpon>
@@ -100,7 +98,7 @@
     <Compile Include="Enums\StartWork.cs" />
     <Compile Include="Enums\TaskType.cs" />
     <Compile Include="Structures\CollectionInformation.cs" />
-    <Compile Include="Structures\CollectionItemMeta.cs" />
+    <Compile Include="Classes\CollectionItemMeta.cs" />
     <Compile Include="Windows\SettingsOpenFolderWindow.xaml.cs">
       <DependentUpon>SettingsOpenFolderWindow.xaml</DependentUpon>
     </Compile>
