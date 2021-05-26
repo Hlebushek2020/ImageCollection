@@ -1,14 +1,9 @@
-﻿using ImageCollection.Structures;
-using System;
-using System.Collections.Generic;
+﻿using ImageCollection.Classes.Collections;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace ImageCollection.Classes
+namespace ImageCollection.Classes.Views
 {
     public class ListBoxImageItem : INotifyPropertyChanged
     {

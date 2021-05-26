@@ -1,5 +1,4 @@
-﻿using ImageCollection.Classes.Static;
-using ImageCollection.Classes;
+﻿using ImageCollection.Classes;
 using ImageCollection.Enums;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using ImageCollection.Structures;
 using System.Security.Cryptography;
+using ImageCollection.Classes.Collections;
 
 namespace ImageCollection
 {

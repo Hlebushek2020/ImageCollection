@@ -1,9 +1,7 @@
 ﻿using ImageCollection.Classes.ItemMovers;
-using ImageCollection.Structures;
-using System;
 using System.Collections.Generic;
 
-namespace ImageCollection.Classes.Static
+namespace ImageCollection.Classes.Collections
 {
     public static class CollectionStore
     {

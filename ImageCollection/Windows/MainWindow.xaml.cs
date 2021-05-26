@@ -1,6 +1,7 @@
 ﻿using ImageCollection.Classes;
+using ImageCollection.Classes.Collections;
 using ImageCollection.Classes.Settings;
-using ImageCollection.Classes.Static;
+using ImageCollection.Classes.Views;
 using ImageCollection.Enums;
 using ImageCollection.Structures;
 using System;

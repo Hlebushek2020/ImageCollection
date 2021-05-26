@@ -1,7 +1,4 @@
-﻿using ImageCollection.Classes.ItemMovers;
-using ImageCollection.Structures;
-
-namespace ImageCollection.Classes
+﻿namespace ImageCollection.Classes.ItemMovers
 {
     /// <summary>
     /// Отвечает за перемещение элементов из коллекции, которая будет удалена, в другую коллекцию

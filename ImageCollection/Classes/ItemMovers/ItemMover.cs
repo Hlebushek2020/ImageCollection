@@ -1,4 +1,4 @@
-﻿using ImageCollection.Structures;
+﻿using ImageCollection.Classes.Collections;
 
 namespace ImageCollection.Classes.ItemMovers
 {

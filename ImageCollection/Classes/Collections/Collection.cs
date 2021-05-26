@@ -1,8 +1,7 @@
-﻿using ImageCollection.Structures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace ImageCollection.Classes
+namespace ImageCollection.Classes.Collections
 {
     public class Collection
     {

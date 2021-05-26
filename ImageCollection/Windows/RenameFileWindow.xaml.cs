@@ -1,5 +1,5 @@
 ﻿using ImageCollection.Classes;
-using ImageCollection.Classes.Static;
+using ImageCollection.Classes.Collections;
 using ImageCollection.Enums;
 using System;
 using System.Collections.Generic;
