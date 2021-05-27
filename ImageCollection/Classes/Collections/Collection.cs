@@ -8,7 +8,7 @@ namespace ImageCollection.Classes.Collections
         private readonly Dictionary<string, CollectionItemMeta> actualItems = new Dictionary<string, CollectionItemMeta>();
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();
 
-        public Guid Id { get; private set; }
+        public Guid Id { get; }
         public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
         public string Description { get; set; }
@@ -33,15 +33,26 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
         /// <param name="parent">Родительская коллекция</param>
-        /// <param name="hash">Хеш идентифицирующий превью изображения</param>
-		/// <param name="description">Описание изображения</param>
-        public void Add(string item, bool inCurrentFolder, Guid? parent, string hash, string description)
+        public void Add(string item, bool inCurrentFolder, Guid? parent)
         {
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent)
+            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+            if (inCurrentFolder && irrelevantItems.Contains(item))
             {
-                Hash = hash,
-                Description = description
-            });
+                irrelevantItems.Remove(item);
+            }
+        }
+
+        /// <summary>
+        /// Добавляет элемент в коллекцию соблюдая правила добавления
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
+        /// <param name="parent">Родительская коллекция</param>
+        /// <param name="itemMeta">Старый элемент</param>
+        public void Add(string item, bool inCurrentFolder, Guid? parent, CollectionItemMeta itemMeta)
+        {
+            itemMeta.Change(inCurrentFolder, parent);
+            actualItems.Add(item, itemMeta);
             if (inCurrentFolder && irrelevantItems.Contains(item))
             {
                 irrelevantItems.Remove(item);
@@ -54,15 +65,22 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
         /// <param name="parent">Родительская коллекция</param>
-        /// <param name="hash">Хеш идентифицирующий превью изображения</param>
-		/// <param name="description">Описание изображения</param>
-        public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent, string hash, string description)
+        public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent)
         {
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent)
-            {
-                Hash = hash,
-                Description = description
-            });
+            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+        }
+
+        /// <summary>
+        /// Добавляет элемент в коллекцию без соблюдения правил добавления
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
+        /// <param name="parent">Родительская коллекция</param>
+        /// <param name="itemMeta">Старый элемент</param>
+        public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent, CollectionItemMeta itemMeta)
+        {
+            itemMeta.Change(inCurrentFolder, parent);
+            actualItems.Add(item, itemMeta);
         }
 
         /// <summary>
