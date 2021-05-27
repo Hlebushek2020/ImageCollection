@@ -15,17 +15,17 @@ namespace ImageCollection.Classes.ItemMovers
             CollectionItemMeta meta = FromCollection[item];
             FromCollection.Remove(item);
             if (meta.InCurrentFolder)
-                ToCollection.Add(item, false, FromCollection.Id);
+                ToCollection.Add(item, false, FromCollection.Id, meta.Hash, meta.Description);
             else
             {
                 if (meta.Parent == null)
-                    ToCollection.Add(item, false, null);
+                    ToCollection.Add(item, false, null, meta.Hash, meta.Description);
                 else
                 {
                     if (meta.Parent != ToCollection.Id)
-                        ToCollection.Add(item, false, meta.Parent);
+                        ToCollection.Add(item, false, meta.Parent, meta.Hash, meta.Description);
                     else
-                        ToCollection.Add(item, true, null);
+                        ToCollection.Add(item, true, null, meta.Hash, meta.Description);
                 }
             }
         }

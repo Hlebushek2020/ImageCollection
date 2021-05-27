@@ -9,7 +9,7 @@ namespace ImageCollection.Classes.Collections
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();
 
         public Guid Id { get; private set; }
-        public IEnumerable<string> ActualItems { get => actualItems.Keys; }
+        public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
         public string Description { get; set; }
         public bool IsChanged { get; set; }
@@ -33,9 +33,15 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
         /// <param name="parent">Родительская коллекция</param>
-        public void Add(string item, bool inCurrentFolder, Guid? parent)
+        /// <param name="hash">Хеш идентифицирующий превью изображения</param>
+		/// <param name="description">Описание изображения</param>
+        public void Add(string item, bool inCurrentFolder, Guid? parent, string hash, string description)
         {
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent)
+            {
+                Hash = hash,
+                Description = description
+            });
             if (inCurrentFolder && irrelevantItems.Contains(item))
             {
                 irrelevantItems.Remove(item);
@@ -48,8 +54,16 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
         /// <param name="parent">Родительская коллекция</param>
-        public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent) =>
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+        /// <param name="hash">Хеш идентифицирующий превью изображения</param>
+		/// <param name="description">Описание изображения</param>
+        public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent, string hash, string description)
+        {
+            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent)
+            {
+                Hash = hash,
+                Description = description
+            });
+        }
 
         /// <summary>
         /// Очистка коллекции, указывающей, какие элементы были исключены из текущей папки коллекции

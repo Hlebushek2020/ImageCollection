@@ -11,13 +11,16 @@ namespace ImageCollection.Classes.Settings
         private static ProgramSettings settings;
 
         [JsonIgnore]
-        private static readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
+        private static readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
             "SergeyGovorunov", App.Name.Replace(" ", ""), "settings.json");
 
         #region Settings
         public string Theme { get; set; } = "Light";
         #endregion
 
+        /// <summary>
+        /// Получение текущих настроек программы
+        /// </summary>
         public static ProgramSettings GetInstance()
         {
             if (settings == null)
@@ -30,6 +33,9 @@ namespace ImageCollection.Classes.Settings
             return settings;
         }
 
+        /// <summary>
+        /// Сохраняет текущие настройки программы
+        /// </summary>
         public void Save()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
