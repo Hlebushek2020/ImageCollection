@@ -11,6 +11,7 @@ namespace ImageCollection.Classes.Collections
         public Guid Id { get; }
         public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
+        public string OriginalFolderName { get; set; }
         public string Description { get; set; }
         public bool IsChanged { get; set; }
 

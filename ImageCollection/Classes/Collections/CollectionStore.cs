@@ -134,7 +134,6 @@ namespace ImageCollection.Classes.Collections
         /// Проверяет существует коллекция с таким названием или нет
         /// </summary>
         /// <param name="collection"></param>
-        /// <returns></returns>
         public static bool Contains(string collection)
         {
             return actualCollections.ContainsKey(collection);
@@ -146,6 +145,23 @@ namespace ImageCollection.Classes.Collections
         public static void ClearIrrelevantItems()
         {
             irrelevantCollections.Clear();
+        }
+
+        /// <summary>
+        /// Подготовка хранилища для работы
+        /// </summary>
+        public static void Reset(string baseDirectory, bool openCollections = false)
+        {
+            actualCollections.Clear();
+            irrelevantCollections.Clear();
+            if (openCollections)
+            {
+                Settings = StoreSettings.Load(baseDirectory);
+            }
+            else
+            {
+                Settings = new StoreSettings(baseDirectory);
+            }
         }
     }
 }
