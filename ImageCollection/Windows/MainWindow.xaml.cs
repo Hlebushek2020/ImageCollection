@@ -55,13 +55,11 @@ namespace ImageCollection
 
         private void RefreshAfterOpening()
         {
-            /*object currentColltctionName = comboBox_CollectionNames.SelectedItem;
-            comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+            object currentColltctionName = comboBox_CollectionNames.SelectedItem;
             comboBox_CollectionNames.Items.Refresh();
             comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
             if (currentColltctionName != null)
                 ComboBox_CollectionNames_SelectionChanged(null, null);
-            */
         }
 
         private void MenuItem_OpenFolder_Click(object sender, RoutedEventArgs e) =>
