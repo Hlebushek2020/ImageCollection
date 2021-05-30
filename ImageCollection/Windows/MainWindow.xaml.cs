@@ -53,72 +53,6 @@ namespace ImageCollection
             }
         }
 
-        private void ImageTaskAction()
-        {
-            /*stopImageTask = false;
-
-            int decodeHeight = 94;
-
-            string collectionName = Dispatcher.Invoke<string>(() => { return (string)comboBox_CollectionNames.SelectedItem; });
-            Collection collection = CollectionStore.Get(collectionName);
-            string pathBaseMin = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview";
-            Directory.CreateDirectory(pathBaseMin);
-            MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
-            for (int i = 0; i < listBox_CollectionItems.Items.Count; i++)
-            {
-                if (stopImageTask) break;
-                string itemName = ((ListBoxImageItem)listBox_CollectionItems.Items[i]).Path;
-                string pathImage = $"{CollectionStore.BaseDirectory}\\{itemName}";
-                byte[] buffer = File.ReadAllBytes(pathImage);
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(buffer);
-                bitmapImage.EndInit();
-                string description = $"{bitmapImage.PixelWidth}x{bitmapImage.PixelHeight}; {Math.Round(buffer.Length / 1024.0 / 1024.0, 2)} Мб";
-                byte[] previewName = MD5.ComputeHash(Encoding.UTF8.GetBytes(itemName));
-                StringBuilder stringBuilder = new StringBuilder(previewName.Length * 2);
-                for (int ip = 0; ip < previewName.Length; ip++)
-                    stringBuilder.Append(previewName[ip].ToString("X2"));
-                string pathImageMin = $"{pathBaseMin}\\{stringBuilder}.jpg";
-                if (!File.Exists(pathImageMin))
-                {
-                    if (stopImageTask) break;
-                    int decodeWidth = (int)(1.0 * bitmapImage.PixelWidth / bitmapImage.PixelHeight * decodeHeight);
-                    bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = new MemoryStream(buffer);
-                    bitmapImage.DecodePixelHeight = decodeHeight;
-                    bitmapImage.DecodePixelWidth = decodeWidth;
-                    bitmapImage.EndInit();
-                    JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
-                    jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-                    using (FileStream fileStream = new FileStream(pathImageMin, FileMode.Create, FileAccess.Write))
-                        jpegBitmapEncoder.Save(fileStream);
-                }
-                if (stopImageTask) break;
-                i = Dispatcher.Invoke<int>(() =>
-                {
-                    if (listBox_CollectionItems.Items.Count > i)
-                    {
-                        ListBoxImageItem listBoxImage = (ListBoxImageItem)listBox_CollectionItems.Items[i];
-                        if (File.Exists(pathImageMin) && listBoxImage.Path.Equals(itemName))
-                        {
-                            MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(pathImageMin));
-                            BitmapImage preview = new BitmapImage();
-                            preview.BeginInit();
-                            preview.StreamSource = memoryStream;
-                            preview.EndInit();
-                            listBoxImage.Preview = preview;
-                            listBoxImage.Description = description;
-                            return i;
-                        }
-                        return i--;
-                    }
-                    return i;
-                });
-            }*/
-        }
-
         private void RefreshAfterOpening()
         {
             /*object currentColltctionName = comboBox_CollectionNames.SelectedItem;
@@ -259,22 +193,35 @@ namespace ImageCollection
         private void CreateItemList(string collectionName)
         {
             // preparation
+            stopImageTask = false;
             string previewFolder = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
             // processing
             Collection collection = CollectionStore.Get(collectionName);
             foreach (KeyValuePair<string, CollectionItemMeta> collectionItem in collection.ActualItems)
             {
+                if (stopImageTask)
+                {
+                    break;
+                }
                 ListBoxImageItem listBoxImageItem = new ListBoxImageItem(collectionItem.Key, collectionItem.Value);
                 if (string.IsNullOrEmpty(listBoxImageItem.Hash) || string.IsNullOrEmpty(listBoxImageItem.Description))
                 {
                     GeneratePreviewAndDescription(previewFolder, collectionItem.Key, md5, listBoxImageItem);
+                }
+                if (stopImageTask)
+                {
+                    break;
                 }
                 string previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
                 if (!File.Exists(previewFile))
                 {
                     GeneratePreviewAndDescription(previewFolder, collectionItem.Key, md5, listBoxImageItem);
                     previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
+                }
+                if (stopImageTask)
+                {
+                    break;
                 }
                 MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(previewFile));
                 BitmapImage preview = new BitmapImage();
@@ -287,33 +234,40 @@ namespace ImageCollection
 
         private void GeneratePreviewAndDescription(string previewFolder, string item, MD5CryptoServiceProvider md5, ListBoxImageItem imageItem)
         {
+            // preparation
             string originalImage = Path.Combine(CollectionStore.Settings.BaseDirectory, item);
             byte[] originalImageBuffer = File.ReadAllBytes(originalImage);
+            // processing description
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
             bitmapImage.StreamSource = new MemoryStream(originalImageBuffer);
             bitmapImage.EndInit();
             imageItem.Description = $"{bitmapImage.PixelWidth}x{bitmapImage.PixelHeight}; {Math.Round(originalImageBuffer.Length / 1024.0 / 1024.0, 2)} Мб";
-
+            // processing generate hash
             byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(item));
-            StringBuilder stringBuilder = new StringBuilder(previewName.Length * 2);
-            for (int ip = 0; ip < previewName.Length; ip++)
-                stringBuilder.Append(previewName[ip].ToString("X2"));
-            string pathImageMin = $"{pathBaseMin}\\{stringBuilder}.jpg";
-            if (!File.Exists(pathImageMin))
+            StringBuilder stringBuilder = new StringBuilder(hash.Length * 2);
+            for (int i = 0; i < hash.Length; i++)
             {
-                if (stopImageTask) break;
-                int decodeWidth = (int)(1.0 * bitmapImage.PixelWidth / bitmapImage.PixelHeight * decodeHeight);
+                stringBuilder.Append(hash[i].ToString("X2"));
+            }
+            imageItem.Hash = stringBuilder.ToString();
+            // processing generate preview
+            string previewImage = Path.Combine(previewFolder, $"{imageItem.Hash}.jpg");
+            if (!File.Exists(previewImage))
+            {
+                int decodeWidth = (int)(1.0 * bitmapImage.PixelWidth / bitmapImage.PixelHeight * 94.0);
                 bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(buffer);
-                bitmapImage.DecodePixelHeight = decodeHeight;
+                bitmapImage.StreamSource = new MemoryStream(originalImageBuffer);
+                bitmapImage.DecodePixelHeight = 94;
                 bitmapImage.DecodePixelWidth = decodeWidth;
                 bitmapImage.EndInit();
                 JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
                 jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-                using (FileStream fileStream = new FileStream(pathImageMin, FileMode.Create, FileAccess.Write))
+                using (FileStream fileStream = new FileStream(previewImage, FileMode.Create, FileAccess.Write))
+                {
                     jpegBitmapEncoder.Save(fileStream);
+                }
             }
         }
         #endregion
