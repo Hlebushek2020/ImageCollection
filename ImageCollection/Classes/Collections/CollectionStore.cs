@@ -101,7 +101,7 @@ namespace ImageCollection.Classes.Collections
             }
             itemMover.ToCollection.IsChanged = true;
             actualCollections.Remove(collection);
-            if (!irrelevantCollections.Contains(collection))
+            if (!irrelevantCollections.Contains(collection) && collection.Equals(itemMover.FromCollection.OriginalFolderName))
             {
                 irrelevantCollections.Add(collection);
             }
@@ -128,6 +128,7 @@ namespace ImageCollection.Classes.Collections
                 actualCollections.Remove(collection);
                 actualCollections.Add(information.Name, collectionClass);
             }
+            collectionClass.IsChanged = collectionClass.IsChanged || information.ChangedDescription || information.ChangedName;
         }
 
         /// <summary>
