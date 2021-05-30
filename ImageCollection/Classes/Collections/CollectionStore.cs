@@ -11,8 +11,9 @@ namespace ImageCollection.Classes.Collections
     {
         public const string BaseCollectionName = "Все";
         public const string DataDirectoryName = "DATA-IC";
+        public const string PreviewDirectoryName = "preview";
 
-        public static readonly Guid BaseCollectionId = new Guid(new byte[16] {
+        public static Guid BaseCollectionId { get; } = new Guid(new byte[16] {
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
         });
@@ -36,20 +37,9 @@ namespace ImageCollection.Classes.Collections
         /// </summary>
         /// <param name="from">Название коллекции откуда перемещаются элементы</param>
         /// <param name="to">Название коллекции куда перемещаются элементы</param>
-        /// <param name="items">Элементы для перемещения</param>
-        public static void MoveCollectionItems(string from, string to, IEnumerable<ListBoxImageItem> items)
+        public static ItemMover InitializeItemMover(string from, string to)
         {
-            ItemMover itemMover = new ItemMover
-            {
-                FromCollection = actualCollections[from],
-                ToCollection = actualCollections[to]
-            };
-            foreach (ListBoxImageItem item in items)
-            {
-                itemMover.Move(item.Path);
-            }
-            itemMover.FromCollection.IsChanged = true;
-            itemMover.ToCollection.IsChanged = true;
+            return new ItemMover(actualCollections[from], actualCollections[to]);
         }
 
         /// <summary>
@@ -90,18 +80,15 @@ namespace ImageCollection.Classes.Collections
         /// <param name="collection">Название коллекции</param>
         public static void Remove(string collection)
         {
-            RemoveCollectionItemMover itemMover = new RemoveCollectionItemMover
-            {
-                FromCollection = actualCollections[collection],
-                ToCollection = actualCollections[BaseCollectionName]
-            };
-            foreach (KeyValuePair<string, CollectionItemMeta> item in itemMover.FromCollection.ActualItems)
+            Collection from = actualCollections[collection];
+            ItemMover itemMover = new RemoveCollectionItemMover(from, actualCollections[BaseCollectionName]);
+            foreach (KeyValuePair<string, CollectionItemMeta> item in from.ActualItems)
             {
                 itemMover.Move(item.Key);
             }
-            itemMover.ToCollection.IsChanged = true;
+            itemMover.EndMoving();
             actualCollections.Remove(collection);
-            if (!irrelevantCollections.Contains(collection) && collection.Equals(itemMover.FromCollection.OriginalFolderName))
+            if (!irrelevantCollections.Contains(collection))
             {
                 irrelevantCollections.Add(collection);
             }

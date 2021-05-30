@@ -7,27 +7,48 @@ namespace ImageCollection.Classes.ItemMovers
     /// </summary>
     public class ItemMover
     {
-        public Collection FromCollection;
-        public Collection ToCollection;
+        protected Collection fromCollection;
+        protected Collection toCollection;
 
+        /// <param name="from">Коллекция из которой перемещать элементы</param>
+        /// <param name="to">Коллекция в которую перемещать элементы</param>
+        public ItemMover(Collection from, Collection to)
+        {
+            fromCollection = from;
+            toCollection = to;
+        }
+
+        /// <summary>
+        /// Перемещает заданный элемент
+        /// </summary>
+        /// <param name="item">Элемент</param>
         public virtual void Move(string item)
         {
-            CollectionItemMeta meta = FromCollection[item];
-            FromCollection.Remove(item);
+            CollectionItemMeta meta = fromCollection[item];
+            fromCollection.Remove(item);
             if (meta.InCurrentFolder)
-                ToCollection.Add(item, false, FromCollection.Id, meta);
+                toCollection.Add(item, false, fromCollection.Id, meta);
             else
             {
                 if (meta.Parent == null)
-                    ToCollection.Add(item, false, null, meta);
+                    toCollection.Add(item, false, null, meta);
                 else
                 {
-                    if (meta.Parent != ToCollection.Id)
-                        ToCollection.Add(item, false, meta.Parent, meta);
+                    if (meta.Parent != toCollection.Id)
+                        toCollection.Add(item, false, meta.Parent, meta);
                     else
-                        ToCollection.Add(item, true, null, meta);
+                        toCollection.Add(item, true, null, meta);
                 }
             }
+        }
+
+        /// <summary>
+        /// Завершает перемещение элементов
+        /// </summary>
+        public virtual void EndMoving()
+        {
+            fromCollection.IsChanged = true;
+            toCollection.IsChanged = true;
         }
     }
 }

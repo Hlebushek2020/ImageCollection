@@ -7,18 +7,25 @@ namespace ImageCollection.Classes.ItemMovers
     /// </summary>
     public class RemoveCollectionItemMover : ItemMover
     {
+        public RemoveCollectionItemMover(Collection from, Collection to) : base(from, to) { }
+
         public override void Move(string item)
         {
-            CollectionItemMeta meta = FromCollection[item];
+            CollectionItemMeta meta = fromCollection[item];
             if (!meta.InCurrentFolder && meta.Parent != null)
             {
-                if (meta.Parent == ToCollection.Id)
+                if (meta.Parent == toCollection.Id)
                 {
-                    ToCollection.Add(item, true, null, meta);
+                    toCollection.Add(item, true, null, meta);
                     return;
                 }
             }
-            ToCollection.Add(item, false, null, meta);
+            toCollection.Add(item, false, null, meta);
+        }
+
+        public override void EndMoving()
+        {
+            toCollection.IsChanged = true;
         }
     }
 }
