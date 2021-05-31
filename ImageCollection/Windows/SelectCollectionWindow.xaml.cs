@@ -16,7 +16,7 @@ namespace ImageCollection
         {
             InitializeComponent();
             Title = App.Name;
-            comboBox_CollectionNames.ItemsSource = CollectionStore.GetCollectionNames();
+            comboBox_CollectionNames.ItemsSource = CollectionStore.ActualCollections;
             comboBox_CollectionNames.SelectedItem = currentCollectionName;
             this.currentCollectionName = currentCollectionName;
         }
@@ -27,7 +27,9 @@ namespace ImageCollection
         {
             string nameSelectedCollection = (string)comboBox_CollectionNames.SelectedItem;
             if (!currentCollectionName.Equals(nameSelectedCollection))
+            {
                 IsApply = true;
+            }
             Close();
         }
 

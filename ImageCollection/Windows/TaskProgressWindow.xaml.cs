@@ -46,10 +46,14 @@ namespace ImageCollection
                     currentOperation = new Task(() => OpenFolderTaskAction((string)args[0], (SearchOption)args[1], (string)args[2], (string)args[3]));
                     break;
                 case TaskType.Distribution:
-                    if (string.IsNullOrEmpty(CollectionStore.DistributionDirectory))
+                    if (string.IsNullOrEmpty(CollectionStore.Settings.DistributionDirectory))
+                    {
                         currentOperation = new Task(() => StdDistributionTaskAction());
+                    }
                     else
+                    {
                         currentOperation = new Task(() => DistributionTaskAction());
+                    }
                     break;
                 case TaskType.СlearImageCache:
                     currentOperation = new Task(() => СlearImageCacheAction());

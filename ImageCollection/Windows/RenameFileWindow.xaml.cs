@@ -1,21 +1,11 @@
-﻿using ImageCollection.Classes;
-using ImageCollection.Classes.Collections;
+﻿using ImageCollection.Classes.Collections;
 using ImageCollection.Enums;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace ImageCollection
 {
@@ -112,42 +102,39 @@ namespace ImageCollection
             }
             string dirName = Path.GetDirectoryName(oldFileName);
             newFileName = $"{(string.IsNullOrEmpty(dirName) ? "" : $"{dirName}\\")}{newFileName}{Path.GetExtension(oldFileName)}";
-            string toPath = $"{CollectionStore.BaseDirectory}\\{newFileName}";
+            string toPath = $"{CollectionStore.Settings.BaseDirectory}\\{newFileName}";
             if (File.Exists(toPath))
             {
                 MessageBox.Show("Файл с таким именем уже существует!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            try
+            Collection collection = CollectionStore.Get(collectionName);
+            File.Move($"{CollectionStore.Settings.BaseDirectory}\\{oldFileName}", toPath);
+            collection.Rename(oldFileName, newFileName);
+            collection.IsChanged = true;
+            NewFileName = newFileName;
+            IsApply = true;
+            // processing generate hash and rename preview
+            CollectionItemMeta itemMeta = collection[oldFileName];
+            if (!string.IsNullOrEmpty(itemMeta.Hash))
             {
-                Collection collection = CollectionStore.Get(collectionName);
-                File.Move($"{CollectionStore.BaseDirectory}\\{oldFileName}", toPath);
-                collection.Rename(oldFileName, newFileName);
-                collection.IsChanged = true;
-                NewFileName = newFileName;
-                IsApply = true;
+                MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                byte[] newHash = md5.ComputeHash(Encoding.UTF8.GetBytes(newFileName));
+                StringBuilder newHashSB = new StringBuilder(newHash.Length * 2);
+                for (int i = 0; i < newHash.Length; i++)
+                {
+                    newHashSB.Append(newHash[i].ToString("X2"));
+                }
+                string newHashS = newHashSB.ToString();
+                string previewDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
                 try
                 {
-                    MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
-                    byte[] oldPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(oldFileName));
-                    byte[] newPreviewNameB = MD5.ComputeHash(Encoding.UTF8.GetBytes(newFileName));
-                    StringBuilder oldPreviewNameS = new StringBuilder(oldPreviewNameB.Length * 2);
-                    StringBuilder newPreviewNameS = new StringBuilder(newPreviewNameB.Length * 2);
-                    for (int i = 0; i < oldPreviewNameB.Length; i++)
-                    {
-                        oldPreviewNameS.Append(oldPreviewNameB[i].ToString("X2"));
-                        newPreviewNameS.Append(newPreviewNameB[i].ToString("X2"));
-                    }
-                    File.Move($"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{oldPreviewNameS}.jpg",
-                        $"{CollectionStore.BaseDirectory}//{CollectionStore.DataDirectoryName}//preview//{newPreviewNameS}.jpg");
+                    File.Move(Path.Combine(previewDirectory, $"{itemMeta.Hash}.jpg"), Path.Combine(previewDirectory, $"{newHashS}.jpg"));
+                    itemMeta.Hash = newHashS;
                 }
                 catch { }
-                Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, App.Name, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            Close();
         }
 
         private void RenameAllFiles()
