@@ -19,10 +19,10 @@ namespace ImageCollection.Classes.Collections
         });
 
         private static readonly Dictionary<string, Collection> actualCollections = new Dictionary<string, Collection>();
-        private static readonly HashSet<string> irrelevantCollections = new HashSet<string>();
+        private static readonly Dictionary<string, Guid?> irrelevantCollections = new Dictionary<string, Guid?>();
 
         public static IEnumerable<string> ActualCollections { get => actualCollections.Keys; }
-        public static IEnumerable<string> IrrelevantCollections { get => irrelevantCollections; }
+        public static IEnumerable<KeyValuePair<string, Guid?>> IrrelevantCollections { get => irrelevantCollections; }
         public static StoreSettings Settings { get; private set; }
 
         /// <summary>
@@ -53,10 +53,10 @@ namespace ImageCollection.Classes.Collections
                 IsChanged = true,
                 Description = information.Description
             };
-            if (irrelevantCollections.Contains(information.Name))
-            {
-                irrelevantCollections.Remove(information.Name);
-            }
+            //if (irrelevantCollections.ContainsKey(information.Name))
+            //{
+            //    irrelevantCollections.Remove(information.Name);
+            //}
             actualCollections.Add(information.Name, collection);
         }
 
@@ -67,11 +67,21 @@ namespace ImageCollection.Classes.Collections
         /// <param name="collection">Коллекция</param>
         public static void AddIgnorRules(string name, Collection collection)
         {
-            if (irrelevantCollections.Contains(name))
-            {
-                irrelevantCollections.Remove(name);
-            }
+            //if (irrelevantCollections.ContainsKey(name))
+            //{
+            //    irrelevantCollections.Remove(name);
+            //}
             actualCollections.Add(name, collection);
+        }
+
+        /// <summary>
+        /// Добавление удаленной коллекции
+        /// </summary>
+        /// <param name="collection">Название коллекции</param>
+        /// <param name="id">Guid коллекции</param>
+        public static void AddIrrelevant(string collection, Guid? id = null)
+        {
+            irrelevantCollections.Add(collection, id);
         }
 
         /// <summary>
@@ -88,9 +98,12 @@ namespace ImageCollection.Classes.Collections
             }
             itemMover.EndMoving();
             actualCollections.Remove(collection);
-            if (!irrelevantCollections.Contains(collection))
+            if (!string.IsNullOrEmpty(from.OriginalFolderName))
             {
-                irrelevantCollections.Add(collection);
+                if (!irrelevantCollections.ContainsKey(from.OriginalFolderName))
+                {
+                    irrelevantCollections.Add(from.OriginalFolderName, from.Id);
+                }
             }
         }
 
@@ -108,10 +121,10 @@ namespace ImageCollection.Classes.Collections
             }
             if (information.ChangedName)
             {
-                if (irrelevantCollections.Contains(information.Name))
-                {
-                    irrelevantCollections.Remove(information.Name);
-                }
+                //if (irrelevantCollections.ContainsKey(information.Name))
+                //{
+                //    irrelevantCollections.Remove(information.Name);
+                //}
                 actualCollections.Remove(collection);
                 actualCollections.Add(information.Name, collectionClass);
             }
@@ -119,12 +132,30 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Проверяет существует коллекция с таким названием или нет
+        /// Наличие коллекции в актуальных
         /// </summary>
-        /// <param name="collection"></param>
+        /// <param name="collection">Название коллекции</param>
         public static bool Contains(string collection)
         {
             return actualCollections.ContainsKey(collection);
+        }
+
+        /// <summary>
+        /// Наличие коллекции в удаленных
+        /// </summary>
+        /// <param name="collection">Оригинальное название коллекции</param>
+        public static bool ContainsIrrelevant(string collection)
+        {
+            return irrelevantCollections.ContainsKey(collection);
+        }
+
+        /// <summary>
+        /// Окончательно удаляет удаленную коллекцию
+        /// </summary>
+        /// <param name="collection">Оригинальное название коллекции</param>
+        public static void RemoveIrrelevant(string collection)
+        {
+            irrelevantCollections.Remove(collection);
         }
 
         /// <summary>

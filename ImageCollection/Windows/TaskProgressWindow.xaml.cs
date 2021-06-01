@@ -1,5 +1,5 @@
-﻿using ImageCollection.Classes;
-using ImageCollection.Enums;
+﻿using ImageCollection.Enums;
+using ImageCollection.Classes.Collections;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
-using ImageCollection.Structures;
 using System.Security.Cryptography;
-using ImageCollection.Classes.Collections;
 
 namespace ImageCollection
 {
@@ -76,9 +74,11 @@ namespace ImageCollection
                     progressBar_Progress.IsIndeterminate = true;
                     logParagraph.Inlines.Add("Очистка...\r\n");
                 });
-                string pathBaseMin = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\preview";
-                if (Directory.Exists(pathBaseMin))
-                    Directory.Delete(pathBaseMin, true);
+                string previewDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
+                if (Directory.Exists(previewDirectory))
+                {
+                    Directory.Delete(previewDirectory, true);
+                }
                 Dispatcher.Invoke(() =>
                 {
                     inProgress = false;
@@ -96,6 +96,125 @@ namespace ImageCollection
                     };
                     logParagraph.Inlines.Add(run);
                 }), ex.Message);
+            }
+        }
+
+        private void SaveCollectionsTaskAction()
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = true;
+                    progressBar_Progress.IsIndeterminate = true;
+                });
+                BaseSaveCollectionsTaskAction();
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = false;
+                    Close();
+                });
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke((Action<string>)((valueError) =>
+                {
+                    inProgress = false;
+                    Run run = new Run(valueError)
+                    {
+                        Foreground = Brushes.Red,
+                    };
+                    logParagraph.Inlines.Add(run);
+                }), ex.Message);
+            }
+        }
+
+        private void BaseSaveCollectionsTaskAction()
+        {
+            string metaDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName);
+            if (!Directory.Exists(metaDirectory))
+            {
+                Directory.CreateDirectory(metaDirectory);
+            }
+            else
+            {
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Обработка удаленных коллекций...\r\n"));
+                string icdFilePath = Path.Combine(metaDirectory, $"irrelevant.icd");
+                using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Create, FileAccess.Write))
+                {
+                    using (BinaryWriter icdWriter = new BinaryWriter(icdFile, Encoding.UTF8))
+                    {
+                        foreach (KeyValuePair<string, Guid?> deleteCollection in CollectionStore.IrrelevantCollections)
+                        {
+                            Dispatcher.Invoke((Action<string>)((string _collectionName) => logParagraph.Inlines.Add($"Запись названия: \"{_collectionName}\"\r\n")), deleteCollection.Key);
+                            icdWriter.Write(deleteCollection.Key);
+                            if (deleteCollection.Value.HasValue)
+                            {
+                                string deleteIcdFilePath = Path.Combine(metaDirectory, $"{deleteCollection.Value.Value}.icd");
+                                if (File.Exists(deleteIcdFilePath))
+                                {
+                                    Dispatcher.Invoke((Action<string>)((string _deleteFilePath) => logParagraph.Inlines.Add($"Удаление: \"{_deleteFilePath}\"\r\n")), deleteIcdFilePath);
+                                    File.Delete(deleteIcdFilePath);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Обработка актуальных коллекций...\r\n"));
+            foreach (string collectionName in CollectionStore.ActualCollections)
+            {
+                Dispatcher.Invoke((Action<string>)((string _collection) => logParagraph.Inlines.Add($"Обработка коллекции: \"{_collection}\"\r\n")), collectionName);
+                Collection collection = CollectionStore.Get(collectionName);
+                if (collection.IsChanged)
+                {
+                    string icdFilePath = Path.Combine(metaDirectory, $"{collection.Id}.icd");
+                    using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Create, FileAccess.Write))
+                    {
+                        using (BinaryWriter icdWriter = new BinaryWriter(icdFile, Encoding.UTF8))
+                        {
+                            Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Запись базовых сведений...\r\n"));
+                            icdWriter.Write(collectionName);
+                            icdWriter.Write(collection.Id.ToByteArray());
+                            bool noValue = string.IsNullOrEmpty(collection.OriginalFolderName);
+                            icdWriter.Write(noValue);
+                            if (!noValue)
+                            {
+                                icdWriter.Write(collection.OriginalFolderName);
+                            }
+                            noValue = string.IsNullOrEmpty(collection.Description);
+                            icdWriter.Write(noValue);
+                            if (!noValue)
+                            {
+                                icdWriter.Write(collection.Description);
+                            }
+                            Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Запись актуальных элементов...\r\n"));
+                            foreach (KeyValuePair<string, CollectionItemMeta> item in collection.ActualItems)
+                            {
+                                if (item.Value.InCurrentFolder)
+                                {
+                                    continue;
+                                }
+                                // add item flag
+                                icdWriter.Write(true);
+                                icdWriter.Write(item.Value.Parent.HasValue);
+                                if (item.Value.Parent.HasValue)
+                                {
+                                    icdWriter.Write(item.Value.Parent.Value.ToByteArray());
+                                }
+                                icdWriter.Write(item.Key);
+                            }
+                            Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Запись исключенных элементов...\r\n"));
+                            foreach (string deleteItem in collection.IrrelevantItems)
+                            {
+                                // delete item flag
+                                icdWriter.Write(false);
+                                icdWriter.Write(deleteItem);
+                            }
+                            collection.IsChanged = false;
+                        }
+                    }
+                }
             }
         }
 
@@ -193,85 +312,6 @@ namespace ImageCollection
                 }), ex.Message);
             }
         }
-
-        private void BaseSaveCollectionsTaskAction()
-        {
-            string metaDirectoryPath = $"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}";
-            if (!Directory.Exists(metaDirectoryPath))
-                Directory.CreateDirectory(metaDirectoryPath);
-            foreach (string collectionName in CollectionStore.IrrelevantCollections)
-            {
-                string icd = $"{metaDirectoryPath}\\{collectionName}.icd";
-                Dispatcher.Invoke((Action<string>)((string paramIcd) => logParagraph.Inlines.Add($"Удаление \"{paramIcd}\"...\r\n")), icd);
-                File.Delete(icd);
-            }
-            CollectionStore.IrrelevantCollectionsClear();
-            IEnumerable<string> collectionNames = CollectionStore.GetCollectionNames();
-            foreach (string collectionName in collectionNames)
-            {
-                Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Обработка коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                Collection collection = CollectionStore.Get(collectionName);
-                if (collection.IsChanged)
-                {
-                    using (StreamWriter streamWriter = new StreamWriter($"{metaDirectoryPath}\\{collectionName}.icd", false, Encoding.UTF8))
-                    {
-                        streamWriter.WriteLine(collection.Id);
-                        streamWriter.WriteLine(collection.Description);
-                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Запись актуальных элементов коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                        foreach (string item in collection.ActualItems)
-                        {
-                            CollectionItemMeta itemMeta = collection[item];
-                            if (itemMeta.InCurrentFolder)
-                                continue;
-                            if (itemMeta.Parent != null)
-                                streamWriter.WriteLine($"00{itemMeta.Parent}{item}");
-                            else
-                                streamWriter.WriteLine($"01{item}");
-                        }
-                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Запись исключенных элементов коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                        foreach (string item in collection.IrrelevantItems)
-                            if (File.Exists(CollectionStore.BaseDirectory + "\\" + item))
-                                streamWriter.WriteLine($"1{item}");
-                    }
-                    collection.IsChanged = false;
-                }
-            }
-            if (!string.IsNullOrEmpty(CollectionStore.DistributionDirectory))
-                File.WriteAllText($"{metaDirectoryPath}\\confTmp.icct", CollectionStore.DistributionDirectory, Encoding.UTF8);
-            if (!Directory.EnumerateFiles(metaDirectoryPath, "*.icd").Any())
-                Directory.Delete(metaDirectoryPath, true);
-        }
-
-        private void SaveCollectionsTaskAction()
-        {
-            try
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    inProgress = true;
-                    progressBar_Progress.IsIndeterminate = true;
-                });
-                BaseSaveCollectionsTaskAction();
-                Dispatcher.Invoke(() =>
-                {
-                    inProgress = false;
-                    Close();
-                });
-            }
-            catch (Exception ex)
-            {
-                Dispatcher.Invoke((Action<string>)((valueError) =>
-                {
-                    inProgress = false;
-                    Run run = new Run(valueError)
-                    {
-                        Foreground = Brushes.Red,
-                    };
-                    logParagraph.Inlines.Add(run);
-                }), ex.Message);
-            }
-        }
-
 
         private void DistributionTaskAction()
         {
