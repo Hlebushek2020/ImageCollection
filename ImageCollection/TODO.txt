@@ -1,1 +1,3 @@
 ﻿private void RefreshAfterOpening() | Проверить возможность избавления от нее
+
+возможно InCurrentFolder выставляется неверно
