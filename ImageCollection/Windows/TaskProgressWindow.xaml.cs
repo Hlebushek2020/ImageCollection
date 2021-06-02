@@ -139,7 +139,7 @@ namespace ImageCollection
             else
             {
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Обработка удаленных коллекций...\r\n"));
-                string icdFilePath = Path.Combine(metaDirectory, $"irrelevant.icd");
+                string icdFilePath = Path.Combine(metaDirectory, $"irrelevant.dicd");
                 using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Create, FileAccess.Write))
                 {
                     using (BinaryWriter icdWriter = new BinaryWriter(icdFile, Encoding.UTF8))
@@ -174,19 +174,19 @@ namespace ImageCollection
                         using (BinaryWriter icdWriter = new BinaryWriter(icdFile, Encoding.UTF8))
                         {
                             Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Запись базовых сведений...\r\n"));
-                            icdWriter.Write(collectionName);
                             icdWriter.Write(collection.Id.ToByteArray());
-                            bool noValue = string.IsNullOrEmpty(collection.OriginalFolderName);
-                            icdWriter.Write(noValue);
-                            if (!noValue)
-                            {
-                                icdWriter.Write(collection.OriginalFolderName);
-                            }
-                            noValue = string.IsNullOrEmpty(collection.Description);
-                            icdWriter.Write(noValue);
-                            if (!noValue)
+                            icdWriter.Write(collectionName);
+                            bool isValue = !string.IsNullOrEmpty(collection.Description);
+                            icdWriter.Write(isValue);
+                            if (isValue)
                             {
                                 icdWriter.Write(collection.Description);
+                            }
+                            isValue = !string.IsNullOrEmpty(collection.OriginalFolderName);
+                            icdWriter.Write(isValue);
+                            if (isValue)
+                            {
+                                icdWriter.Write(collection.OriginalFolderName);
                             }
                             Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Запись актуальных элементов...\r\n"));
                             foreach (KeyValuePair<string, CollectionItemMeta> item in collection.ActualItems)
@@ -220,96 +220,149 @@ namespace ImageCollection
 
         private void OpenCollectionsTaskAction(string baseDirectory)
         {
-            try
+            string metaDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName);
+            IEnumerable<string> icdFiles = new DirectoryInfo(metaDirectory)
+                .EnumerateFiles()
+                .Where(x => x.Extension.Equals(".icd"))
+                .Select(x => Name);
+            CollectionStore.Reset(baseDirectory, true);
+            foreach (string icdFileName in icdFiles)
             {
-                Dispatcher.Invoke(() =>
+                string icdFilePath = Path.Combine(metaDirectory, icdFileName);
+                Collection collection = null;
+                using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    inProgress = true;
-                    progressBar_Progress.IsIndeterminate = true;
-                    logParagraph.Inlines.Add("Получение коллекций...\r\n");
-                });
-                string metaDirectoryPath = $"{baseDirectory}\\{CollectionStore.DataDirectoryName}";
-                DirectoryInfo metaDirectory = new DirectoryInfo(metaDirectoryPath);
-                IEnumerable<string> metaFiles = metaDirectory.EnumerateFiles()
-                    .Where(x => x.Extension.Equals(".icd"))
-                    .Select(x => x.Name);
-                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Инициализация хранилища...\r\n"));
-                string distributionDirectory = null;
-                if (File.Exists($"{metaDirectoryPath}\\confTmp.icct"))
-                    distributionDirectory = File.ReadAllText($"{metaDirectoryPath}\\confTmp.icct", Encoding.UTF8);
-                CollectionStore.Init(baseDirectory, distributionDirectory);
-                foreach (string icd in metaFiles)
-                {
-                    string collectionName = Path.GetFileNameWithoutExtension(icd);
-
-                    string pathIcd = $"{metaDirectoryPath}\\{icd}";
-                    Dispatcher.Invoke((Action<string, string>)((string paramCollectionName, string paramIcd) => logParagraph.Inlines.Add($"Чтение метаданных коллекции \"{paramCollectionName}\" ({paramIcd})...\r\n")), collectionName, pathIcd);
-                    using (StreamReader streamReader = new StreamReader(pathIcd, Encoding.UTF8))
+                    using (BinaryReader icdReader = new BinaryReader(icdFile, Encoding.UTF8))
                     {
-                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Инициализация коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                        Collection collection = new Collection(Guid.Parse(streamReader.ReadLine()));
-                        DirectoryInfo collectionInfo;
-                        if (collectionName.Equals(CollectionStore.BaseCollectionName))
-                            collectionInfo = new DirectoryInfo(baseDirectory);
-                        else
-                            collectionInfo = new DirectoryInfo($"{baseDirectory}\\{collectionName}");
-                        if (collectionInfo.Exists)
+                        Guid id = new Guid(icdReader.ReadBytes(16));
+                        collection = new Collection(id);
+                        string collectionName = icdReader.ReadString();
+                        if (icdReader.ReadBoolean())
                         {
-                            IEnumerable<string> files = collectionInfo.EnumerateFiles()
-                                .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"))
-                                .Select(f => f.FullName);
-                            foreach (string item in files)
-                                collection.AddIgnorRules(item.Remove(0, baseDirectory.Length + 1), true, null);
+                            collection.Description = icdReader.ReadString();
                         }
-                        collection.Description = streamReader.ReadLine();
-                        string filePath;
-                        int command;
-                        char[] guidBuffer = new char[36];
-                        while (!streamReader.EndOfStream)
+                        bool ofnContains = icdReader.ReadBoolean();
+                        if (ofnContains || id == CollectionStore.BaseCollectionId)
                         {
-                            command = streamReader.Read();
-                            if (command == '0')
+                            if (ofnContains)
+                            {
+                                collection.OriginalFolderName = icdReader.ReadString();
+                            }
+                            // get files from folder and add coll
+                            string collectionFolder = baseDirectory;
+                            if (id != CollectionStore.BaseCollectionId)
+                            {
+                                collectionFolder = Path.Combine(baseDirectory, collection.OriginalFolderName);
+                            }
+                            // CODE
+                        }
+                        // read icd processing
+                        while (icdFile.Length != icdFile.Position)
+                        {
+                            // add
+                            if (icdReader.ReadBoolean())
+                            {
+                                // CODE
+                            }
+                            // remove
+                            else
+                            {
+                                // CODE
+                            }
+                        }
+                    }
+                }
+                /*try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        inProgress = true;
+                        progressBar_Progress.IsIndeterminate = true;
+                        logParagraph.Inlines.Add("Получение коллекций...\r\n");
+                    });
+                    string metaDirectoryPath = $"{baseDirectory}\\{CollectionStore.DataDirectoryName}";
+                    DirectoryInfo metaDirectory = new DirectoryInfo(metaDirectoryPath);
+                    IEnumerable<string> metaFiles = metaDirectory.EnumerateFiles()
+                        .Where(x => x.Extension.Equals(".icd"))
+                        .Select(x => x.Name);
+                    Dispatcher.Invoke(() => logParagraph.Inlines.Add("Инициализация хранилища...\r\n"));
+                    string distributionDirectory = null;
+                    if (File.Exists($"{metaDirectoryPath}\\confTmp.icct"))
+                        distributionDirectory = File.ReadAllText($"{metaDirectoryPath}\\confTmp.icct", Encoding.UTF8);
+                    CollectionStore.Init(baseDirectory, distributionDirectory);
+                    foreach (string icd in metaFiles)
+                    {
+                        string collectionName = Path.GetFileNameWithoutExtension(icd);
+
+                        string pathIcd = $"{metaDirectoryPath}\\{icd}";
+                        Dispatcher.Invoke((Action<string, string>)((string paramCollectionName, string paramIcd) => logParagraph.Inlines.Add($"Чтение метаданных коллекции \"{paramCollectionName}\" ({paramIcd})...\r\n")), collectionName, pathIcd);
+                        using (StreamReader streamReader = new StreamReader(pathIcd, Encoding.UTF8))
+                        {
+                            Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Инициализация коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
+                            Collection collection = new Collection(Guid.Parse(streamReader.ReadLine()));
+                            DirectoryInfo collectionInfo;
+                            if (collectionName.Equals(CollectionStore.BaseCollectionName))
+                                collectionInfo = new DirectoryInfo(baseDirectory);
+                            else
+                                collectionInfo = new DirectoryInfo($"{baseDirectory}\\{collectionName}");
+                            if (collectionInfo.Exists)
+                            {
+                                IEnumerable<string> files = collectionInfo.EnumerateFiles()
+                                    .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"))
+                                    .Select(f => f.FullName);
+                                foreach (string item in files)
+                                    collection.AddIgnorRules(item.Remove(0, baseDirectory.Length + 1), true, null);
+                            }
+                            collection.Description = streamReader.ReadLine();
+                            string filePath;
+                            int command;
+                            char[] guidBuffer = new char[36];
+                            while (!streamReader.EndOfStream)
                             {
                                 command = streamReader.Read();
                                 if (command == '0')
                                 {
-                                    streamReader.Read(guidBuffer, 0, 36);
-                                    filePath = streamReader.ReadLine();
-                                    collection.AddIgnorRules(filePath, false, Guid.Parse(new string(guidBuffer)));
+                                    command = streamReader.Read();
+                                    if (command == '0')
+                                    {
+                                        streamReader.Read(guidBuffer, 0, 36);
+                                        filePath = streamReader.ReadLine();
+                                        collection.AddIgnorRules(filePath, false, Guid.Parse(new string(guidBuffer)));
+                                    }
+                                    else
+                                    {
+                                        filePath = streamReader.ReadLine();
+                                        collection.AddIgnorRules(filePath, false, null);
+                                    }
                                 }
                                 else
                                 {
                                     filePath = streamReader.ReadLine();
-                                    collection.AddIgnorRules(filePath, false, null);
+                                    collection.Remove(filePath);
                                 }
                             }
-                            else
-                            {
-                                filePath = streamReader.ReadLine();
-                                collection.Remove(filePath);
-                            }
+                            Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Добавление коллекции \"{paramCollectionName}\" в хранилище...\r\n")), collectionName);
+                            CollectionStore.Add(collectionName, collection);
                         }
-                        Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Добавление коллекции \"{paramCollectionName}\" в хранилище...\r\n")), collectionName);
-                        CollectionStore.Add(collectionName, collection);
                     }
-                }
-                Dispatcher.Invoke(() =>
-                {
-                    inProgress = false;
-                    Close();
-                });
-            }
-            catch (Exception ex)
-            {
-                Dispatcher.Invoke((Action<string>)((valueError) =>
-                {
-                    inProgress = false;
-                    Run run = new Run(valueError)
+                    Dispatcher.Invoke(() =>
                     {
-                        Foreground = Brushes.Red,
-                    };
-                    logParagraph.Inlines.Add(run);
-                }), ex.Message);
+                        inProgress = false;
+                        Close();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke((Action<string>)((valueError) =>
+                    {
+                        inProgress = false;
+                        Run run = new Run(valueError)
+                        {
+                            Foreground = Brushes.Red,
+                        };
+                        logParagraph.Inlines.Add(run);
+                    }), ex.Message);
+                }*/
             }
         }
 
