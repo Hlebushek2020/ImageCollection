@@ -10,6 +10,7 @@ namespace ImageCollection.Classes.Collections
 
         public Guid Id { get; }
         public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
+        public IEnumerable<string> ActualItemsKeys { get => actualItems.Keys; }
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
         /// <summary>
         /// Название коллекции на диске

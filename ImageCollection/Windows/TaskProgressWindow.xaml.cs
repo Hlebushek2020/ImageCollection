@@ -354,6 +354,9 @@ namespace ImageCollection
             }
         }
 
+        /// <summary>
+        /// Распределяет файлы по папкам (используя новое место для хранения)
+        /// </summary>
         private void DistributionTaskAction()
         {
             try
@@ -363,53 +366,46 @@ namespace ImageCollection
                     inProgress = true;
                     progressBar_Progress.IsIndeterminate = true;
                 });
-                Directory.CreateDirectory(CollectionStore.DistributionDirectory);
-                IEnumerable<string> collectionNames = CollectionStore.GetCollectionNames();
-                foreach (string collectionName in collectionNames)
+                string distributionDirectory = CollectionStore.Settings.DistributionDirectory;
+                string baseDirectory = CollectionStore.Settings.BaseDirectory;
+                foreach (string collectionName in CollectionStore.ActualCollections)
                 {
-                    Dispatcher.Invoke((Action<string>)((string paramCollectionName) => logParagraph.Inlines.Add($"Обработка коллекции \"{paramCollectionName}\"...\r\n")), collectionName);
-                    string toPrefix = $"{collectionName}\\";
-                    if (collectionName.Equals(CollectionStore.BaseCollectionName))
-                        toPrefix = "";
-                    else
-                        Directory.CreateDirectory($"{CollectionStore.DistributionDirectory}\\{collectionName}");
+                    Dispatcher.Invoke((Action<string>)((string _collection) => logParagraph.Inlines.Add($"Обработка коллекции: \"{_collection}\"\r\n")), collectionName);
                     Collection collection = CollectionStore.Get(collectionName);
-                    List<string> actualItemsTemp = new List<string>(collection.ActualItems);
-                    string fromPath;
-                    string fromFileName;
-                    string toFileName;
-                    string toPath;
-                    //collection.Clear();
+                    string prefixPath = string.Empty;
+                    if (collection.Id != CollectionStore.BaseCollectionId)
+                    {
+                        prefixPath = collectionName;
+                    }
+                    string toPath = Path.Combine(distributionDirectory, prefixPath);
+                    Directory.CreateDirectory(toPath);
+                    List<string> actualItemsTemp = new List<string>(collection.ActualItemsKeys);
                     foreach (string item in actualItemsTemp)
                     {
-                        CollectionItemMeta itemMeta = collection[item];
-                        fromPath = $"{CollectionStore.BaseDirectory}\\{item}";
-                        fromFileName = Path.GetFileName(item);
-                        toFileName = fromFileName;
-                        toPath = $"{CollectionStore.DistributionDirectory}\\{toPrefix}{toFileName}";
-                        int index = 0;
-                        while (File.Exists(toPath))
+                        string fromFilePath = Path.Combine(baseDirectory, item);
+                        Dispatcher.Invoke((Action<string>)((string _fromFilePath) => logParagraph.Inlines.Add($"Подготовка и копирование: \"{_fromFilePath}\"\r\n")), fromFilePath);
+                        string fromFileName = Path.GetFileNameWithoutExtension(item);
+                        string fromFileExtension = Path.GetExtension(item);
+                        string toFileName = fromFileName + fromFileExtension;
+                        string toFilePath = Path.Combine(toPath, toFileName);
+                        int fileNamePrefix = 0;
+                        while (File.Exists(toFilePath))
                         {
-                            toFileName = index + fromFileName;
-                            toPath = $"{CollectionStore.DistributionDirectory}\\{toPrefix}{toFileName}";
-                            index++;
+                            toFileName = fromFileName + fileNamePrefix.ToString() + fromFileExtension;
+                            toFilePath = Path.Combine(toPath, toFileName);
+                            fileNamePrefix++;
                         }
-                        Dispatcher.Invoke((Action<string, string>)((string paramFromPath, string paramToPath) => logParagraph.Inlines.Add($"Копирование \"{paramFromPath}\" -> \"{paramToPath}\"...\r\n")), fromPath, toPath);
-                        File.Copy(fromPath, toPath);
+                        File.Copy(fromFilePath, toFilePath, true);
                         collection.RemoveIgnorRules(item);
-                        collection.AddIgnorRules(toPrefix + toFileName, true, null);
+                        collection.AddIgnorRules(Path.Combine(prefixPath, toFileName), true, null);
                     }
                     collection.ClearIrrelevantItems();
-                    if (!string.IsNullOrEmpty(collection.Description))
-                    {
-                        Dispatcher.Invoke(() => logParagraph.Inlines.Add("Запись описания коллекции...\r\n"));
-                        File.WriteAllText($"{CollectionStore.BaseDirectory}\\{toPrefix}description.txt", collection.Description, Encoding.UTF8);
-                    }
                     collection.IsChanged = true;
                 }
-                //if (File.Exists($"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\confTmp.icct"))
-                //File.Delete($"{CollectionStore.BaseDirectory}\\{CollectionStore.DataDirectoryName}\\confTmp.icct");
-                CollectionStore.BaseDirectoryFromDistributionDirectory();
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Установка параметров...\r\n"));
+                CollectionStore.Settings.SetDistributionDirectoryAsBase();
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение параметров...\r\n"));
+                CollectionStore.Settings.Save();
                 BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
                 {
