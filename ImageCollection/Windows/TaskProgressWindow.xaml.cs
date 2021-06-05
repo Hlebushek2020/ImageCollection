@@ -355,6 +355,66 @@ namespace ImageCollection
         }
 
         /// <summary>
+        /// Открытие папки как коллекция
+        /// </summary>
+        /// <param name="baseDirectory">Базовая директория</param>
+        /// <param name="search">Тип поиска</param>
+        /// <param name="searchMask">Маска поиска</param>
+        /// <param name="distributionDirectory">Директория для первого распределения</param>
+        private void OpenFolderTaskAction(string baseDirectory, SearchOption search, string searchMask, string distributionDirectory)
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = true;
+                    progressBar_Progress.IsIndeterminate = true;
+                    logParagraph.Inlines.Add("Подготовка хранилища...\r\n");
+                });
+                CollectionStore.Reset(baseDirectory);
+                CollectionStore.Settings.DistributionDirectory = distributionDirectory;
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Создание базовой коллекции...\r\n"));
+                Collection collection = new Collection(CollectionStore.BaseCollectionId);
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Получение списка файлов...\r\n"));
+                IEnumerable<FileInfo> files = new DirectoryInfo(baseDirectory)
+                    .EnumerateFiles(searchMask, search)
+                    .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"));
+                int deleteCount = baseDirectory.Length + 1;
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка списка файлов...\r\n"));
+                foreach (FileInfo fileInfo in files)
+                {
+                    if (fileInfo.DirectoryName.Equals(baseDirectory))
+                    {
+                        collection.AddIgnorRules(fileInfo.Name, true, null);
+                    }
+                    else
+                    {
+                        collection.AddIgnorRules(fileInfo.FullName.Remove(0, deleteCount), false, null);
+                    }
+                }
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Добавление коллекции в хранилище...\r\n"));
+                CollectionStore.AddIgnorRules(CollectionStore.BaseCollectionName, collection);
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = false;
+                    Close();
+                });
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke((Action<string>)((valueError) =>
+                {
+                    inProgress = false;
+                    Run run = new Run(valueError)
+                    {
+                        Foreground = Brushes.Red,
+                    };
+                    logParagraph.Inlines.Add(run);
+                }), ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Распределяет файлы по папкам (используя новое место для хранения)
         /// </summary>
         private void DistributionTaskAction()
@@ -368,6 +428,7 @@ namespace ImageCollection
                 });
                 string distributionDirectory = CollectionStore.Settings.DistributionDirectory;
                 string baseDirectory = CollectionStore.Settings.BaseDirectory;
+                string dataDirectory = Path.Combine(baseDirectory, CollectionStore.DataDirectoryName);
                 foreach (string collectionName in CollectionStore.ActualCollections)
                 {
                     Dispatcher.Invoke((Action<string>)((string _collection) => logParagraph.Inlines.Add($"Обработка коллекции: \"{_collection}\"\r\n")), collectionName);
@@ -401,9 +462,25 @@ namespace ImageCollection
                     }
                     collection.ClearIrrelevantItems();
                     collection.IsChanged = true;
+                    // write collection description
+                    if (!string.IsNullOrEmpty(collection.Description))
+                    {
+                        Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение описания коллекции...\r\n"));
+                        string descriptionFile = Path.Combine(toPath, "description.txt");
+                        using (StreamWriter descriptionWriter = new StreamWriter(descriptionFile, false, Encoding.UTF8))
+                        {
+                            descriptionWriter.Write(collection.Description);
+                        }
+                    }
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Установка параметров...\r\n"));
+                CollectionStore.ClearIrrelevantItems();
                 CollectionStore.Settings.SetDistributionDirectoryAsBase();
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Удаление директории данных программы...\r\n"));
+                if (Directory.Exists(dataDirectory))
+                {
+                    Directory.Delete(dataDirectory, true);
+                }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение параметров...\r\n"));
                 CollectionStore.Settings.Save();
                 BaseSaveCollectionsTaskAction();
@@ -429,7 +506,115 @@ namespace ImageCollection
 
         private void StdDistributionTaskAction()
         {
-            try
+            List<string[]> collectionRename = new List<string[]>();
+            string baseDirectory = CollectionStore.Settings.BaseDirectory;
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            string previewDirectory = Path.Combine(baseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
+            foreach (string collectionName in CollectionStore.ActualCollections)
+            {
+                Dispatcher.Invoke((Action<string>)((string _collection) => logParagraph.Inlines.Add($"Обработка коллекции: \"{_collection}\"\r\n")), collectionName);
+                Collection collection = CollectionStore.Get(collectionName);
+                // add data to rename list
+                if (!string.IsNullOrEmpty(collection.OriginalFolderName) && !collectionName.Equals(collection.OriginalFolderName))
+                {
+                    collectionRename.Add(new string[] { collectionName, collection.OriginalFolderName });
+                }
+                // remove from delete list
+                if (CollectionStore.ContainsIrrelevant(collectionName))
+                {
+                    CollectionStore.RemoveIrrelevant(collectionName);
+                }
+                // distribution process
+                string prefixPath = string.Empty;
+                string prefixItem = string.Empty;
+                if (collection.Id != CollectionStore.BaseCollectionId)
+                {
+                    prefixPath = collectionName;
+                    if (!string.IsNullOrEmpty(collection.OriginalFolderName))
+                    {
+                        prefixPath = collection.OriginalFolderName;
+                    }
+                    prefixItem = collectionName;
+                }
+                string toPath = Path.Combine(baseDirectory, prefixPath);
+                Directory.CreateDirectory(toPath);
+                List<string> actualItemsTemp = new List<string>(collection.ActualItemsKeys);
+                foreach (string item in actualItemsTemp)
+                {
+                    string fromFilePath = Path.Combine(baseDirectory, item);
+                    Dispatcher.Invoke((Action<string>)((string _fromFilePath) => logParagraph.Inlines.Add($"Подготовка и копирование: \"{_fromFilePath}\"\r\n")), fromFilePath);
+                    string fromFileName = Path.GetFileNameWithoutExtension(item);
+                    string fromFileExtension = Path.GetExtension(item);
+                    string toFileName = fromFileName + fromFileExtension;
+                    string toFilePath = Path.Combine(toPath, toFileName);
+                    int fileNamePrefix = 0;
+                    while (File.Exists(toFilePath))
+                    {
+                        toFileName = fromFileName + fileNamePrefix.ToString() + fromFileExtension;
+                        toFilePath = Path.Combine(toPath, toFileName);
+                        fileNamePrefix++;
+                    }
+                    File.Copy(fromFilePath, toFilePath, true);
+                    CollectionItemMeta meta = collection[item];
+                    string newItem = Path.Combine(prefixItem, toFileName);
+                    collection.RemoveIgnorRules(item);
+                    collection.AddIgnorRules(newItem, true, null, meta);
+                    if (!string.IsNullOrEmpty(meta.Hash))
+                    {
+                        Dispatcher.Invoke(() => logParagraph.Inlines.Add("Установка параметров элемента...\r\n"));
+                        byte[] newHashB = md5.ComputeHash(Encoding.UTF8.GetBytes(newItem));
+                        StringBuilder newHashSB = new StringBuilder(newHashB.Length * 2);
+                        for (int i = 0; i < newHashB.Length; i++)
+                        {
+                            newHashSB.Append(newHashB[i].ToString("X2"));
+                        }
+                        string newHash = newHashSB.ToString();
+                        string oldPreview = Path.Combine(previewDirectory, $"{meta.Hash}.jpg");
+                        string newPreview = Path.Combine(previewDirectory, $"{newHash}.jpg");
+                        if (File.Exists(newPreview))
+                        {
+                            File.Delete(newPreview);
+                        }
+                        File.Move(oldPreview, newPreview);
+                        meta.Hash = newHash;
+                    }
+                }
+                collection.ClearIrrelevantItems();
+                collection.IsChanged = true;
+                // write collection description
+                if (!string.IsNullOrEmpty(collection.Description))
+                {
+                    Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение описания коллекции...\r\n"));
+                    string descriptionFile = Path.Combine(toPath, "description.txt");
+                    using (StreamWriter descriptionWriter = new StreamWriter(descriptionFile, false, Encoding.UTF8))
+                    {
+                        descriptionWriter.Write(collection.Description);
+                    }
+                }
+            }
+            // rename folders
+            Dispatcher.Invoke(() => logParagraph.Inlines.Add("Подготовка к переименованию папок коллекций...\r\n"));
+            foreach (string[] item in collectionRename)
+            {
+                string originalNameFrom = Path.Combine(baseDirectory, item[1]);
+                string originalNameTo = Path.Combine(baseDirectory, $"temp-{item[1]}");
+                Directory.Move(originalNameFrom, originalNameTo);
+            }
+            foreach (string[] item in collectionRename)
+            {
+                string originalNameFrom = Path.Combine(baseDirectory, $"temp-{item[1]}");
+                string originalNameTo = Path.Combine(baseDirectory, item[0]);
+                Dispatcher.Invoke((Action<string, string>)((string _fromName, string _toName) => logParagraph.Inlines.Add($"Переименование \"{_fromName}\" в \"{_toName}\"")), item[1], item[0]);
+                Directory.Move(originalNameFrom, originalNameTo);
+            }
+            // deleted irrelevant folder
+
+            //
+            // Если изображение с новым хешем есть, удаляем его
+            //
+
+
+            /*try
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -532,7 +717,7 @@ namespace ImageCollection
                     };
                     logParagraph.Inlines.Add(run);
                 }), ex.Message);
-            }
+            }*/
         }
 
         public void RenameAllItemsInCollectionTaskAction(string collectionName, string mask)
@@ -612,52 +797,7 @@ namespace ImageCollection
             }
         }
 
-        private void OpenFolderTaskAction(string baseDirectory, SearchOption recursiveSearch, string searchMask, string distributionDirectory)
-        {
-            try
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    inProgress = true;
-                    progressBar_Progress.IsIndeterminate = true;
-                    logParagraph.Inlines.Add("Получение списка файлов...\r\n");
-                });
-                DirectoryInfo directoryInfo = new DirectoryInfo(baseDirectory);
-                IEnumerable<FileInfo> files = directoryInfo.EnumerateFiles(searchMask, recursiveSearch)
-                    .Where(f => f.Extension.Equals(".bmp") || f.Extension.Equals(".jpg") || f.Extension.Equals(".jpeg") || f.Extension.Equals(".png"));
-                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Инициализация хранилища...\r\n"));
-                CollectionStore.Init(baseDirectory, distributionDirectory);
-                Collection collection = new Collection(Guid.Parse(CollectionStore.BaseCollectionGuid));
-                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка файлов...\r\n"));
-                foreach (FileInfo file in files)
-                {
-                    string path = file.DirectoryName;
-                    if (path != baseDirectory)
-                        collection.AddIgnorRules(file.FullName.Remove(0, baseDirectory.Length + 1), false, null);
-                    else
-                        collection.AddIgnorRules(file.Name, true, null);
-                }
-                collection.IsChanged = true;
-                CollectionStore.Add(CollectionStore.BaseCollectionName, collection);
-                Dispatcher.Invoke(() =>
-                {
-                    inProgress = false;
-                    Close();
-                });
-            }
-            catch (Exception ex)
-            {
-                Dispatcher.Invoke((Action<string>)((valueError) =>
-                {
-                    inProgress = false;
-                    Run run = new Run(valueError)
-                    {
-                        Foreground = Brushes.Red,
-                    };
-                    logParagraph.Inlines.Add(run);
-                }), ex.Message);
-            }
-        }
+        
         #endregion
 
     }
