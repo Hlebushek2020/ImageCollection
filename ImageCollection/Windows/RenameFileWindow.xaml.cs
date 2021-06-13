@@ -115,7 +115,7 @@ namespace ImageCollection
             NewFileName = newFileName;
             IsApply = true;
             // processing generate hash and rename preview
-            CollectionItemMeta itemMeta = collection[oldFileName];
+            CollectionItemMeta itemMeta = collection[newFileName];
             if (!string.IsNullOrEmpty(itemMeta.Hash))
             {
                 MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();

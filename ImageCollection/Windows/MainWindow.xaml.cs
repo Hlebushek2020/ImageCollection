@@ -179,7 +179,8 @@ namespace ImageCollection
             collectionItems.Clear();
             if (comboBox_CollectionNames.SelectedItem != null)
             {
-                imageTask = Task.Run(() => CreateItemList((string)comboBox_CollectionNames.SelectedItem));
+                string collectionName = (string)comboBox_CollectionNames.SelectedItem;
+                imageTask = Task.Run(() => CreateItemList(collectionName));
             }
         }
 
@@ -189,6 +190,10 @@ namespace ImageCollection
             // preparation
             stopImageTask = false;
             string previewFolder = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
+            if (!Directory.Exists(previewFolder))
+            {
+                Directory.CreateDirectory(previewFolder);
+            }
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
             // processing
             Collection collection = CollectionStore.Get(collectionName);
@@ -204,13 +209,17 @@ namespace ImageCollection
                 {
                     break;
                 }
-                string previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
-                MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(previewFile));
-                BitmapImage preview = new BitmapImage();
-                preview.BeginInit();
-                preview.StreamSource = memoryStream;
-                preview.EndInit();
-                collectionItems.Add(listBoxImageItem);
+                Dispatcher.Invoke(() =>
+                {
+                    string previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
+                    MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(previewFile));
+                    BitmapImage preview = new BitmapImage();
+                    preview.BeginInit();
+                    preview.StreamSource = memoryStream;
+                    preview.EndInit();
+                    listBoxImageItem.Preview = preview;
+                    collectionItems.Add(listBoxImageItem);
+                });
             }
         }
 
