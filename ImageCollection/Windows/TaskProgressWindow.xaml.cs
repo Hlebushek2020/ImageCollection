@@ -148,7 +148,7 @@ namespace ImageCollection
             else
             {
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Обработка удаленных коллекций...\r\n"));
-                string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.dicd");
+                string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.icdd");
                 using (FileStream dicdFile = new FileStream(dicdFilePath, FileMode.Create, FileAccess.Write))
                 {
                     using (BinaryWriter dicdWriter = new BinaryWriter(dicdFile, Encoding.UTF8))
@@ -241,11 +241,11 @@ namespace ImageCollection
                     progressBar_Progress.IsIndeterminate = true;
                     logParagraph.Inlines.Add("Поиск метаданных коллекций...\r\n");
                 });
-                string metaDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName);
+                string metaDirectory = Path.Combine(baseDirectory, CollectionStore.DataDirectoryName);
                 IEnumerable<string> icdFiles = new DirectoryInfo(metaDirectory)
                     .EnumerateFiles()
                     .Where(x => x.Extension.Equals(".icd"))
-                    .Select(x => Name);
+                    .Select(x => x.Name);
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Подготовка хранилища...\r\n"));
                 CollectionStore.Reset(baseDirectory, true);
                 foreach (string icdFileName in icdFiles)
@@ -319,7 +319,7 @@ namespace ImageCollection
                 }
                 // read deleted collection
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Чтение удаленных коллекций...\r\n"));
-                string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.dicd");
+                string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.icdd");
                 if (File.Exists(dicdFilePath))
                 {
                     using (FileStream dicdFile = new FileStream(dicdFilePath, FileMode.Open, FileAccess.Read))
@@ -392,6 +392,7 @@ namespace ImageCollection
                         collection.AddIgnorRules(fileInfo.FullName.Remove(0, deleteCount), false, null);
                     }
                 }
+                collection.IsChanged = true;
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Добавление коллекции в хранилище...\r\n"));
                 CollectionStore.AddIgnorRules(CollectionStore.BaseCollectionName, collection);
                 Dispatcher.Invoke(() =>
@@ -461,6 +462,7 @@ namespace ImageCollection
                         collection.AddIgnorRules(Path.Combine(prefixPath, toFileName), true, null);
                     }
                     collection.ClearIrrelevantItems();
+                    collection.OriginalFolderName = collectionName;
                     collection.IsChanged = true;
                     // write collection description
                     if (!string.IsNullOrEmpty(collection.Description))
@@ -590,6 +592,7 @@ namespace ImageCollection
                         }
                     }
                     collection.ClearIrrelevantItems();
+                    collection.OriginalFolderName = collectionName;
                     collection.IsChanged = true;
                     // write collection description
                     if (!string.IsNullOrEmpty(collection.Description))
