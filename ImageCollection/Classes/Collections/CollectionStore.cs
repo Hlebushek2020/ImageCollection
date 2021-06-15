@@ -189,5 +189,13 @@ namespace ImageCollection.Classes.Collections
                 Settings = new StoreSettings(baseDirectory);
             }
         }
+
+        /// <summary>
+        /// Очищает список сохраненных удаленных коллекций
+        /// </summary>
+        public static void ClearIrrelevantSaved()
+        {
+            irrelevantSavedCollections.Clear();
+        }
     }
 }

@@ -141,32 +141,34 @@ namespace ImageCollection
         private void BaseSaveCollectionsTaskAction()
         {
             string metaDirectory = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName);
+            Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка удаленных коллекций...\r\n"));
             if (!Directory.Exists(metaDirectory))
             {
                 Directory.CreateDirectory(metaDirectory);
             }
             else
             {
-                Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Обработка удаленных коллекций...\r\n"));
-                string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.icdd");
-                using (FileStream dicdFile = new FileStream(dicdFilePath, FileMode.Create, FileAccess.Write))
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Удаление ненужных метаданных...\r\n"));
+                foreach (Guid deleteSavedCollection in CollectionStore.IrrelevantSavedCollections)
                 {
-                    using (BinaryWriter dicdWriter = new BinaryWriter(dicdFile, Encoding.UTF8))
+                    string icdPath = Path.Combine(metaDirectory, $"{deleteSavedCollection}.icd");
+                    if (File.Exists(icdPath))
                     {
-                        foreach (KeyValuePair<string, Guid?> deleteCollection in CollectionStore.IrrelevantCollections)
-                        {
-                            Dispatcher.Invoke((Action<string>)((string _collectionName) => logParagraph.Inlines.Add($"Запись названия: \"{_collectionName}\"\r\n")), deleteCollection.Key);
-                            dicdWriter.Write(deleteCollection.Key);
-                            if (deleteCollection.Value.HasValue)
-                            {
-                                string deleteIcdFilePath = Path.Combine(metaDirectory, $"{deleteCollection.Value.Value}.icd");
-                                if (File.Exists(deleteIcdFilePath))
-                                {
-                                    Dispatcher.Invoke((Action<string>)((string _deleteFilePath) => logParagraph.Inlines.Add($"Удаление: \"{_deleteFilePath}\"\r\n")), deleteIcdFilePath);
-                                    File.Delete(deleteIcdFilePath);
-                                }
-                            }
-                        }
+                        Dispatcher.Invoke((Action<string>)((string _icdPath) => logParagraph.Inlines.Add($"Удаление метаданных: \"{_icdPath}\"\r\n")), icdPath);
+                        File.Delete(icdPath);
+                    }
+                }
+                CollectionStore.ClearIrrelevantSaved();
+            }
+            string dicdFilePath = Path.Combine(metaDirectory, $"irrelevant.icdd");
+            Dispatcher.Invoke(() => logParagraph.Inlines.Add("Запись названий удаленных распределенных коллекций...\r\n"));
+            using (FileStream dicdFile = new FileStream(dicdFilePath, FileMode.Create, FileAccess.Write))
+            {
+                using (BinaryWriter dicdWriter = new BinaryWriter(dicdFile, Encoding.UTF8))
+                {
+                    foreach (string deleteCollection in CollectionStore.IrrelevantDistributionCollections)
+                    {
+                        dicdWriter.Write(deleteCollection);
                     }
                 }
             }
