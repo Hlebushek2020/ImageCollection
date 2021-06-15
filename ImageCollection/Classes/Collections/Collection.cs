@@ -7,6 +7,7 @@ namespace ImageCollection.Classes.Collections
     {
         private readonly Dictionary<string, CollectionItemMeta> actualItems = new Dictionary<string, CollectionItemMeta>();
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();
+        private bool isChanged = false;
 
         public Guid Id { get; }
         public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
@@ -17,7 +18,19 @@ namespace ImageCollection.Classes.Collections
         /// </summary>
         public string OriginalFolderName { get; set; } = string.Empty;
         public string Description { get; set; }
-        public bool IsChanged { get; set; } = false;
+        public bool IsSaved { get; set; } = false;
+        public bool IsChanged
+        {
+            get { return isChanged; }
+            set
+            {
+                if (value)
+                {
+                    IsSaved = false;
+                }
+                isChanged = value;
+            }
+        }
 
         public Collection() =>
             Id = Guid.NewGuid();

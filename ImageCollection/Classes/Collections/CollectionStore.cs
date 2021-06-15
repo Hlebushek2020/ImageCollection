@@ -19,10 +19,12 @@ namespace ImageCollection.Classes.Collections
         });
 
         private static readonly Dictionary<string, Collection> actualCollections = new Dictionary<string, Collection>();
-        private static readonly Dictionary<string, Guid?> irrelevantCollections = new Dictionary<string, Guid?>();
+        private static readonly HashSet<string> irrelevantDistributionCollections = new HashSet<string>();
+        private static readonly List<Guid> irrelevantSavedCollections = new List<Guid>();
 
         public static IEnumerable<string> ActualCollections { get => actualCollections.Keys; }
-        public static IEnumerable<KeyValuePair<string, Guid?>> IrrelevantCollections { get => irrelevantCollections; }
+        public static IEnumerable<string> IrrelevantDistributionCollections { get => irrelevantDistributionCollections; }
+        public static IEnumerable<Guid> IrrelevantSavedCollections { get => irrelevantSavedCollections; }
         public static StoreSettings Settings { get; private set; }
 
         /// <summary>
@@ -79,10 +81,10 @@ namespace ImageCollection.Classes.Collections
         /// </summary>
         /// <param name="collection">Название коллекции</param>
         /// <param name="id">Guid коллекции</param>
-        public static void AddIrrelevant(string collection, Guid? id = null)
+        /*public static void AddIrrelevant(string collection, Guid? id = null)
         {
             irrelevantCollections.Add(collection, id);
-        }
+        }*/
 
         /// <summary>
         /// Удаление коллекции
@@ -97,12 +99,16 @@ namespace ImageCollection.Classes.Collections
                 itemMover.Move(item.Key);
             }
             itemMover.EndMoving();
+            if (from.IsSaved)
+            {
+                irrelevantSavedCollections.Add(from.Id);
+            }
             actualCollections.Remove(collection);
             if (!string.IsNullOrEmpty(from.OriginalFolderName))
             {
-                if (!irrelevantCollections.ContainsKey(from.OriginalFolderName))
+                if (!irrelevantDistributionCollections.Contains(from.OriginalFolderName))
                 {
-                    irrelevantCollections.Add(from.OriginalFolderName, from.Id);
+                    irrelevantDistributionCollections.Add(from.OriginalFolderName);
                 }
             }
         }
@@ -144,27 +150,27 @@ namespace ImageCollection.Classes.Collections
         /// Наличие коллекции в удаленных
         /// </summary>
         /// <param name="collection">Оригинальное название коллекции</param>
-        public static bool ContainsIrrelevant(string collection)
+        /*public static bool ContainsIrrelevant(string collection)
         {
             return irrelevantCollections.ContainsKey(collection);
-        }
+        }*/
 
         /// <summary>
         /// Окончательно удаляет удаленную коллекцию
         /// </summary>
         /// <param name="collection">Оригинальное название коллекции</param>
-        public static void RemoveIrrelevant(string collection)
+        /*public static void RemoveIrrelevant(string collection)
         {
             irrelevantCollections.Remove(collection);
-        }
+        }*/
 
         /// <summary>
         /// Очистка списка удаленных коллекций
         /// </summary>
-        public static void ClearIrrelevantItems()
+        /*public static void ClearIrrelevantItems()
         {
             irrelevantCollections.Clear();
-        }
+        }*/
 
         /// <summary>
         /// Подготовка хранилища для работы
@@ -172,7 +178,8 @@ namespace ImageCollection.Classes.Collections
         public static void Reset(string baseDirectory, bool openCollections = false)
         {
             actualCollections.Clear();
-            irrelevantCollections.Clear();
+            irrelevantDistributionCollections.Clear();
+            irrelevantSavedCollections.Clear();
             if (openCollections)
             {
                 Settings = StoreSettings.Load(baseDirectory);
