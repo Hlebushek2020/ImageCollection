@@ -80,11 +80,10 @@ namespace ImageCollection.Classes.Collections
         /// Добавление удаленной коллекции
         /// </summary>
         /// <param name="collection">Название коллекции</param>
-        /// <param name="id">Guid коллекции</param>
-        /*public static void AddIrrelevant(string collection, Guid? id = null)
+        public static void AddIrrelevantDistribution(string collection)
         {
-            irrelevantCollections.Add(collection, id);
-        }*/
+            irrelevantDistributionCollections.Add(collection);
+        }
 
         /// <summary>
         /// Удаление коллекции
@@ -150,27 +149,27 @@ namespace ImageCollection.Classes.Collections
         /// Наличие коллекции в удаленных
         /// </summary>
         /// <param name="collection">Оригинальное название коллекции</param>
-        /*public static bool ContainsIrrelevant(string collection)
+        public static bool ContainsIrrelevantDistribution(string collection)
         {
-            return irrelevantCollections.ContainsKey(collection);
-        }*/
+            return irrelevantDistributionCollections.Contains(collection);
+        }
 
         /// <summary>
         /// Окончательно удаляет удаленную коллекцию
         /// </summary>
         /// <param name="collection">Оригинальное название коллекции</param>
-        /*public static void RemoveIrrelevant(string collection)
+        public static void RemoveIrrelevantDistribution(string collection)
         {
-            irrelevantCollections.Remove(collection);
-        }*/
+            irrelevantDistributionCollections.Remove(collection);
+        }
 
         /// <summary>
         /// Очистка списка удаленных коллекций
         /// </summary>
-        /*public static void ClearIrrelevantItems()
+        public static void ClearIrrelevantDistribution()
         {
-            irrelevantCollections.Clear();
-        }*/
+            irrelevantDistributionCollections.Clear();
+        }
 
         /// <summary>
         /// Подготовка хранилища для работы

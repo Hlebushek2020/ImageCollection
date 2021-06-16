@@ -331,7 +331,7 @@ namespace ImageCollection
                             while (dicdFile.Length != dicdFile.Position)
                             {
                                 string deleteCollectionName = dicdReader.ReadString();
-                                CollectionStore.AddIrrelevant(deleteCollectionName);
+                                CollectionStore.AddIrrelevantDistribution(deleteCollectionName);
                             }
                         }
                     }
@@ -478,7 +478,8 @@ namespace ImageCollection
                     }
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Установка параметров...\r\n"));
-                CollectionStore.ClearIrrelevantItems();
+                CollectionStore.ClearIrrelevantDistribution();
+                CollectionStore.ClearIrrelevantSaved();
                 CollectionStore.Settings.SetDistributionDirectoryAsBase();
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Удаление директории данных программы...\r\n"));
                 if (Directory.Exists(dataDirectory))
@@ -534,9 +535,9 @@ namespace ImageCollection
                         collectionRename.Add(new string[] { collectionName, collection.OriginalFolderName });
                     }
                     // remove from delete list
-                    if (CollectionStore.ContainsIrrelevant(collectionName))
+                    if (CollectionStore.ContainsIrrelevantDistribution(collectionName))
                     {
-                        CollectionStore.RemoveIrrelevant(collectionName);
+                        CollectionStore.RemoveIrrelevantDistribution(collectionName);
                     }
                     // distribution process
                     string prefixPath = string.Empty;
@@ -624,9 +625,9 @@ namespace ImageCollection
                 }
                 // deleted irrelevant folder
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Удаление пустых папок коллекций...\r\n"));
-                foreach (KeyValuePair<string, Guid?> removeCollection in CollectionStore.IrrelevantCollections)
+                foreach (string removeCollection in CollectionStore.IrrelevantDistributionCollections)
                 {
-                    string removeCollectionDirPath = Path.Combine(baseDirectory, removeCollection.Key);
+                    string removeCollectionDirPath = Path.Combine(baseDirectory, removeCollection);
                     DirectoryInfo removeCollectionDir = new DirectoryInfo(removeCollectionDirPath);
                     if (removeCollectionDir.Exists)
                     {
