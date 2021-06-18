@@ -98,11 +98,8 @@ namespace ImageCollection.Classes.Collections
                 itemMover.Move(item.Key);
             }
             itemMover.EndMoving();
-            if (from.IsSaved)
-            {
-                irrelevantSavedCollections.Add(from.Id);
-            }
             actualCollections.Remove(collection);
+            irrelevantSavedCollections.Add(from.Id);
             if (!string.IsNullOrEmpty(from.OriginalFolderName))
             {
                 if (!irrelevantDistributionCollections.Contains(from.OriginalFolderName))

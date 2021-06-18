@@ -10,8 +10,11 @@ namespace ImageCollection.Classes.ItemMovers
         protected Collection fromCollection;
         protected Collection toCollection;
 
-        /// <param name="from">Коллекция из которой перемещать элементы</param>
-        /// <param name="to">Коллекция в которую перемещать элементы</param>
+        /// <summary>
+        /// Создание "перемещателя"
+        /// </summary>
+        /// <param name="from">Из</param>
+        /// <param name="to">В</param>
         public ItemMover(Collection from, Collection to)
         {
             fromCollection = from;
@@ -19,7 +22,7 @@ namespace ImageCollection.Classes.ItemMovers
         }
 
         /// <summary>
-        /// Перемещает заданный элемент
+        /// Перемещение заданного элемента
         /// </summary>
         /// <param name="item">Элемент</param>
         public virtual void Move(string item)
@@ -43,7 +46,7 @@ namespace ImageCollection.Classes.ItemMovers
         }
 
         /// <summary>
-        /// Завершает перемещение элементов
+        /// Завершение перемещения элементов
         /// </summary>
         public virtual void EndMoving()
         {

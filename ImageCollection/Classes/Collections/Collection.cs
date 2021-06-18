@@ -7,30 +7,35 @@ namespace ImageCollection.Classes.Collections
     {
         private readonly Dictionary<string, CollectionItemMeta> actualItems = new Dictionary<string, CollectionItemMeta>();
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();
-        private bool isChanged = false;
 
+        /// <summary>
+        /// Идентификатор коллекции
+        /// </summary>
         public Guid Id { get; }
+        /// <summary>
+        /// Актуальные элементы
+        /// </summary>
         public IEnumerable<KeyValuePair<string, CollectionItemMeta>> ActualItems { get => actualItems; }
+        /// <summary>
+        /// Актуальные элементы (ключи)
+        /// </summary>
         public IEnumerable<string> ActualItemsKeys { get => actualItems.Keys; }
+        /// <summary>
+        /// Исключенные элементы
+        /// </summary>
         public IEnumerable<string> IrrelevantItems { get => irrelevantItems; }
         /// <summary>
-        /// Название коллекции на диске
+        /// Название папки на диске
         /// </summary>
         public string OriginalFolderName { get; set; } = string.Empty;
+        /// <summary>
+        /// Описание
+        /// </summary>
         public string Description { get; set; }
-        public bool IsSaved { get; set; } = false;
-        public bool IsChanged
-        {
-            get { return isChanged; }
-            set
-            {
-                if (value)
-                {
-                    IsSaved = false;
-                }
-                isChanged = value;
-            }
-        }
+        /// <summary>
+        /// Изменения
+        /// </summary>
+        public bool IsChanged { get; set; } = false;
 
         public Collection() =>
             Id = Guid.NewGuid();
@@ -46,7 +51,7 @@ namespace ImageCollection.Classes.Collections
         public CollectionItemMeta this[string item] { get => actualItems[item]; }
 
         /// <summary>
-        /// Добавляет элемент в коллекцию соблюдая правила добавления
+        /// Добавление элемента с соблюдением правил добавления
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
@@ -61,7 +66,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Добавляет элемент в коллекцию соблюдая правила добавления
+        /// Добавление элемента с соблюдением правил добавления
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
@@ -78,7 +83,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Добавляет элемент в коллекцию без соблюдения правил добавления
+        /// Добавление элемента без соблюдения правил добавления
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
@@ -89,7 +94,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Добавляет элемент в коллекцию без соблюдения правил добавления
+        /// Добавление элемента без соблюдения правил добавления
         /// </summary>
         /// <param name="item">Элемент</param>
         /// <param name="inCurrentFolder">Если True элемент в паке коллекции</param>
@@ -102,7 +107,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Очистка коллекции, указывающей, какие элементы были исключены из текущей папки коллекции
+        /// Очистка коллекции, указывающей, какие элементы были исключены из актуальных
         /// </summary>
         public bool ClearIrrelevantItems()
         {
@@ -115,7 +120,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Удаляет элемент из коллекции соблюдая правила удаления
+        /// Удаление элемента с соблюдением правил удаления
         /// </summary>
         /// <param name="item">Элемент</param>
         public void Remove(string item)
@@ -129,7 +134,7 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
-        /// Удаляет элемент из коллекции без соблюдения правил удаления
+        /// Удаление элемента без соблюдения правил удаления
         /// </summary>
         /// <param name="item">Элемент</param>
         public void RemoveIgnorRules(string item) =>
@@ -137,7 +142,7 @@ namespace ImageCollection.Classes.Collections
 
 
         /// <summary>
-        /// Переименовывает элемент коллекции
+        /// Переименовыание элемента коллекции
         /// </summary>
         /// <param name="oldName">Старое имя</param>
         /// <param name="newName">Новое имя</param>

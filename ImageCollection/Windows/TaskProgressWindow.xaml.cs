@@ -556,6 +556,11 @@ namespace ImageCollection
                     List<string> actualItemsTemp = new List<string>(collection.ActualItemsKeys);
                     foreach (string item in actualItemsTemp)
                     {
+                        CollectionItemMeta meta = collection[item];
+                        if (meta.InCurrentFolder)
+                        {
+                            continue;
+                        }
                         string fromFilePath = Path.Combine(baseDirectory, item);
                         Dispatcher.Invoke((Action<string>)((string _fromFilePath) => logParagraph.Inlines.Add($"Подготовка и копирование: \"{_fromFilePath}\"\r\n")), fromFilePath);
                         string fromFileName = Path.GetFileNameWithoutExtension(item);
@@ -570,10 +575,10 @@ namespace ImageCollection
                             fileNamePrefix++;
                         }
                         File.Copy(fromFilePath, toFilePath, true);
-                        CollectionItemMeta meta = collection[item];
                         string newItem = Path.Combine(prefixItem, toFileName);
                         collection.RemoveIgnorRules(item);
                         collection.AddIgnorRules(newItem, true, null, meta);
+                        collection.IsChanged = true;
                         if (!string.IsNullOrEmpty(meta.Hash))
                         {
                             Dispatcher.Invoke(() => logParagraph.Inlines.Add("Установка параметров элемента...\r\n"));
@@ -596,7 +601,6 @@ namespace ImageCollection
                     }
                     collection.ClearIrrelevantItems();
                     collection.OriginalFolderName = collectionName;
-                    collection.IsChanged = true;
                     // write collection description
                     if (!string.IsNullOrEmpty(collection.Description))
                     {
@@ -715,7 +719,6 @@ namespace ImageCollection
                         Dispatcher.Invoke((Action<string>)((string _item) => logParagraph.Inlines.Add($"Переименование: \"{_item}\"...\r\n")), item);
                         File.Move(fromPath, toPath);
                         collection.Rename(item, newName);
-                        collection.IsChanged = true;
                         actualItemsTemp.RemoveAt(0);
                         CollectionItemMeta itemMeta = collection[newName];
                         if (!string.IsNullOrEmpty(itemMeta.Hash))
@@ -737,6 +740,14 @@ namespace ImageCollection
                             File.Move(oldPreview, newPreview);
                             itemMeta.Hash = newHash;
                         }
+                    }
+                }
+                foreach (KeyValuePair<string, int> numberItem in number)
+                {
+                    if (numberItem.Value > 0)
+                    {
+                        collection.IsChanged = true;
+                        break;
                     }
                 }
                 Dispatcher.Invoke(() =>
