@@ -574,7 +574,7 @@ namespace ImageCollection
                             toFilePath = Path.Combine(toPath, toFileName);
                             fileNamePrefix++;
                         }
-                        File.Copy(fromFilePath, toFilePath, true);
+                        File.Move(fromFilePath, toFilePath);
                         string newItem = Path.Combine(prefixItem, toFileName);
                         collection.RemoveIgnorRules(item);
                         collection.AddIgnorRules(newItem, true, null, meta);
@@ -599,8 +599,9 @@ namespace ImageCollection
                             meta.Hash = newHash;
                         }
                     }
-                    collection.ClearIrrelevantItems();
                     collection.OriginalFolderName = collectionName;
+                    bool isClear = collection.ClearIrrelevantItems();
+                    collection.IsChanged = collection.IsChanged || isClear;
                     // write collection description
                     if (!string.IsNullOrEmpty(collection.Description))
                     {
@@ -626,6 +627,8 @@ namespace ImageCollection
                     string originalNameTo = Path.Combine(baseDirectory, item[0]);
                     Dispatcher.Invoke((Action<string, string>)((string _fromName, string _toName) => logParagraph.Inlines.Add($"Переименование \"{_fromName}\" в \"{_toName}\"")), item[1], item[0]);
                     Directory.Move(originalNameFrom, originalNameTo);
+                    Collection collection = CollectionStore.Get(item[0]);
+                    collection.IsChanged = true;
                 }
                 // deleted irrelevant folder
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Удаление пустых папок коллекций...\r\n"));
@@ -652,6 +655,7 @@ namespace ImageCollection
                         removeCollectionDir.Delete(true);
                     }
                 }
+                CollectionStore.ClearIrrelevantDistribution();
                 BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
                 {
