@@ -348,6 +348,7 @@ namespace ImageCollection
                     {
                         CollectionStore.Remove(currentCollectionName);
                         comboBox_CollectionNames.Items.Refresh();
+                        comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
                     }
                 }
             }
