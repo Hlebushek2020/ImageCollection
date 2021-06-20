@@ -487,6 +487,8 @@ namespace ImageCollection
                     Directory.Delete(dataDirectory, true);
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение параметров...\r\n"));
+                string newDataDirectory = Path.Combine(distributionDirectory, CollectionStore.DataDirectoryName);
+                Directory.CreateDirectory(newDataDirectory);
                 CollectionStore.Settings.Save();
                 BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
