@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace ImageCollection.Classes.Collections
 {
     public class Collection
     {
-        private readonly Dictionary<string, CollectionItemMeta> actualItems = new Dictionary<string, CollectionItemMeta>();
+        private readonly ConcurrentDictionary<string, CollectionItemMeta> actualItems = new ConcurrentDictionary<string, CollectionItemMeta>();
         private readonly HashSet<string> irrelevantItems = new HashSet<string>();
 
         /// <summary>
@@ -58,7 +59,8 @@ namespace ImageCollection.Classes.Collections
         /// <param name="parent">Родительская коллекция</param>
         public void Add(string item, bool inCurrentFolder, Guid? parent)
         {
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+            actualItems.TryAdd(item, new CollectionItemMeta(inCurrentFolder, parent));
+            //actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
             if (inCurrentFolder && irrelevantItems.Contains(item))
             {
                 irrelevantItems.Remove(item);
@@ -75,7 +77,8 @@ namespace ImageCollection.Classes.Collections
         public void Add(string item, bool inCurrentFolder, Guid? parent, CollectionItemMeta itemMeta)
         {
             itemMeta.Change(inCurrentFolder, parent);
-            actualItems.Add(item, itemMeta);
+            actualItems.TryAdd(item, itemMeta);
+            //actualItems.Add(item, itemMeta);
             if (inCurrentFolder && irrelevantItems.Contains(item))
             {
                 irrelevantItems.Remove(item);
@@ -90,7 +93,8 @@ namespace ImageCollection.Classes.Collections
         /// <param name="parent">Родительская коллекция</param>
         public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent)
         {
-            actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
+            actualItems.TryAdd(item, new CollectionItemMeta(inCurrentFolder, parent));
+            //actualItems.Add(item, new CollectionItemMeta(inCurrentFolder, parent));
         }
 
         /// <summary>
@@ -103,7 +107,8 @@ namespace ImageCollection.Classes.Collections
         public void AddIgnorRules(string item, bool inCurrentFolder, Guid? parent, CollectionItemMeta itemMeta)
         {
             itemMeta.Change(inCurrentFolder, parent);
-            actualItems.Add(item, itemMeta);
+            actualItems.TryAdd(item, itemMeta);
+            //actualItems.Add(item, itemMeta);
         }
 
         /// <summary>
@@ -130,7 +135,8 @@ namespace ImageCollection.Classes.Collections
             {
                 irrelevantItems.Add(item);
             }
-            actualItems.Remove(item);
+            actualItems.TryRemove(item, out _);
+            //actualItems.Remove(item);
         }
 
         /// <summary>
@@ -138,7 +144,8 @@ namespace ImageCollection.Classes.Collections
         /// </summary>
         /// <param name="item">Элемент</param>
         public void RemoveIgnorRules(string item) =>
-            actualItems.Remove(item);
+            actualItems.TryRemove(item, out _);
+            //actualItems.Remove(item);
 
 
         /// <summary>
@@ -148,9 +155,11 @@ namespace ImageCollection.Classes.Collections
         /// <param name="newName">Новое имя</param>
         public void Rename(string oldName, string newName)
         {
-            CollectionItemMeta itemMeta = actualItems[oldName];
-            actualItems.Remove(oldName);
-            actualItems.Add(newName, itemMeta);
+            //actualItems[oldName];
+            actualItems.TryRemove(oldName, out CollectionItemMeta itemMeta);
+            actualItems.TryAdd(newName, itemMeta);
+            //actualItems.Remove(oldName);
+            //actualItems.Add(newName, itemMeta);
         }
     }
 }
