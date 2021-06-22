@@ -356,9 +356,12 @@ namespace ImageCollection
 
         private void MenuItem_DistributeFolders_Click(object sender, RoutedEventArgs e)
         {
-            TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.Distribution);
-            taskProgressWindow.ShowDialog();
-            ComboBox_CollectionNames_SelectionChanged(null, null);
+            if (CollectionStore.Settings != null)
+            {
+                TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.Distribution);
+                taskProgressWindow.ShowDialog();
+                ComboBox_CollectionNames_SelectionChanged(null, null);
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
