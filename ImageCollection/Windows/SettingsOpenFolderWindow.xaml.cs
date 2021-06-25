@@ -80,7 +80,9 @@ namespace ImageCollection
             using (System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 if (!textBox_distributionNewFolder.Text.Equals(DistributionFolderPlaceholder))
+                {
                     folderBrowserDialog.SelectedPath = textBox_distributionNewFolder.Text;
+                }
                 string path = textBox_distributionNewFolder.Text;
                 bool success = false;
                 do
@@ -89,10 +91,14 @@ namespace ImageCollection
                     {
                         path = folderBrowserDialog.SelectedPath;
                         if (path.Equals(textBox_baseDirectory.Text))
+                        {
                             MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
                                 App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                         else
+                        {
                             success = true;
+                        }
                     }
                     else break;
                 } while (!success);
@@ -118,16 +124,26 @@ namespace ImageCollection
                 MessageBox.Show("Маска для первого поиска не должна быть пустой!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (DistributionFolderPlaceholder.Equals(textBox_baseDirectory.Text) && checkBox_isDistributionNewFolder.IsChecked.Value)
+            if (checkBox_isDistributionNewFolder.IsChecked.Value)
             {
-                MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
-                    App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                if (DistributionFolderPlaceholder.Equals(textBox_distributionNewFolder.Text))
+                {
+                    MessageBox.Show("Выберите директорию для размещения!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                /*if (textBox_baseDirectory.Text.Equals(textBox_distributionNewFolder.Text))
+                {
+                    MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
+                        App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }*/
             }
-            if (!checkBox_isDistributionNewFolder.IsChecked.Value)
+            else
             {
                 if (MessageBox.Show("ВНИМАНИЕ! По умолчанию при распределении происходит перемещение файлов, для копирования при первом распределении нужно отметить соответствующий пункт.", App.Name, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.Cancel)
+                {
                     return;
+                }
             }
             isOpenFolder = true;
             Close();
@@ -136,8 +152,10 @@ namespace ImageCollection
         public OpenFolderArgs GetArgs()
         {
             if (checkBox_isDistributionNewFolder.IsChecked.Value)
+            {
                 return new OpenFolderArgs(isOpenFolder, textBox_baseDirectory.Text, checkBox_recursiveSearch.IsChecked.Value,
                     textBox_searchMask.Text, textBox_distributionNewFolder.Text);
+            }
             return new OpenFolderArgs(isOpenFolder, textBox_baseDirectory.Text, checkBox_recursiveSearch.IsChecked.Value, textBox_searchMask.Text, null);
         }
     }

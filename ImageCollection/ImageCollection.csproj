@@ -84,12 +84,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\Collection.cs" />
+    <Compile Include="Classes\Collections\Collection.cs" />
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
-    <Compile Include="Classes\ListBoxImageItem.cs" />
-    <Compile Include="Classes\ProgramSettings.cs" />
-    <Compile Include="Classes\Static\CollectionStore.cs" />
+    <Compile Include="Classes\Views\ListBoxImageItem.cs" />
+    <Compile Include="Classes\Settings\ProgramSettings.cs" />
+    <Compile Include="Classes\Collections\CollectionStore.cs" />
+    <Compile Include="Classes\Settings\StoreSettings.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
       <DependentUpon>CollectionInformationEditorWindow.xaml</DependentUpon>
@@ -97,7 +98,7 @@
     <Compile Include="Enums\StartWork.cs" />
     <Compile Include="Enums\TaskType.cs" />
     <Compile Include="Structures\CollectionInformation.cs" />
-    <Compile Include="Structures\CollectionItemMeta.cs" />
+    <Compile Include="Classes\Collections\CollectionItemMeta.cs" />
     <Compile Include="Windows\SettingsOpenFolderWindow.xaml.cs">
       <DependentUpon>SettingsOpenFolderWindow.xaml</DependentUpon>
     </Compile>

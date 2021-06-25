@@ -1,4 +1,4 @@
-﻿using ImageCollection.Classes.Static;
+﻿using ImageCollection.Classes.Collections;
 using ImageCollection.Structures;
 using System;
 using System.Collections.Generic;

@@ -1,30 +1,43 @@
-﻿using ImageCollection.Classes.ItemMovers;
-using ImageCollection.Structures;
+﻿using ImageCollection.Classes.Collections;
 
-namespace ImageCollection.Classes
+namespace ImageCollection.Classes.ItemMovers
 {
     /// <summary>
-    /// Отвечает за перемещение элементов из коллекции, которая будет удалена, в другую коллекцию
+    /// Отвечает за перемещение элементов из коллекции, которая будет удалена, в базовую коллекцию
     /// </summary>
     public class RemoveCollectionItemMover : ItemMover
-    { 
+    {
+        /// <summary>
+        /// Создание "перемещателя"
+        /// </summary>
+        /// <param name="from">Из</param>
+        /// <param name="to">В</param>
+        public RemoveCollectionItemMover(Collection from, Collection to) : base(from, to) { }
+
+        /// <summary>
+        /// Перемещение заданного элемента
+        /// </summary>
+        /// <param name="item">Элемент</param>
         public override void Move(string item)
         {
-            CollectionItemMeta meta = FromCollection.GetMeta(item);
-            if (meta.InCurrentFolder)
-                ToCollection.AddNoFlag(item, false, null);
-            else
+            CollectionItemMeta meta = fromCollection[item];
+            if (!meta.InCurrentFolder && meta.Parent != null)
             {
-                if (meta.Parent == null)
-                    ToCollection.AddNoFlag(item, false, null);
-                else
+                if (meta.Parent == toCollection.Id)
                 {
-                    if (meta.Parent != ToCollection.Id)
-                        ToCollection.AddNoFlag(item, false, null);
-                    else
-                        ToCollection.AddNoFlag(item, true, null);
+                    toCollection.Add(item, true, null, meta);
+                    return;
                 }
             }
+            toCollection.Add(item, false, null, meta);
+        }
+
+        /// <summary>
+        /// Завершение перемещения элементов
+        /// </summary>
+        public override void EndMoving()
+        {
+            toCollection.IsChanged = true;
         }
     }
 }
