@@ -189,8 +189,5 @@
   <ItemGroup>
     <Resource Include="appIcon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="TODO.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

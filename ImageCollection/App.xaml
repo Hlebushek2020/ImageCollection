@@ -741,6 +741,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--RichTextBox-->
         <Style TargetType="{x:Type RichTextBox}">
             <Setter Property="Background" Value="{DynamicResource RichTextBox.Background}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource RichTextBox.Border}"/>
