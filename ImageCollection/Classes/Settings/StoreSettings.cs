@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ImageCollection.Classes.Settings
 {
@@ -14,6 +15,7 @@ namespace ImageCollection.Classes.Settings
         [JsonIgnore]
         public string BaseDirectory { get; private set; }
         public string DistributionDirectory { get; set; }
+        public Dictionary<Key, string> CollectionHotkeys { get; set; } = new Dictionary<Key, string>();
 
         public StoreSettings(string baseDirectory) =>
             BaseDirectory = baseDirectory;

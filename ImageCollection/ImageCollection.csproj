@@ -66,6 +66,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,7 +92,14 @@
     <Compile Include="Classes\Settings\ProgramSettings.cs" />
     <Compile Include="Classes\Collections\CollectionStore.cs" />
     <Compile Include="Classes\Settings\StoreSettings.cs" />
+    <Compile Include="Structures\CollectionKeyInformation.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
+    <Compile Include="Windows\CollectionHotkeyEditWindow.xaml.cs">
+      <DependentUpon>CollectionHotkeyEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\CollectionHotkeyWindow.xaml.cs">
+      <DependentUpon>CollectionHotkeyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\CollectionInformationEditorWindow.xaml.cs">
       <DependentUpon>CollectionInformationEditorWindow.xaml</DependentUpon>
     </Compile>
@@ -122,6 +130,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="Windows\CollectionHotkeyEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\CollectionHotkeyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\CollectionInformationEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -188,6 +204,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="appIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\broom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\edit.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -33,6 +33,7 @@
                 <Separator/>
                 <MenuItem Header="Распределить по папкам" InputGestureText="Ctrl + D" Click="MenuItem_DistributeFolders_Click"/>
                 <MenuItem Header="Переименовать файлы" InputGestureText="Ctrl + F2" Click="MenuItem_RenameAllItemsInCollection_Click"/>
+                <MenuItem Header="Горячие клавиши" Click="MenuItem_CollectionHotkey_Click"/>
             </MenuItem>
             <MenuItem Header="Опции">
                 <MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>

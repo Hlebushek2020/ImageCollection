@@ -603,5 +603,11 @@ namespace ImageCollection
                 settings.Save();
             }
         }
+
+        private void MenuItem_CollectionHotkey_Click(object sender, RoutedEventArgs e)
+        {
+            CollectionHotkeyWindow collectionHotkey = new CollectionHotkeyWindow();
+            collectionHotkey.ShowDialog();
+        }
     }
 }
