@@ -36,8 +36,8 @@
                 <MenuItem Header="Горячие клавиши" Click="MenuItem_CollectionHotkey_Click"/>
             </MenuItem>
             <MenuItem Header="Опции">
-                <MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
-                <Separator/>
+                <!--<MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
+                <Separator/>-->
                 <MenuItem Header="Тема">
                     <MenuItem x:Name="menuItem_Light" Header="Светлая" Tag="Light" Click="MenuItem_SetTheme_Click"/>
                     <MenuItem x:Name="menuItem_Dark" Header="Темная" Tag="Dark" Click="MenuItem_SetTheme_Click"/>

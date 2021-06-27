@@ -168,6 +168,17 @@ namespace ImageCollection
 
         private void ComboBox_CollectionNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ImageTaskStop();
+            collectionItems.Clear();
+            if (comboBox_CollectionNames.SelectedItem != null)
+            {
+                string collectionName = (string)comboBox_CollectionNames.SelectedItem;
+                imageTask = Task.Run(() => CreateItemList(collectionName));
+            }
+        }
+
+        private void ImageTaskStop()
+        {
             if (imageTask != null)
             {
                 if (imageTask.Status == TaskStatus.Running)
@@ -175,12 +186,6 @@ namespace ImageCollection
                     stopImageTask = true;
                     imageTask.Wait();
                 }
-            }
-            collectionItems.Clear();
-            if (comboBox_CollectionNames.SelectedItem != null)
-            {
-                string collectionName = (string)comboBox_CollectionNames.SelectedItem;
-                imageTask = Task.Run(() => CreateItemList(collectionName));
             }
         }
 
@@ -358,6 +363,7 @@ namespace ImageCollection
         {
             if (CollectionStore.Settings != null)
             {
+                ImageTaskStop();
                 TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.Distribution);
                 taskProgressWindow.ShowDialog();
                 ComboBox_CollectionNames_SelectionChanged(null, null);
@@ -409,22 +415,29 @@ namespace ImageCollection
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (string collectionName in CollectionStore.ActualCollections)
+            MessageBoxResult result = MessageBoxResult.Yes;
+            if (CollectionStore.Settings.IsChanged)
             {
-                if (CollectionStore.Get(collectionName).IsChanged)
+                result = MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            }
+            else
+            {
+                foreach (string collectionName in CollectionStore.ActualCollections)
                 {
-                    if (MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                        e.Cancel = true;
-                    break;
+                    if (CollectionStore.Get(collectionName).IsChanged)
+                    {
+                        result = MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        break;
+                    }
                 }
             }
-            if (imageTask != null)
+            if (result == MessageBoxResult.No)
             {
-                if (imageTask.Status == TaskStatus.Running)
-                {
-                    stopImageTask = true;
-                    imageTask.Wait();
-                }
+                e.Cancel = true;
+            }
+            else
+            {
+                ImageTaskStop();
             }
         }
 
@@ -502,18 +515,32 @@ namespace ImageCollection
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers == ModifierKeys.Control)
+            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+            {
+                if (e.Key == Key.O)
+                {
+                    MenuItem_OpenFolder_Click(null, null);
+                }
+                else if (e.Key == Key.Delete)
+                {
+                    MenuItem_RemoveFile_Click(null, null);
+                }
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control)
             {
                 switch (e.Key)
                 {
                     case Key.O:
-                        MenuItem_OpenFolder_Click(null, null);
+                        MenuItem_OpenCollections_Click(null, null);
                         break;
                     case Key.S:
                         MenuItem_SaveCollections_Click(null, null);
                         break;
-                    case Key.C:
-                        MenuItem_ToCollection_Click(null, null);
+                    case Key.Delete:
+                        MenuItem_RemoveCollection_Click(null, null);
+                        break;
+                    case Key.F2:
+                        MenuItem_RenameFile_Click(null, null);
                         break;
                     case Key.N:
                         MenuItem_CreateCollection_Click(null, null);
@@ -524,20 +551,24 @@ namespace ImageCollection
                     case Key.D:
                         MenuItem_DistributeFolders_Click(null, null);
                         break;
-                    case Key.Delete:
-                        MenuItem_RemoveAllSelectedFiles_Click(null, null);
+                    case Key.H:
+                        MenuItem_CollectionHotkey_Click(null, null);
                         break;
-                    case Key.F2:
-                        MenuItem_RenameAllItemsInCollection_Click(null, null);
+                    case Key.C:
+                        MenuItem_ToCollection_Click(null, null);
+                        break;
+                    default:
+                        //bindings
                         break;
                 }
             }
-            else
+            else if (e.Key == Key.F2)
             {
-                if (e.Key == Key.Delete)
-                    MenuItem_RemoveFile_Click(null, null);
-                if (e.Key == Key.F2)
-                    MenuItem_RenameFile_Click(null, null);
+                MenuItem_RenameFile_Click(null, null);
+            }
+            else if (e.Key == Key.Delete)
+            {
+                MenuItem_RemoveAllSelectedFiles_Click(null, null);
             }
         }
 
@@ -562,13 +593,13 @@ namespace ImageCollection
             }
         }
 
-        private void MenuItem_СlearImageCache_Click(object sender, RoutedEventArgs e)
+        /*private void MenuItem_СlearImageCache_Click(object sender, RoutedEventArgs e)
         {
             stopImageTask = true;
             imageTask.Wait();
             TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.СlearImageCache);
             taskProgressWindow.ShowDialog();
-        }
+        }*/
 
         private void ListBox_CollectionItems_PreviewKeyDown(object sender, KeyEventArgs e)
         {

@@ -15,17 +15,17 @@
             <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Добавить" Click="Button_AddHotkey_Click">
                 <Image Source="/Resources/add.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Переименовать" >
+            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Изменить" Click="Button_EditHotkey_Click">
                 <Image Source="/Resources/edit.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Удалить" >
+            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Удалить" Click="Button_RemoveHotkey_Click">
                 <Image Source="/Resources/delete.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Очистить" >
+            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Удалить все" Click="Button_RemoveAllHotkeys_Click">
                 <Image Source="/Resources/broom.png"/>
             </Button>
         </StackPanel>
-        <ListView x:Name="listBox_Hotkeys" Margin="10,35,10,10">
+        <ListView x:Name="listBox_Hotkeys" Margin="10,35,10,10" MouseDoubleClick="ListBox_Hotkeys_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Горчая клавиша" DisplayMemberBinding="{Binding Path=Key, StringFormat=Ctrl + {0}}" />

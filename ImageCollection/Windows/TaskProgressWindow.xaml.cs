@@ -227,6 +227,11 @@ namespace ImageCollection
                     }
                 }
             }
+            if (CollectionStore.Settings.IsChanged)
+            {
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Сохранение настроек...\r\n"));
+                CollectionStore.Settings.Save();
+            }
         }
 
         /// <summary>

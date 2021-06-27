@@ -107,6 +107,7 @@ namespace ImageCollection.Classes.Collections
                     irrelevantDistributionCollections.Add(from.OriginalFolderName);
                 }
             }
+            Settings.RemoveHotkey(collection);
         }
 
         /// <summary>
@@ -129,6 +130,7 @@ namespace ImageCollection.Classes.Collections
                 //}
                 actualCollections.Remove(collection);
                 actualCollections.Add(information.Name, collectionClass);
+                Settings.SetHotkeyCollection(collection, information.Name);
             }
             collectionClass.IsChanged = collectionClass.IsChanged || information.ChangedDescription || information.ChangedName;
         }

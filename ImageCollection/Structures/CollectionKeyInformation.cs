@@ -11,13 +11,11 @@ namespace ImageCollection.Structures
     {
         public Key Key { get; }
         public string CollectionName { get; }
-        public bool IsEdit { get; }
 
-        public CollectionKeyInformation(Key key, string collectionName, bool isEdit)
+        public CollectionKeyInformation(Key key, string collectionName)
         {
             Key = key;
             CollectionName = collectionName;
-            IsEdit = isEdit;
         }
     }
 }

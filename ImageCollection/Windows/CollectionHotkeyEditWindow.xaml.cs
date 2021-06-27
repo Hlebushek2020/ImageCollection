@@ -21,7 +21,12 @@ namespace ImageCollection
     /// </summary>
     public partial class CollectionHotkeyEditWindow : Window
     {
+        private const string EnterHotkeyPlaceholder = "Введите клавишу";
+
+        private readonly Brush currentForeground;
+        private readonly Brush placeholderForeground;
         private readonly string currentCollection = null;
+
         private Key? key = null;
 
         public CollectionKeyInformation? KeyInformation { get; private set; } = null;
@@ -29,12 +34,22 @@ namespace ImageCollection
         public CollectionHotkeyEditWindow(Key? key = null)
         {
             InitializeComponent();
+
+            currentForeground = (Brush)TryFindResource("Base.Foreground");
+            placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
+
             comboBox_Collections.ItemsSource = CollectionStore.ActualCollections;
+
             if (key.HasValue)
             {
                 currentCollection = CollectionStore.Settings.CollectionHotkeys[key.Value];
                 comboBox_Collections.SelectedItem = currentCollection;
                 textBox_Hotkey.Text = key.Value.ToString();
+            }
+            else
+            {
+                textBox_Hotkey.Text = EnterHotkeyPlaceholder;
+                textBox_Hotkey.Foreground = placeholderForeground;
             }
         }
 
@@ -60,18 +75,53 @@ namespace ImageCollection
                     return;
                 }
             }
-            KeyInformation = new CollectionKeyInformation(key.Value, collectionName, !string.IsNullOrEmpty(currentCollection));
+            KeyInformation = new CollectionKeyInformation(key.Value, collectionName);
             Close();
         }
 
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.LeftCtrl || e.Key != Key.RightCtrl || e.Key != Key.LeftShift || e.Key != Key.RightShift || e.Key != Key.LeftAlt
-                || e.Key != Key.RightAlt || e.Key != Key.Enter)
+            if (e.Key != Key.LeftCtrl && 
+                e.Key != Key.RightCtrl && 
+                e.Key != Key.LeftShift && 
+                e.Key != Key.RightShift && 
+                e.Key != Key.LeftAlt && 
+                e.Key != Key.RightAlt && 
+                e.Key != Key.Enter && 
+                e.Key != Key.O && 
+                e.Key != Key.S &&
+                e.Key != Key.Delete && 
+                e.Key != Key.F2 && 
+                e.Key != Key.N && 
+                e.Key != Key.E && 
+                e.Key != Key.D && 
+                e.Key != Key.H &&
+                e.Key != Key.C && 
+                e.Key != Key.Up && 
+                e.Key != Key.Down &&
+                e.Key != Key.Tab)
             {
                 textBox_Hotkey.Text = e.Key.ToString();
                 key = e.Key;
-                e.Handled = true;
+            }
+            e.Handled = true;
+        }
+
+        private void TextBox_Hotkey_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (textBox_Hotkey.Text.Equals(EnterHotkeyPlaceholder))
+            {
+                textBox_Hotkey.Foreground = currentForeground;
+                textBox_Hotkey.Text = string.Empty;
+            }
+        }
+
+        private void TextBox_Hotkey_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBox_Hotkey.Text))
+            {
+                textBox_Hotkey.Foreground = placeholderForeground;
+                textBox_Hotkey.Text = EnterHotkeyPlaceholder;
             }
         }
     }
