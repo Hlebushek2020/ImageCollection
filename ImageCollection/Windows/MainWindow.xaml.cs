@@ -103,6 +103,7 @@ namespace ImageCollection
             taskProgressWindow.ShowDialog();
         }
 
+        #region Remove Files
         private void MenuItem_RemoveFile_Click(object sender, RoutedEventArgs e)
         {
             if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItem != null)
@@ -137,7 +138,55 @@ namespace ImageCollection
                 }
             }
         }
+        private void MenuItem_RemoveAllSelectedFiles_Click(object sender, RoutedEventArgs e)
+        {
+            if (listBox_CollectionItems.SelectedItems.Count > 0)
+            {
+                if (MessageBox.Show("Вы действительно хотите удалить выбранные файлы?", App.Name,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
+                    Collection collection = CollectionStore.Get(currentCollectionName);
+                    IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
 
+                    int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => collectionItems.IndexOf(x));
+
+                    List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
+                    foreach (ListBoxImageItem item in selectedItems)
+                    {
+                        File.Delete(Path.Combine(CollectionStore.Settings.BaseDirectory, item.Path));
+                        collection.RemoveIgnorRules(item.Path);
+                        collection.IsChanged = true;
+                        collectionItems.Remove(item);
+                    }
+
+                    listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, collectionItems.Count - 1);
+
+                    Task.Run(() =>
+                    {
+                        string previewFolder = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
+                        foreach (ListBoxImageItem item in selectedItems)
+                        {
+                            if (!string.IsNullOrEmpty(item.Hash))
+                            {
+                                string deletePreviewFile = Path.Combine(previewFolder, $"{item.Hash}.jpg");
+                                if (File.Exists(deletePreviewFile))
+                                {
+                                    try
+                                    {
+                                        File.Delete(deletePreviewFile);
+                                    }
+                                    catch { }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        #endregion
+
+        #region To Collection
         private void MenuItem_ToCollection_Click(object sender, RoutedEventArgs e)
         {
             if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItems.Count > 0)
@@ -148,23 +197,29 @@ namespace ImageCollection
                 if (selectCollectionWindow.IsApply)
                 {
                     string toCollectionName = selectCollectionWindow.GetNameSelectedCollection();
-                    IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
-
-                    int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => collectionItems.IndexOf(x));
-
-                    List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
-                    ItemMover itemMover = CollectionStore.InitializeItemMover(currentCollectionName, toCollectionName);
-                    foreach (ListBoxImageItem item in selectedItems)
-                    {
-                        collectionItems.Remove(item);
-                        itemMover.Move(item.Path);
-                    }
-                    itemMover.EndMoving();
-
-                    listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, listBox_CollectionItems.Items.Count - 1);
+                    ToCollection(currentCollectionName, toCollectionName);
                 }
             }
         }
+
+        private void ToCollection(string from, string to)
+        {
+            IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
+
+            int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => collectionItems.IndexOf(x));
+
+            List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
+            ItemMover itemMover = CollectionStore.InitializeItemMover(from, to);
+            foreach (ListBoxImageItem item in selectedItems)
+            {
+                collectionItems.Remove(item);
+                itemMover.Move(item.Path);
+            }
+            itemMover.EndMoving();
+
+            listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, listBox_CollectionItems.Items.Count - 1);
+        }
+        #endregion
 
         private void ComboBox_CollectionNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -401,14 +456,14 @@ namespace ImageCollection
             {
                 StartWindow startWindow = new StartWindow();
                 startWindow.ShowDialog();
-                switch (startWindow.StartWork)
+                StartWork work = startWindow.StartWork;
+                if (work == StartWork.OpenFolder)
                 {
-                    case StartWork.OpenFolder:
-                        MenuItem_OpenFolder_Click(null, null);
-                        break;
-                    case StartWork.OpenCollection:
-                        MenuItem_OpenCollections_Click(null, null);
-                        break;
+                    MenuItem_OpenFolder_Click(null, null);
+                }
+                else if (work == StartWork.OpenCollection)
+                {
+                    MenuItem_OpenCollections_Click(null, null);
                 }
             }
         }
@@ -416,7 +471,7 @@ namespace ImageCollection
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             MessageBoxResult result = MessageBoxResult.Yes;
-            if (CollectionStore.Settings.IsChanged)
+            if (CollectionStore.Settings != null && CollectionStore.Settings.IsChanged)
             {
                 result = MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
@@ -438,6 +493,11 @@ namespace ImageCollection
             else
             {
                 ImageTaskStop();
+                if (menuItem_ClearImageCache.IsChecked)
+                {
+                    TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.СlearImageCache);
+                    taskProgressWindow.ShowDialog();
+                }
             }
         }
 
@@ -463,53 +523,6 @@ namespace ImageCollection
                 renameFileWindow.ShowDialog();
                 if (renameFileWindow.IsApply)
                     ComboBox_CollectionNames_SelectionChanged(null, null);
-            }
-        }
-
-        private void MenuItem_RemoveAllSelectedFiles_Click(object sender, RoutedEventArgs e)
-        {
-            if (listBox_CollectionItems.SelectedItems.Count > 0)
-            {
-                if (MessageBox.Show("Вы действительно хотите удалить выбранные файлы?", App.Name,
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                    Collection collection = CollectionStore.Get(currentCollectionName);
-                    IEnumerable<ListBoxImageItem> enSelectedItems = listBox_CollectionItems.SelectedItems.Cast<ListBoxImageItem>();
-
-                    int firstCollectionItemSelectedIndex = enSelectedItems.Min(x => collectionItems.IndexOf(x));
-
-                    List<ListBoxImageItem> selectedItems = new List<ListBoxImageItem>(enSelectedItems);
-                    foreach (ListBoxImageItem item in selectedItems)
-                    {
-                        File.Delete(Path.Combine(CollectionStore.Settings.BaseDirectory, item.Path));
-                        collection.RemoveIgnorRules(item.Path);
-                        collection.IsChanged = true;
-                        collectionItems.Remove(item);
-                    }
-
-                    listBox_CollectionItems.SelectedIndex = Math.Min(firstCollectionItemSelectedIndex, collectionItems.Count - 1);
-
-                    Task.Run(() =>
-                    {
-                        string previewFolder = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName, CollectionStore.PreviewDirectoryName);
-                        foreach (ListBoxImageItem item in selectedItems)
-                        {
-                            if (!string.IsNullOrEmpty(item.Hash))
-                            {
-                                string deletePreviewFile = Path.Combine(previewFolder, $"{item.Hash}.jpg");
-                                if (File.Exists(deletePreviewFile))
-                                {
-                                    try
-                                    {
-                                        File.Delete(deletePreviewFile);
-                                    }
-                                    catch { }
-                                }
-                            }
-                        }
-                    });
-                }
             }
         }
 
@@ -540,7 +553,7 @@ namespace ImageCollection
                         MenuItem_RemoveCollection_Click(null, null);
                         break;
                     case Key.F2:
-                        MenuItem_RenameFile_Click(null, null);
+                        MenuItem_RenameAllItemsInCollection_Click(null, null);
                         break;
                     case Key.N:
                         MenuItem_CreateCollection_Click(null, null);
@@ -558,7 +571,18 @@ namespace ImageCollection
                         MenuItem_ToCollection_Click(null, null);
                         break;
                     default:
-                        //bindings
+                        if (CollectionStore.Settings != null)
+                        {
+                            Dictionary<Key, string> collectionHotkeys = CollectionStore.Settings.CollectionHotkeys;
+                            if (comboBox_CollectionNames.SelectedItem != null &&
+                                listBox_CollectionItems.SelectedItems.Count > 0 &&
+                                collectionHotkeys.ContainsKey(e.Key))
+                            {
+                                string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
+                                string toCollectionName = collectionHotkeys[e.Key];
+                                ToCollection(currentCollectionName, toCollectionName);
+                            }
+                        }
                         break;
                 }
             }
@@ -593,13 +617,10 @@ namespace ImageCollection
             }
         }
 
-        /*private void MenuItem_СlearImageCache_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_СlearImageCache_Click(object sender, RoutedEventArgs e)
         {
-            stopImageTask = true;
-            imageTask.Wait();
-            TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.СlearImageCache);
-            taskProgressWindow.ShowDialog();
-        }*/
+            menuItem_ClearImageCache.IsChecked = !menuItem_ClearImageCache.IsChecked;
+        }
 
         private void ListBox_CollectionItems_PreviewKeyDown(object sender, KeyEventArgs e)
         {

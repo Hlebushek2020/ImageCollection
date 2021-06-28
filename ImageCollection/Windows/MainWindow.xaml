@@ -15,13 +15,13 @@
     <Grid Background="{DynamicResource Base.Grid.Background}">
         <Menu VerticalAlignment="Top" FontSize="12">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть папку" InputGestureText="Ctrl + O" Click="MenuItem_OpenFolder_Click"/>
+                <MenuItem Header="Открыть папку" InputGestureText="Ctrl + Shift + O" Click="MenuItem_OpenFolder_Click"/>
                 <Separator/>
-                <MenuItem Header="Открыть коллекции" Click="MenuItem_OpenCollections_Click"/>
+                <MenuItem Header="Открыть коллекции" InputGestureText="Ctrl + O" Click="MenuItem_OpenCollections_Click"/>
                 <MenuItem Header="Сохранить коллекции" InputGestureText="Ctrl + S" Click="MenuItem_SaveCollections_Click"/>
                 <Separator/>
-                <MenuItem Header="Удалить" InputGestureText="Delete" Click="MenuItem_RemoveFile_Click"/>
-                <MenuItem Header="Удалить выбранные" InputGestureText="Ctrl + Delete" Click="MenuItem_RemoveAllSelectedFiles_Click"/>
+                <MenuItem Header="Удалить" InputGestureText="Ctrl + Shift + Delete" Click="MenuItem_RemoveFile_Click"/>
+                <MenuItem Header="Удалить выбранные" InputGestureText="Delete" Click="MenuItem_RemoveAllSelectedFiles_Click"/>
                 <MenuItem Header="Переименовать" InputGestureText="F2" Click="MenuItem_RenameFile_Click"/>
                 <Separator/>
                 <MenuItem Header="Добавить в коллекцию..." InputGestureText="Ctrl + C" Click="MenuItem_ToCollection_Click"/>
@@ -29,15 +29,15 @@
             <MenuItem Header="Коллекция">
                 <MenuItem Header="Создать" InputGestureText="Ctrl + N" Click="MenuItem_CreateCollection_Click"/>
                 <MenuItem Header="Изменить" InputGestureText="Ctrl + E" Click="MenuItem_EditCollectionDetails_Click"/>
-                <MenuItem Header="Удалить" Click="MenuItem_RemoveCollection_Click"/>
+                <MenuItem Header="Удалить" InputGestureText="Ctrl + Delete" Click="MenuItem_RemoveCollection_Click"/>
                 <Separator/>
                 <MenuItem Header="Распределить по папкам" InputGestureText="Ctrl + D" Click="MenuItem_DistributeFolders_Click"/>
                 <MenuItem Header="Переименовать файлы" InputGestureText="Ctrl + F2" Click="MenuItem_RenameAllItemsInCollection_Click"/>
-                <MenuItem Header="Горячие клавиши" Click="MenuItem_CollectionHotkey_Click"/>
+                <MenuItem Header="Горячие клавиши" InputGestureText="Ctrl + H" Click="MenuItem_CollectionHotkey_Click"/>
             </MenuItem>
             <MenuItem Header="Опции">
-                <!--<MenuItem Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
-                <Separator/>-->
+                <MenuItem x:Name="menuItem_ClearImageCache" Header="Очистить кеш изображений" Click="MenuItem_СlearImageCache_Click"/>
+                <Separator/>
                 <MenuItem Header="Тема">
                     <MenuItem x:Name="menuItem_Light" Header="Светлая" Tag="Light" Click="MenuItem_SetTheme_Click"/>
                     <MenuItem x:Name="menuItem_Dark" Header="Темная" Tag="Dark" Click="MenuItem_SetTheme_Click"/>
@@ -65,8 +65,8 @@
             <ListBox x:Name="listBox_CollectionItems" Grid.Column="2" Margin="5,0,0,0" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ListBox_CollectionItems_SelectionChanged" PreviewKeyDown="ListBox_CollectionItems_PreviewKeyDown" IsSynchronizedWithCurrentItem="True">
                 <ListBox.ContextMenu>
                     <ContextMenu FontSize="12">
-                        <MenuItem Header="Удалить" InputGestureText="Delete" Click="MenuItem_RemoveFile_Click"/>
-                        <MenuItem Header="Удалить выбранные" InputGestureText="Ctrl + Delete" Click="MenuItem_RemoveAllSelectedFiles_Click"/>
+                        <MenuItem Header="Удалить" InputGestureText="Ctrl + Shift + Delete" Click="MenuItem_RemoveFile_Click"/>
+                        <MenuItem Header="Удалить выбранные" InputGestureText="Delete" Click="MenuItem_RemoveAllSelectedFiles_Click"/>
                         <MenuItem Header="Переименовать" InputGestureText="F2" Click="MenuItem_RenameFile_Click"/>
                         <Separator/>
                         <MenuItem Header="Добавить в коллекцию..." InputGestureText="Ctrl + C" Click="MenuItem_ToCollection_Click"/>
