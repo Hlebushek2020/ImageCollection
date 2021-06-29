@@ -11,7 +11,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
         FontSize="14">
-    <Grid Background="{DynamicResource Base.Grid.Background}">
+    <Grid>
         <TextBox x:Name="textBox_baseDirectory" Margin="10,10,115,0" TextWrapping="NoWrap" IsReadOnly="True" VerticalAlignment="Top"/>
         <Button Content="Выбрать" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="100" Height="29" Click="Button_BaseDirectory_Click"/>
         <CheckBox x:Name="checkBox_recursiveSearch" Content="Рекурсивный поиск" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" ToolTip="Выполнить поиск не только в базовой директории, но и во всех ее поддиректориях"/>

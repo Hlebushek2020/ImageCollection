@@ -747,13 +747,18 @@
             <Setter Property="BorderBrush" Value="{DynamicResource RichTextBox.Border}"/>
             <Setter Property="Foreground" Value="{DynamicResource Base.Foreground}"/>
         </Style>
-        <!-- MenuButtonStyle -->
-        <Style x:Key="MenuButtonStyle" TargetType="Button">
-            <Setter Property="Margin" Value="0,0,4,0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="2"/>
-            <Setter Property="Cursor" Value="Hand"/>
+        <!-- Windows Styles -->
+        <Style x:Key="WindowsBaseStyle" TargetType="{x:Type Window}">
+            <Setter Property="Background" Value="{DynamicResource Base.Grid.Background}"/>
         </Style>
+        <Style TargetType="local:CollectionHotkeyEditWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:CollectionHotkeyWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:CollectionInformationEditorWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:MainWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:RenameFileWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:SelectCollectionWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:SettingsOpenFolderWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:StartWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:TaskProgressWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
     </Application.Resources>
 </Application>

@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
         FontSize="14">
-    <Grid Background="{DynamicResource Base.Grid.Background}">
+    <Grid>
         <TextBox x:Name="textBox_NewFileName" Margin="10,10,10,0" VerticalAlignment="Top" GotFocus="TextBox_NewFileName_GotFocus" LostFocus="TextBox_NewFileName_LostFocus"/>
         <Button Content="Применить" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="150" Height="30" Click="Button_Apply_Click"/>
         <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="30" Click="Button_Close_Click"/>

@@ -96,7 +96,7 @@ namespace ImageCollection
                 e.Key != Key.E && 
                 e.Key != Key.D && 
                 e.Key != Key.H &&
-                e.Key != Key.C && 
+                e.Key != Key.A && 
                 e.Key != Key.Up && 
                 e.Key != Key.Down &&
                 e.Key != Key.Tab)

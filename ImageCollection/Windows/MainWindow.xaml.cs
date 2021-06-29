@@ -103,44 +103,9 @@ namespace ImageCollection
             taskProgressWindow.ShowDialog();
         }
 
-        #region Remove Files
-        private void MenuItem_RemoveFile_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_RemoveSelectedFiles_Click(object sender, RoutedEventArgs e)
         {
-            if (comboBox_CollectionNames.SelectedItem != null && listBox_CollectionItems.SelectedItem != null)
-            {
-                string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                ListBoxImageItem currentCollectionItem = (ListBoxImageItem)listBox_CollectionItems.SelectedItem;
-                int currentCollectionItemIndex = listBox_CollectionItems.SelectedIndex;
-                string deleteFile = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollectionItem.Path);
-                if (MessageBox.Show($"Удалить \"{deleteFile}\"?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    Collection collection = CollectionStore.Get(currentCollectionName);
-                    File.Delete(deleteFile);
-                    collection.RemoveIgnorRules(currentCollectionItem.Path);
-                    collection.IsChanged = true;
-                    collectionItems.RemoveAt(currentCollectionItemIndex);
-
-                    listBox_CollectionItems.SelectedIndex = Math.Min(currentCollectionItemIndex, collectionItems.Count - 1);
-
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(currentCollectionItem.Hash))
-                        {
-                            string deletePreviewFile = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName,
-                            CollectionStore.PreviewDirectoryName, $"{currentCollectionItem.Hash}.jpg");
-                            if (File.Exists(deletePreviewFile))
-                            {
-                                File.Delete(deletePreviewFile);
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-        }
-        private void MenuItem_RemoveAllSelectedFiles_Click(object sender, RoutedEventArgs e)
-        {
-            if (listBox_CollectionItems.SelectedItems.Count > 0)
+            if (listBox_CollectionItems.SelectedItems.Count > 1)
             {
                 if (MessageBox.Show("Вы действительно хотите удалить выбранные файлы?", App.Name,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -183,8 +148,38 @@ namespace ImageCollection
                     });
                 }
             }
+            else
+            {
+                string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
+                ListBoxImageItem currentCollectionItem = (ListBoxImageItem)listBox_CollectionItems.SelectedItem;
+                int currentCollectionItemIndex = listBox_CollectionItems.SelectedIndex;
+                string deleteFile = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollectionItem.Path);
+                if (MessageBox.Show($"Удалить \"{deleteFile}\"?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Collection collection = CollectionStore.Get(currentCollectionName);
+                    File.Delete(deleteFile);
+                    collection.RemoveIgnorRules(currentCollectionItem.Path);
+                    collection.IsChanged = true;
+                    collectionItems.RemoveAt(currentCollectionItemIndex);
+
+                    listBox_CollectionItems.SelectedIndex = Math.Min(currentCollectionItemIndex, collectionItems.Count - 1);
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(currentCollectionItem.Hash))
+                        {
+                            string deletePreviewFile = Path.Combine(CollectionStore.Settings.BaseDirectory, CollectionStore.DataDirectoryName,
+                            CollectionStore.PreviewDirectoryName, $"{currentCollectionItem.Hash}.jpg");
+                            if (File.Exists(deletePreviewFile))
+                            {
+                                File.Delete(deletePreviewFile);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
         }
-        #endregion
 
         #region To Collection
         private void MenuItem_ToCollection_Click(object sender, RoutedEventArgs e)
@@ -534,10 +529,6 @@ namespace ImageCollection
                 {
                     MenuItem_OpenFolder_Click(null, null);
                 }
-                else if (e.Key == Key.Delete)
-                {
-                    MenuItem_RemoveFile_Click(null, null);
-                }
             }
             else if (Keyboard.Modifiers == ModifierKeys.Control)
             {
@@ -567,7 +558,7 @@ namespace ImageCollection
                     case Key.H:
                         MenuItem_CollectionHotkey_Click(null, null);
                         break;
-                    case Key.C:
+                    case Key.A:
                         MenuItem_ToCollection_Click(null, null);
                         break;
                     default:
@@ -592,7 +583,7 @@ namespace ImageCollection
             }
             else if (e.Key == Key.Delete)
             {
-                MenuItem_RemoveAllSelectedFiles_Click(null, null);
+                MenuItem_RemoveSelectedFiles_Click(null, null);
             }
         }
 
@@ -658,8 +649,11 @@ namespace ImageCollection
 
         private void MenuItem_CollectionHotkey_Click(object sender, RoutedEventArgs e)
         {
-            CollectionHotkeyWindow collectionHotkey = new CollectionHotkeyWindow();
-            collectionHotkey.ShowDialog();
+            if (CollectionStore.Settings != null)
+            {
+                CollectionHotkeyWindow collectionHotkey = new CollectionHotkeyWindow();
+                collectionHotkey.ShowDialog();
+            }
         }
     }
 }

@@ -10,22 +10,22 @@
         Width="800"
         FontSize="14"
         WindowStartupLocation="CenterScreen">
-    <Grid Background="{DynamicResource Base.Grid.Background}">
-        <StackPanel Orientation="Horizontal" Height="20" Margin="10,10,10,0" VerticalAlignment="Top">
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Добавить" Click="Button_AddHotkey_Click">
+    <Grid>
+        <StackPanel Orientation="Horizontal" Height="24" Margin="10,10,10,0" VerticalAlignment="Top">
+            <Button Margin="0,0,5,0" BorderThickness="0" Padding="4" Cursor="Hand" ToolTip="Добавить" Click="Button_AddHotkey_Click">
                 <Image Source="/Resources/add.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Изменить" Click="Button_EditHotkey_Click">
+            <Button Margin="0,0,5,0" BorderThickness="0" Padding="4" Cursor="Hand" ToolTip="Изменить" Click="Button_EditHotkey_Click">
                 <Image Source="/Resources/edit.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Удалить" Click="Button_RemoveHotkey_Click">
+            <Button Margin="0,0,5,0" BorderThickness="0" Padding="4" Cursor="Hand" ToolTip="Удалить" Click="Button_RemoveHotkey_Click">
                 <Image Source="/Resources/delete.png"/>
             </Button>
-            <Button Style="{StaticResource MenuButtonStyle}" ToolTip="Удалить все" Click="Button_RemoveAllHotkeys_Click">
+            <Button Margin="0,0,5,0" BorderThickness="0" Padding="4" Cursor="Hand" ToolTip="Удалить все" Click="Button_RemoveAllHotkeys_Click">
                 <Image Source="/Resources/broom.png"/>
             </Button>
         </StackPanel>
-        <ListView x:Name="listBox_Hotkeys" Margin="10,35,10,10" MouseDoubleClick="ListBox_Hotkeys_MouseDoubleClick">
+        <ListView x:Name="listBox_Hotkeys" Margin="10,39,10,10" MouseDoubleClick="ListBox_Hotkeys_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Горчая клавиша" DisplayMemberBinding="{Binding Path=Key, StringFormat=Ctrl + {0}}" />
