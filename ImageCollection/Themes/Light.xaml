@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:ImageCollection">
     <!--Base-->
     <SolidColorBrush x:Key="Base.Foreground" Color="Black"/>
-    <SolidColorBrush x:Key="Base.Grid.Background" Color="Transparent" />
+    <SolidColorBrush x:Key="Base.Grid.Background" Color="White" />
     <SolidColorBrush x:Key="Base.Placeholder.Foreground" Color="Gray" />
     <!--Menu-->
     <SolidColorBrush x:Key="Menu.Background" Color="#fff0f0f0"/>
@@ -88,4 +88,7 @@
     <!--RichTextBox-->
     <SolidColorBrush x:Key="RichTextBox.Border" Color="#FFABAdB3"/>
     <SolidColorBrush x:Key="RichTextBox.Background" Color="White"/>
+    <!--ListView-->
+    <SolidColorBrush x:Key="ListView.Background" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="ListView.Border" Color="#FFABADB3"/>
 </ResourceDictionary>

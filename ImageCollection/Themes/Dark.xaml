@@ -82,4 +82,7 @@
     <!--RichTextBox-->
     <SolidColorBrush x:Key="RichTextBox.Border" Color="#ff414141"/>
     <SolidColorBrush x:Key="RichTextBox.Background" Color="#ff2d2d2d"/>
+    <!--ListView-->
+    <SolidColorBrush x:Key="ListView.Background" Color="#ff2d2d2d"/>
+    <SolidColorBrush x:Key="ListView.Border" Color="#ff414141"/>
 </ResourceDictionary>
