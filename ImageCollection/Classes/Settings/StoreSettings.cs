@@ -106,8 +106,8 @@ namespace ImageCollection.Classes.Settings
             if (File.Exists(settings))
             {
                 string json = File.ReadAllText(settings, Encoding.UTF8);
-                StoreSettings fromJson = JsonConvert.DeserializeObject<StoreSettings>(json);
-                result.DistributionDirectory = fromJson.DistributionDirectory;
+                result = JsonConvert.DeserializeObject<StoreSettings>(json);
+                result.BaseDirectory = baseDirectory;
             }
             return result;
         }

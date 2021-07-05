@@ -68,9 +68,9 @@ namespace ImageCollection
                 return;
             }
             string collectionName = (string)comboBox_Collections.SelectedItem;
-            if (CollectionStore.Settings.CollectionHotkeys.ContainsValue(collectionName) && collectionName.Equals(currentCollection))
+            if (CollectionStore.Settings.CollectionHotkeys.ContainsValue(collectionName))
             {
-                if (MessageBox.Show("Для такой коллекции уже назначена грячая клавиша, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (MessageBox.Show("Для выбранной коллекции уже назначена грячая клавиша, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }

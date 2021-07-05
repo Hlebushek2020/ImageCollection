@@ -25,7 +25,7 @@
                 <Image Source="/Resources/broom.png"/>
             </Button>
         </StackPanel>
-        <ListView x:Name="listBox_Hotkeys" Margin="10,39,10,10" MouseDoubleClick="ListBox_Hotkeys_MouseDoubleClick">
+        <ListView x:Name="listBox_Hotkeys" Margin="10,39,10,10" SelectionMode="Single" MouseDoubleClick="ListBox_Hotkeys_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Горчая клавиша" DisplayMemberBinding="{Binding Path=Key, StringFormat=Ctrl + {0}}" />
