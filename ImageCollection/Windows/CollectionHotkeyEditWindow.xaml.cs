@@ -25,9 +25,9 @@ namespace ImageCollection
 
         private readonly Brush currentForeground;
         private readonly Brush placeholderForeground;
-        private readonly string currentCollection = null;
 
-        private Key? key = null;
+        private Key? editkey = null;
+        private Key? currentKey = null;
 
         public CollectionKeyInformation? KeyInformation { get; private set; } = null;
 
@@ -42,9 +42,10 @@ namespace ImageCollection
 
             if (key.HasValue)
             {
-                currentCollection = CollectionStore.Settings.CollectionHotkeys[key.Value];
-                comboBox_Collections.SelectedItem = currentCollection;
+                comboBox_Collections.SelectedItem = CollectionStore.Settings.CollectionHotkeys[key.Value];;
                 textBox_Hotkey.Text = key.Value.ToString();
+                editkey = key;
+                currentKey = key;
             }
             else
             {
@@ -57,12 +58,12 @@ namespace ImageCollection
 
         private void Button_Apply_Click(object sender, RoutedEventArgs e)
         {
-            if (!key.HasValue)
+            if (!currentKey.HasValue)
             {
                 MessageBox.Show("Введите горячую клавишу!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (CollectionStore.Settings.CollectionHotkeys.ContainsKey(key.Value))
+            if (CollectionStore.Settings.CollectionHotkeys.ContainsKey(currentKey.Value) && !currentKey.Equals(editkey))
             {
                 MessageBox.Show("Такая горячая клавиша уже используется, введите другую!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -75,7 +76,7 @@ namespace ImageCollection
                     return;
                 }
             }
-            KeyInformation = new CollectionKeyInformation(key.Value, collectionName);
+            KeyInformation = new CollectionKeyInformation(currentKey.Value, collectionName);
             Close();
         }
 
@@ -102,7 +103,7 @@ namespace ImageCollection
                 e.Key != Key.Tab)
             {
                 textBox_Hotkey.Text = e.Key.ToString();
-                key = e.Key;
+                currentKey = e.Key;
             }
             e.Handled = true;
         }

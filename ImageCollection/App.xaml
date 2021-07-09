@@ -50,12 +50,12 @@
                 <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                     <Setter TargetName="Popup" Property="PopupAnimation" Value="None" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="True">
+                <!--<Trigger Property="IsHighlighted" Value="True">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
-                </Trigger>
+                </Trigger>-->
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
+                    <!--<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />-->
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
                 </Trigger>
             </ControlTemplate.Triggers>
@@ -66,19 +66,19 @@
                 <ContentPresenter Margin="0" ContentSource="Header" RecognizesAccessKey="True" />
             </Border>
             <ControlTemplate.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
+                <!--<Trigger Property="IsHighlighted" Value="True">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
-                </Trigger>
+                </Trigger>-->
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
+                    <!--<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />-->
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <!--MenuItem.SubmenuItemTemplateKey-->
         <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
-            <Border x:Name="Border" BorderThickness="1" Padding="5,2">
+            <Border x:Name="Border" BorderThickness="0" Padding="5,2">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -101,19 +101,19 @@
                 <Trigger Property="IsChecked" Value="true">
                     <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="True">
+                <!--<Trigger Property="IsHighlighted" Value="True">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
-                </Trigger>
+                </Trigger>-->
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
+                    <!--<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />-->
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <!--SubmenuHeaderTemplateKey-->
         <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-            <Border x:Name="Border" BorderThickness="1" Padding="5,2">
+            <Border x:Name="Border" BorderThickness="0" Padding="5,2">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
@@ -138,12 +138,12 @@
                 <Trigger Property="Icon" Value="{x:Null}">
                     <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="True">
+                <!--<Trigger Property="IsHighlighted" Value="True">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
-                </Trigger>
+                </Trigger>-->
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />
+                    <!--<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Menu.MouseOver.Border}" />-->
                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource Menu.MouseOver.Background}"/>
                 </Trigger>
             </ControlTemplate.Triggers>
