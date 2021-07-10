@@ -264,7 +264,18 @@ namespace ImageCollection
                 {
                     break;
                 }
-                Dispatcher.Invoke(() =>
+                //Dispatcher.Invoke(() =>
+                //{
+                //    string previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
+                //    MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(previewFile));
+                //    BitmapImage preview = new BitmapImage();
+                //    preview.BeginInit();
+                //    preview.StreamSource = memoryStream;
+                //    preview.EndInit();
+                //    listBoxImageItem.Preview = preview;
+                //    collectionItems.Add(listBoxImageItem);
+                //});
+                Dispatcher.Invoke(new Func<int>(() =>
                 {
                     string previewFile = Path.Combine(previewFolder, $"{listBoxImageItem.Hash}.jpg");
                     MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(previewFile));
@@ -274,7 +285,8 @@ namespace ImageCollection
                     preview.EndInit();
                     listBoxImageItem.Preview = preview;
                     collectionItems.Add(listBoxImageItem);
-                });
+                    return 1;
+                }), TimeSpan.FromMilliseconds(500));
             }
         }
 
