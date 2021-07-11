@@ -1,0 +1,21 @@
+﻿<Window x:Class="ImageCollection.CollectionHotkeyEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageCollection"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" 
+        mc:Ignorable="d"
+        Title="CollectionHotkeyEditWindow" 
+        Height="120" 
+        Width="650"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        FontSize="14">
+    <Grid>
+        <TextBox x:Name="textBox_Hotkey" HorizontalAlignment="Left" Margin="10,10,0,0" TextAlignment="Center"  VerticalAlignment="Top" Width="150" PreviewKeyDown="TextBox_PreviewKeyDown" IsReadOnlyCaretVisible="True" GotFocus="TextBox_Hotkey_GotFocus" LostFocus="TextBox_Hotkey_LostFocus"/>
+        <ComboBox x:Name="comboBox_Collections" Margin="165,11,10,0" VerticalAlignment="Top" SelectedIndex="0"/>
+        <Button Content="Применить" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="150" Height="30" Click="Button_Apply_Click"/>
+        <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="30" Click="Button_Close_Click" />
+    </Grid>
+</Window>

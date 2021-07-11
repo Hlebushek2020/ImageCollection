@@ -82,4 +82,23 @@
     <!--RichTextBox-->
     <SolidColorBrush x:Key="RichTextBox.Border" Color="#ff414141"/>
     <SolidColorBrush x:Key="RichTextBox.Background" Color="#ff2d2d2d"/>
+    <!--ListView-->
+    <SolidColorBrush x:Key="ListView.Background" Color="#ff2d2d2d"/>
+    <SolidColorBrush x:Key="ListView.Border" Color="#ff414141"/>
+    <!--ListViewItem-->
+    <SolidColorBrush x:Key="ListViewItem.Hover.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="ListViewItem.Hover.Border" Color="#a826A0Da"/>
+    <SolidColorBrush x:Key="ListViewItem.Selected.Background" Color="#3D26A0DA"/>
+    <SolidColorBrush x:Key="ListViewItem.Selected.Border" Color="#FF26A0DA"/>
+    <SolidColorBrush x:Key="ListViewItem.SelectedInactive.Background" Color="#ff464646"/>
+    <SolidColorBrush x:Key="ListViewItem.SelectedInactive.Border" Color="#ff464646"/>
+    <SolidColorBrush x:Key="ListViewItem.SelectedActive.Background" Color="#3D26A0DA"/>
+    <SolidColorBrush x:Key="ListViewItem.SelectedActive.Border" Color="#FF26A0DA"/>
+    <!--GridViewColumnHeaderGripper-->
+    <SolidColorBrush x:Key="GridViewColumnHeaderGripper.Background" Color="#ff414141"/>
+    <!--GridViewColumnHeader-->
+    <SolidColorBrush x:Key="GridViewColumnHeader.Background" Color="Transparent" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.Border" Color="#ff414141"/>
+    <SolidColorBrush x:Key="GridViewColumnHeader.MouseOver.Background" Color="#6626A0DA"/>
+    <SolidColorBrush x:Key="GridViewColumnHeader.Floating.Fill" Color="Transparent"/>
 </ResourceDictionary>
