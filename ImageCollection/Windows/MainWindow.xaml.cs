@@ -90,7 +90,7 @@ namespace ImageCollection
                         RefreshAfterOpening();
                     }
                     else
-                        MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
+                        Classes.UI.MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
                             App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -107,7 +107,7 @@ namespace ImageCollection
         {
             if (listBox_CollectionItems.SelectedItems.Count > 1)
             {
-                if (MessageBox.Show("Вы действительно хотите удалить выбранные файлы?", App.Name,
+                if (Classes.UI.MessageBox.Show("Вы действительно хотите удалить выбранные файлы?", App.Name,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
@@ -154,7 +154,7 @@ namespace ImageCollection
                 ListBoxImageItem currentCollectionItem = (ListBoxImageItem)listBox_CollectionItems.SelectedItem;
                 int currentCollectionItemIndex = listBox_CollectionItems.SelectedIndex;
                 string deleteFile = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollectionItem.Path);
-                if (MessageBox.Show($"Удалить \"{deleteFile}\"?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (Classes.UI.MessageBox.Show($"Удалить \"{deleteFile}\"?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     Collection collection = CollectionStore.Get(currentCollectionName);
                     File.Delete(deleteFile);
@@ -407,10 +407,10 @@ namespace ImageCollection
             {
                 string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
                 if (currentCollectionName.Equals(CollectionStore.BaseCollectionName))
-                    MessageBox.Show("Коллекцию по умолчанию запрещено удалять!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+                    Classes.UI.MessageBox.Show("Коллекцию по умолчанию запрещено удалять!", App.Name, MessageBoxButton.OK, MessageBoxImage.Information);
                 else
                 {
-                    if (MessageBox.Show($"Удалить коллекцию \"{currentCollectionName}\"?", App.Name,
+                    if (Classes.UI.MessageBox.Show($"Удалить коллекцию \"{currentCollectionName}\"?", App.Name,
                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         CollectionStore.Remove(currentCollectionName);
@@ -450,7 +450,7 @@ namespace ImageCollection
                     }
                     else
                     {
-                        MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
+                        Classes.UI.MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
                             App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
 
                         Close();
@@ -480,7 +480,7 @@ namespace ImageCollection
             MessageBoxResult result = MessageBoxResult.Yes;
             if (CollectionStore.Settings != null && CollectionStore.Settings.IsChanged)
             {
-                result = MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                result = Classes.UI.MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
             }
             else
             {
@@ -488,7 +488,7 @@ namespace ImageCollection
                 {
                     if (CollectionStore.Get(collectionName).IsChanged)
                     {
-                        result = MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        result = Classes.UI.MessageBox.Show("Текущие изменения не сохранены, закрыть?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         break;
                     }
                 }

@@ -1,17 +1,6 @@
 ﻿using ImageCollection.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ImageCollection
 {
@@ -92,7 +81,7 @@ namespace ImageCollection
                         path = folderBrowserDialog.SelectedPath;
                         if (path.Equals(textBox_baseDirectory.Text))
                         {
-                            MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
+                            Classes.UI.MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
                                 App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                         else
@@ -116,31 +105,31 @@ namespace ImageCollection
         {
             if (textBox_baseDirectory.Text.Equals(BaseDirectoryPlaceholder))
             {
-                MessageBox.Show("Выберите базавую директорию!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Выберите базавую директорию!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(textBox_searchMask.Text))
             {
-                MessageBox.Show("Маска для первого поиска не должна быть пустой!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Маска для первого поиска не должна быть пустой!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (checkBox_isDistributionNewFolder.IsChecked.Value)
             {
                 if (DistributionFolderPlaceholder.Equals(textBox_distributionNewFolder.Text))
                 {
-                    MessageBox.Show("Выберите директорию для размещения!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Classes.UI.MessageBox.Show("Выберите директорию для размещения!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 /*if (textBox_baseDirectory.Text.Equals(textBox_distributionNewFolder.Text))
                 {
-                    MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
+                    Classes.UI.MessageBox.Show("Директория для размещения не может совпадать с базовой директорией! Выберите другую директорию для размещения или уберите флажок в соответствующем пункте.",
                         App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }*/
             }
             else
             {
-                if (MessageBox.Show("ВНИМАНИЕ! По умолчанию при распределении происходит перемещение файлов, для копирования при первом распределении нужно отметить соответствующий пункт.", App.Name, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.Cancel)
+                if (Classes.UI.MessageBox.Show("ВНИМАНИЕ! По умолчанию при распределении происходит перемещение файлов, для копирования при первом распределении нужно отметить соответствующий пункт.", App.Name, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.Cancel)
                 {
                     return;
                 }

@@ -91,13 +91,13 @@ namespace ImageCollection
             string newFileName = textBox_NewFileName.Text;
             if (newFileName.Equals(placeholder))
             {
-                MessageBox.Show("Имя файла не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Имя файла не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             Regex regex = new Regex(".*[\\<>:\"/|?*].*");
             if (regex.IsMatch(newFileName))
             {
-                MessageBox.Show("Имя файла содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Имя файла содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             string dirName = Path.GetDirectoryName(oldFileName);
@@ -105,7 +105,7 @@ namespace ImageCollection
             string toPath = $"{CollectionStore.Settings.BaseDirectory}\\{newFileName}";
             if (File.Exists(toPath))
             {
-                MessageBox.Show("Файл с таким именем уже существует!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Файл с таким именем уже существует!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             Collection collection = CollectionStore.Get(collectionName);
@@ -142,18 +142,18 @@ namespace ImageCollection
             string maskFileName = textBox_NewFileName.Text;
             if (maskFileName.Equals(placeholder))
             {
-                MessageBox.Show("Маска файла не может быть пустой!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Маска файла не может быть пустой!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             Regex regex = new Regex(".*[\\<>:\"/|?*].*");
             if (regex.IsMatch(maskFileName))
             {
-                MessageBox.Show("Маска файла содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Маска файла содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (!maskFileName.Contains("{0}"))
             {
-                MessageBox.Show("В маске файла отсутствует комбинация символов для подстановки номера! ({0})", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("В маске файла отсутствует комбинация символов для подстановки номера! ({0})", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.RenameCollectionItems, new string[] { collectionName, maskFileName });

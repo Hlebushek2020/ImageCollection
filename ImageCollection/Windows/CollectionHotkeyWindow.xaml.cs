@@ -72,7 +72,7 @@ namespace ImageCollection
             if (listBox_Hotkeys.SelectedItem != null)
             {
                 KeyValuePair<Key, string> item = (KeyValuePair<Key, string>)listBox_Hotkeys.SelectedItem;
-                if (MessageBox.Show($"Удалить бинд Ctrl + {item.Key}?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (Classes.UI.MessageBox.Show($"Удалить бинд Ctrl + {item.Key}?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     CollectionStore.Settings.RemoveHotkey(item.Key);
                     listBox_Hotkeys.Items.Refresh();
@@ -84,7 +84,7 @@ namespace ImageCollection
         {
             if (listBox_Hotkeys.Items.Count > 0)
             {
-                if (MessageBox.Show("Удалить все бинды?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (Classes.UI.MessageBox.Show("Удалить все бинды?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     CollectionStore.Settings.RemoveAllHotkeys();
                     listBox_Hotkeys.Items.Refresh();

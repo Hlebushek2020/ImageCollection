@@ -75,20 +75,20 @@ namespace ImageCollection
             string newCollectionName = textBox_collectionName.Text;
             if (newCollectionName.Equals(CollectionNamePlaceholder))
             {
-                MessageBox.Show("Название коллекции не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Название коллекции не может быть пустым!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             Regex regex = new Regex(".*[\\<>:\"/|?*].*");
             if (regex.IsMatch(newCollectionName))
             {
-                MessageBox.Show("Название коллекции содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Название коллекции содержит запрещенные символы! (< > : \" \\ / | ? *)", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (!collectionName.Equals(newCollectionName))
             {
                 if (CollectionStore.Contains(newCollectionName))
                 {
-                    MessageBox.Show("Коллекция с таким названием уже существует!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Classes.UI.MessageBox.Show("Коллекция с таким названием уже существует!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 changedCollectionName = true;

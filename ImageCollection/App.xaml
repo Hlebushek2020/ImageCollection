@@ -760,6 +760,7 @@
         <Style TargetType="local:SettingsOpenFolderWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
         <Style TargetType="local:StartWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
         <Style TargetType="local:TaskProgressWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
+        <Style TargetType="local:MessageBoxWindow" BasedOn="{StaticResource WindowsBaseStyle}"/>
         <!--ListView-->
         <Style TargetType="{x:Type ListView}">
             <Setter Property="Background" Value="{DynamicResource ListView.Background}"/>
