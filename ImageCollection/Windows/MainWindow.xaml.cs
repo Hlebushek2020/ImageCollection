@@ -49,15 +49,7 @@ namespace ImageCollection
             }
         }
 
-        private void RefreshAfterOpening()
-        {
-            object currentColltctionName = comboBox_CollectionNames.SelectedItem;
-            comboBox_CollectionNames.Items.Refresh();
-            comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
-            if (currentColltctionName != null)
-                ComboBox_CollectionNames_SelectionChanged(null, null);
-        }
-
+        #region Open Folder
         private void MenuItem_OpenFolder_Click(object sender, RoutedEventArgs e) =>
             OpenFolderShell();
 
@@ -76,6 +68,19 @@ namespace ImageCollection
             }
         }
 
+        private void RefreshAfterOpening()
+        {
+            object currentColltctionName = comboBox_CollectionNames.SelectedItem;
+            comboBox_CollectionNames.Items.Refresh();
+            comboBox_CollectionNames.SelectedItem = CollectionStore.BaseCollectionName;
+            if (currentColltctionName != null)
+            {
+                ComboBox_CollectionNames_SelectionChanged(null, null);
+            }
+        }
+        #endregion
+
+        #region Open Collections
         private void MenuItem_OpenCollections_Click(object sender, RoutedEventArgs e)
         {
             using (System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog())
@@ -83,24 +88,45 @@ namespace ImageCollection
                 if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     string baseDirectory = folderBrowserDialog.SelectedPath;
-                    if (Directory.Exists($"{baseDirectory}\\{CollectionStore.DataDirectoryName}"))
-                    {
-                        TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.OpenCollections, new object[] { baseDirectory });
-                        taskProgressWindow.ShowDialog();
-                        RefreshAfterOpening();
-                    }
-                    else
-                        Classes.UI.MessageBox.Show("Папка, содержащая данные о коллекциях не обнаружена. Продолжение операции невозможно.",
-                            App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    OpenCollectionsShell(baseDirectory);
                 }
             }
-
         }
+
+        private void OpenCollectionsShell(string baseDirectory)
+        {
+            string dataDirectory = Path.Combine(baseDirectory, CollectionStore.DataDirectoryName);
+            string icdAllPath = Path.Combine(dataDirectory, $"{CollectionStore.BaseCollectionId}.icd");
+            if (Directory.Exists(dataDirectory) && File.Exists(icdAllPath))
+            {
+                TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.OpenCollections, new object[] { baseDirectory });
+                taskProgressWindow.ShowDialog();
+                SetLastOpenCollection();
+                RefreshAfterOpening();
+            }
+            else
+            {
+                Classes.UI.MessageBox.Show("Данные о коллекциях не обнаружены. Продолжение операции невозможно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void SetLastOpenCollection()
+        {
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            string baseDirectory = CollectionStore.Settings.BaseDirectory;
+            if (!baseDirectory.Equals(settings.LastOpenCollection))
+            {
+                settings.LastOpenCollection = baseDirectory;
+                settings.Save();
+            }
+        }
+        #endregion
 
         private void MenuItem_SaveCollections_Click(object sender, RoutedEventArgs e)
         {
             TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.SaveCollections);
             taskProgressWindow.ShowDialog();
+            SetLastOpenCollection();
         }
 
         private void MenuItem_RemoveSelectedFiles_Click(object sender, RoutedEventArgs e)
@@ -438,7 +464,9 @@ namespace ImageCollection
             if (args.Length > 1)
             {
                 if (!Directory.Exists(args[1]))
+                {
                     Close();
+                }
 
                 if (args.Contains("-oc"))
                 {
@@ -457,7 +485,9 @@ namespace ImageCollection
                     }
                 }
                 else
+                {
                     OpenFolderShell(args[1]);
+                }
             }
             else
             {
@@ -471,6 +501,11 @@ namespace ImageCollection
                 else if (work == StartWork.OpenCollection)
                 {
                     MenuItem_OpenCollections_Click(null, null);
+                }
+                else if (work == StartWork.LastOpenCollection)
+                {
+                    ProgramSettings settings = ProgramSettings.GetInstance();
+                    OpenCollectionsShell(settings.LastOpenCollection);
                 }
             }
         }
