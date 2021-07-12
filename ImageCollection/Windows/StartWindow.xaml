@@ -14,6 +14,6 @@
         <TextBlock Text="Начало Работы" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Center" FontWeight="Medium" FontSize="18" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button Content="Открыть папку" Height="30" Margin="10,40,10,0" VerticalAlignment="Top" Click="Button_OpenFolder_Click"/>
         <Button Content="Открыть коллекции" Height="30" Margin="10,75,10,0" VerticalAlignment="Top" Click="Button_OpenCollections_Click"/>
-        <Button x:Name="button_LastOpenCollection" Content="Открыть последнии открытые коллекции" Height="30" Margin="10,110,10,0" VerticalAlignment="Top" Click="Button_LastOpenCollections_Click"/>
+        <Button x:Name="button_LastOpenCollection" Content="Открыть последнюю сессию" Height="30" Margin="10,110,10,0" VerticalAlignment="Top" Click="Button_LastOpenCollections_Click"/>
     </Grid>
 </Window>
