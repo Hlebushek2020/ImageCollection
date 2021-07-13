@@ -12,15 +12,20 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
-        Closing="Window_Closing">
+        Closing="Window_Closing"
+        SnapsToDevicePixels="True">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Image x:Name="image_Icon" Grid.Column="0" HorizontalAlignment="Left" Height="60" Margin="10,10,0,10" VerticalAlignment="Center" Width="60"/>
-        <TextBlock x:Name="textBlock_Message" Style="{StaticResource TextBlockStyle}" Grid.Column="1" Margin="10,10,10,4" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        <StackPanel Grid.Column="1" HorizontalAlignment="Right" Height="30" Margin="10,0,10,10" VerticalAlignment="Bottom" Orientation="Horizontal">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="image_Icon" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Left" Height="60" Margin="10,10,0,10" VerticalAlignment="Center" Width="60"/>
+        <TextBlock x:Name="textBlock_Message" Style="{StaticResource TextBlockStyle}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Height="30" Margin="10,0,10,10" VerticalAlignment="Bottom" Orientation="Horizontal">
             <Button x:Name="button_OK" Content="OK" Width="80" Margin="4,0,0,0" Visibility="Collapsed" Tag="1" Click="Button_MBR_Click"/>
             <Button x:Name="button_Yes" Content="Да" Width="80" Margin="4,0,0,0" Visibility="Collapsed" Tag="6" Click="Button_MBR_Click"/>
             <Button x:Name="button_No" Content="Нет" Width="80" Margin="4,0,0,0" Visibility="Collapsed" Tag="7" Click="Button_MBR_Click"/>
