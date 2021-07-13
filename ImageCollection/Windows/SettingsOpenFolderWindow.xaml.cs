@@ -105,7 +105,7 @@ namespace ImageCollection
         {
             if (textBox_baseDirectory.Text.Equals(BaseDirectoryPlaceholder))
             {
-                Classes.UI.MessageBox.Show("Выберите базавую директорию!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Выберите базoвую директорию!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(textBox_searchMask.Text))
