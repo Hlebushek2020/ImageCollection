@@ -88,10 +88,14 @@
     <Compile Include="Classes\Collections\Collection.cs" />
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
+    <Compile Include="Classes\UI\MessageBox.cs" />
     <Compile Include="Classes\Views\ListBoxImageItem.cs" />
     <Compile Include="Classes\Settings\ProgramSettings.cs" />
     <Compile Include="Classes\Collections\CollectionStore.cs" />
     <Compile Include="Classes\Settings\StoreSettings.cs" />
+    <Compile Include="Windows\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Structures\CollectionKeyInformation.cs" />
     <Compile Include="Structures\OpenFolderArgs.cs" />
     <Compile Include="Windows\CollectionHotkeyEditWindow.xaml.cs">
@@ -130,6 +134,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="Windows\MessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\CollectionHotkeyEditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -219,6 +227,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\dialog-error.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dialog-information.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dialog-question.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dialog-warning.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,6 +10,7 @@ namespace ImageCollection.Enums
     {
         OpenFolder,
         OpenCollection,
+        LastOpenCollection,
         None
     }
 }

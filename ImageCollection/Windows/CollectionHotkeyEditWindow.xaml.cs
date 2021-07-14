@@ -60,18 +60,18 @@ namespace ImageCollection
         {
             if (!currentKey.HasValue)
             {
-                MessageBox.Show("Введите горячую клавишу!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Введите горячую клавишу!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (CollectionStore.Settings.CollectionHotkeys.ContainsKey(currentKey.Value) && !currentKey.Equals(editkey))
             {
-                MessageBox.Show("Такая горячая клавиша уже используется, введите другую!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Такая горячая клавиша уже используется, введите другую!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             string collectionName = (string)comboBox_Collections.SelectedItem;
             if (CollectionStore.Settings.CollectionHotkeys.ContainsValue(collectionName))
             {
-                if (MessageBox.Show("Для выбранной коллекции уже назначена грячая клавиша, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (Classes.UI.MessageBox.Show("Для выбранной коллекции уже назначена грячая клавиша, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }

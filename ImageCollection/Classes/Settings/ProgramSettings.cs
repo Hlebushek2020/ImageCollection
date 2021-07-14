@@ -16,6 +16,7 @@ namespace ImageCollection.Classes.Settings
 
         #region Settings
         public string Theme { get; set; } = "Light";
+        public string LastOpenCollection { get; set; } = null;
         #endregion
 
         /// <summary>
@@ -26,9 +27,13 @@ namespace ImageCollection.Classes.Settings
             if (settings == null)
             {
                 if (File.Exists(settingsPath))
+                {
                     settings = JsonConvert.DeserializeObject<ProgramSettings>(File.ReadAllText(settingsPath, Encoding.UTF8));
+                }
                 else
+                {
                     settings = new ProgramSettings();
+                }
             }
             return settings;
         }
