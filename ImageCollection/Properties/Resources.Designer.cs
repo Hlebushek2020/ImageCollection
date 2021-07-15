@@ -91,42 +91,42 @@ namespace ImageCollection.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Icon dialog_error {
+        internal static System.Drawing.Bitmap dialog_error_64 {
             get {
-                object obj = ResourceManager.GetObject("dialog_error", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                object obj = ResourceManager.GetObject("dialog_error_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Icon dialog_information {
+        internal static System.Drawing.Bitmap dialog_information_64 {
             get {
-                object obj = ResourceManager.GetObject("dialog_information", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                object obj = ResourceManager.GetObject("dialog_information_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Icon dialog_question {
+        internal static System.Drawing.Bitmap dialog_question_64 {
             get {
-                object obj = ResourceManager.GetObject("dialog_question", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                object obj = ResourceManager.GetObject("dialog_question_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Icon dialog_warning {
+        internal static System.Drawing.Bitmap dialog_warning_64 {
             get {
-                object obj = ResourceManager.GetObject("dialog_warning", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                object obj = ResourceManager.GetObject("dialog_warning_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

@@ -228,18 +228,17 @@
   <ItemGroup>
     <Resource Include="TODO.txt" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Resources\dialog-error.ico" />
+    <Resource Include="Resources\dialog-error-64.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dialog-information.ico" />
+    <Resource Include="Resources\dialog-information-64.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dialog-question.ico" />
+    <Resource Include="Resources\dialog-question-64.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dialog-warning.ico" />
+    <Resource Include="Resources\dialog-warning-64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

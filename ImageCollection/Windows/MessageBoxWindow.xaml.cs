@@ -50,16 +50,16 @@ namespace ImageCollection
             switch (icon)
             {
                 case MessageBoxImage.Error:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-error.ico"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-error-64.png"));
                     break;
                 case MessageBoxImage.Information:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-information.ico"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-information-64.png"));
                     break;
                 case MessageBoxImage.Question:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-question.ico"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-question-64.png"));
                     break;
                 case MessageBoxImage.Warning:
-                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-warning.ico"));
+                    image_Icon.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/dialog-warning-64.png"));
                     break;
             }
         }
