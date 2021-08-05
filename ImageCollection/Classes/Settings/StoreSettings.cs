@@ -22,7 +22,7 @@ namespace ImageCollection.Classes.Settings
         /// <summary>
         /// Горячие клавиши (НАПРЯМУЮ НЕРАБОТАЕМ)
         /// </summary>
-        public Dictionary<Key, string> CollectionHotkeys { get; set; } = new Dictionary<Key, string>();
+        public Dictionary<Hotkey, string> CollectionHotkeys { get; set; } = new Dictionary<Hotkey, string>();
 
         public StoreSettings(string baseDirectory) =>
             BaseDirectory = baseDirectory;

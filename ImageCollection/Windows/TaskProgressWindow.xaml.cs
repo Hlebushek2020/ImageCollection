@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Security.Cryptography;
+using ImageCollection.Classes.Settings;
 
 namespace ImageCollection
 {
@@ -232,6 +233,12 @@ namespace ImageCollection
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Сохранение настроек...\r\n"));
                 CollectionStore.Settings.Save();
             }
+            ProgramSettings settings = ProgramSettings.GetInstance();
+            if (!settings.LastOpenCollection.Equals(CollectionStore.Settings.BaseDirectory))
+            {
+                settings.LastOpenCollection = CollectionStore.Settings.BaseDirectory;
+                settings.Save();
+            }
         }
 
         /// <summary>
@@ -341,6 +348,9 @@ namespace ImageCollection
                         }
                     }
                 }
+                ProgramSettings settings = ProgramSettings.GetInstance();
+                settings.LastOpenCollection = baseDirectory;
+                settings.Save();
                 Dispatcher.Invoke(() =>
                 {
                     inProgress = false;

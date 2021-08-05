@@ -101,23 +101,11 @@ namespace ImageCollection
             {
                 TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.OpenCollections, new object[] { baseDirectory });
                 taskProgressWindow.ShowDialog();
-                SetLastOpenCollection();
                 RefreshAfterOpening();
             }
             else
             {
                 Classes.UI.MessageBox.Show("Данные о коллекциях не обнаружены. Продолжение операции невозможно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        private void SetLastOpenCollection()
-        {
-            ProgramSettings settings = ProgramSettings.GetInstance();
-            string baseDirectory = CollectionStore.Settings.BaseDirectory;
-            if (!baseDirectory.Equals(settings.LastOpenCollection))
-            {
-                settings.LastOpenCollection = baseDirectory;
-                settings.Save();
             }
         }
         #endregion
@@ -126,7 +114,6 @@ namespace ImageCollection
         {
             TaskProgressWindow taskProgressWindow = new TaskProgressWindow(TaskType.SaveCollections);
             taskProgressWindow.ShowDialog();
-            SetLastOpenCollection();
         }
 
         private void MenuItem_RemoveSelectedFiles_Click(object sender, RoutedEventArgs e)

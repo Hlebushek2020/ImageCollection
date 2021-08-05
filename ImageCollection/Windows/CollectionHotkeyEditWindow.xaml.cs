@@ -1,7 +1,9 @@
 ﻿using ImageCollection.Classes.Collections;
+using ImageCollection.Classes.Views;
 using ImageCollection.Structures;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ namespace ImageCollection
     {
         private const string EnterHotkeyPlaceholder = "Введите клавишу";
 
+        private readonly ObservableCollection<ComboBoxModifierKey> modifiersKeys;
         private readonly Brush currentForeground;
         private readonly Brush placeholderForeground;
 
@@ -31,21 +34,30 @@ namespace ImageCollection
 
         public CollectionKeyInformation? KeyInformation { get; private set; } = null;
 
-        public CollectionHotkeyEditWindow(Key? key = null)
+        public CollectionHotkeyEditWindow(Hotkey? hotkey = null)
         {
             InitializeComponent();
 
             currentForeground = (Brush)TryFindResource("Base.Foreground");
             placeholderForeground = (Brush)TryFindResource("Base.Placeholder.Foreground");
 
+            modifiersKeys = new ObservableCollection<ComboBoxModifierKey> {
+                new ComboBoxModifierKey { DisplayKey = "Нет", ValueKey = ModifierKeys.None },
+                new ComboBoxModifierKey { DisplayKey = "Alt", ValueKey = ModifierKeys.Alt },
+                new ComboBoxModifierKey { DisplayKey = "Ctrl", ValueKey = ModifierKeys.Control },
+                new ComboBoxModifierKey { DisplayKey = "Shift", ValueKey = ModifierKeys.Shift}
+            };
+            comboBox_ModifierKey.ItemsSource = modifiersKeys;
+            comboBox_ModifierKey.DisplayMemberPath = "DisplayKey";
+
             comboBox_Collections.ItemsSource = CollectionStore.ActualCollections;
 
-            if (key.HasValue)
+            if (hotkey.HasValue)
             {
-                comboBox_Collections.SelectedItem = CollectionStore.Settings.CollectionHotkeys[key.Value];;
-                textBox_Hotkey.Text = key.Value.ToString();
-                editkey = key;
-                currentKey = key;
+                comboBox_Collections.SelectedItem = CollectionStore.Settings.CollectionHotkeys[hotkey.Value];
+                textBox_Hotkey.Text = hotkey.Value.ToString();
+                editkey = hotkey.Value.Key;
+                currentKey = hotkey.Value.Key;
             }
             else
             {
@@ -63,20 +75,22 @@ namespace ImageCollection
                 Classes.UI.MessageBox.Show("Введите горячую клавишу!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (CollectionStore.Settings.CollectionHotkeys.ContainsKey(currentKey.Value) && !currentKey.Equals(editkey))
+            ModifierKeys modifier = ((ComboBoxModifierKey)comboBox_ModifierKey.SelectedItem).ValueKey;
+            Hotkey hotkey = new Hotkey { Key = currentKey.Value, Modifier = modifier };
+            if (CollectionStore.Settings.CollectionHotkeys.ContainsKey(hotkey) && !currentKey.Equals(editkey))
             {
-                Classes.UI.MessageBox.Show("Такая горячая клавиша уже используется, введите другую!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Classes.UI.MessageBox.Show("Такая комбинация уже используется, введите другую!", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             string collectionName = (string)comboBox_Collections.SelectedItem;
             if (CollectionStore.Settings.CollectionHotkeys.ContainsValue(collectionName))
             {
-                if (Classes.UI.MessageBox.Show("Для выбранной коллекции уже назначена грячая клавиша, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (Classes.UI.MessageBox.Show("Для выбранной коллекции уже назначена такая комбинация клавиш, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }
             }
-            KeyInformation = new CollectionKeyInformation(currentKey.Value, collectionName);
+            KeyInformation = new CollectionKeyInformation(hotkey, collectionName);
             Close();
         }
 

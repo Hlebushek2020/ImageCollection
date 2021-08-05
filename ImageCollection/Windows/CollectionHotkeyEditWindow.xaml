@@ -7,14 +7,15 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib" 
         mc:Ignorable="d"
         Title="CollectionHotkeyEditWindow" 
-        Height="120" 
-        Width="650"
+        Height="125" 
+        Width="750"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
         FontSize="14">
     <Grid>
-        <TextBox x:Name="textBox_Hotkey" HorizontalAlignment="Left" Margin="10,10,0,0" TextAlignment="Center"  VerticalAlignment="Top" Width="150" PreviewKeyDown="TextBox_PreviewKeyDown" IsReadOnlyCaretVisible="True" GotFocus="TextBox_Hotkey_GotFocus" LostFocus="TextBox_Hotkey_LostFocus"/>
-        <ComboBox x:Name="comboBox_Collections" Margin="165,11,10,0" VerticalAlignment="Top" SelectedIndex="0"/>
+        <ComboBox x:Name="comboBox_ModifierKey" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top" Width="150" SelectedIndex="0"/>
+        <TextBox x:Name="textBox_Hotkey" HorizontalAlignment="Left" Margin="165,10,0,0" TextAlignment="Center" VerticalAlignment="Top" Width="150" PreviewKeyDown="TextBox_PreviewKeyDown" IsReadOnlyCaretVisible="True" GotFocus="TextBox_Hotkey_GotFocus" LostFocus="TextBox_Hotkey_LostFocus"/>
+        <ComboBox x:Name="comboBox_Collections" Margin="320,11,10,0" VerticalAlignment="Top" SelectedIndex="0"/>
         <Button Content="Применить" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="150" Height="30" Click="Button_Apply_Click"/>
         <Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="30" Click="Button_Close_Click" />
     </Grid>

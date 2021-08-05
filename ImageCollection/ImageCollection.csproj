@@ -89,10 +89,12 @@
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
     <Compile Include="Classes\UI\MessageBox.cs" />
+    <Compile Include="Classes\Views\ComboBoxModifierKey.cs" />
     <Compile Include="Classes\Views\ListBoxImageItem.cs" />
     <Compile Include="Classes\Settings\ProgramSettings.cs" />
     <Compile Include="Classes\Collections\CollectionStore.cs" />
     <Compile Include="Classes\Settings\StoreSettings.cs" />
+    <Compile Include="Structures\Hotkey.cs" />
     <Compile Include="Windows\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>

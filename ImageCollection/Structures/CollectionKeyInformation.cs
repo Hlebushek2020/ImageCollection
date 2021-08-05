@@ -9,12 +9,12 @@ namespace ImageCollection.Structures
 {
     public struct CollectionKeyInformation
     {
-        public Key Key { get; }
+        public Hotkey Hotkey { get; }
         public string CollectionName { get; }
 
-        public CollectionKeyInformation(Key key, string collectionName)
+        public CollectionKeyInformation(Hotkey hotkey, string collectionName)
         {
-            Key = key;
+            Hotkey = hotkey;
             CollectionName = collectionName;
         }
     }
