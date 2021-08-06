@@ -40,11 +40,11 @@ namespace ImageCollection.Classes.Settings
         #region Hotkeys
         public void AddHotkey(CollectionKeyInformation keyInformation)
         {
-            CollectionHotkeys.Add(keyInformation.Key, keyInformation.CollectionName);
+            CollectionHotkeys.Add(keyInformation.Hotkey, keyInformation.CollectionName);
             IsChanged = true;
         }
 
-        public void RemoveHotkey(Key key)
+        public void RemoveHotkey(Hotkey key)
         {
             CollectionHotkeys.Remove(key);
             IsChanged = true;
@@ -52,8 +52,8 @@ namespace ImageCollection.Classes.Settings
 
         public void RemoveHotkey(string collection)
         {
-            List<Key> deleteHotkeys = CollectionHotkeys.Where(x => x.Value.Equals(collection)).Select(x => x.Key).ToList();
-            foreach (Key key in deleteHotkeys)
+            List<Hotkey> deleteHotkeys = CollectionHotkeys.Where(x => x.Value.Equals(collection)).Select(x => x.Key).ToList();
+            foreach (Hotkey key in deleteHotkeys)
             {
                 CollectionHotkeys.Remove(key);
             }
@@ -68,14 +68,14 @@ namespace ImageCollection.Classes.Settings
 
         public void SetHotkeyCollection(CollectionKeyInformation keyInformation)
         {
-            CollectionHotkeys[keyInformation.Key] = keyInformation.CollectionName;
+            CollectionHotkeys[keyInformation.Hotkey] = keyInformation.CollectionName;
             IsChanged = true;
         }
 
         public void SetHotkeyCollection(string collectionOld, string collectionNew)
         {
-            List<Key> deleteHotkeys = CollectionHotkeys.Where(x => x.Value.Equals(collectionOld)).Select(x => x.Key).ToList();
-            foreach (Key key in deleteHotkeys)
+            List<Hotkey> deleteHotkeys = CollectionHotkeys.Where(x => x.Value.Equals(collectionOld)).Select(x => x.Key).ToList();
+            foreach (Hotkey key in deleteHotkeys)
             {
                 CollectionHotkeys[key] = collectionNew;
             }

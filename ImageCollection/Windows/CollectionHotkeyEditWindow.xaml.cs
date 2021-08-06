@@ -85,7 +85,7 @@ namespace ImageCollection
             string collectionName = (string)comboBox_Collections.SelectedItem;
             if (CollectionStore.Settings.CollectionHotkeys.ContainsValue(collectionName))
             {
-                if (Classes.UI.MessageBox.Show("Для выбранной коллекции уже назначена такая комбинация клавиш, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (Classes.UI.MessageBox.Show("Для выбранной коллекции уже назначена комбинация клавиш, назначить еще одну?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }
@@ -96,28 +96,24 @@ namespace ImageCollection
 
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.LeftCtrl && 
-                e.Key != Key.RightCtrl && 
-                e.Key != Key.LeftShift && 
-                e.Key != Key.RightShift && 
-                e.Key != Key.LeftAlt && 
-                e.Key != Key.RightAlt && 
-                e.Key != Key.Enter && 
-                e.Key != Key.O && 
-                e.Key != Key.S &&
-                e.Key != Key.Delete && 
-                e.Key != Key.F2 && 
-                e.Key != Key.N && 
-                e.Key != Key.E && 
-                e.Key != Key.D && 
-                e.Key != Key.H &&
-                e.Key != Key.A && 
-                e.Key != Key.Up && 
-                e.Key != Key.Down &&
-                e.Key != Key.Tab)
+            int keyInt = (int)e.Key;
+            if ((keyInt >= 34 && keyInt <= 69) || (keyInt >= 74 && keyInt <= 83) || (keyInt >= 90 && keyInt <= 113))
             {
-                textBox_Hotkey.Text = e.Key.ToString();
-                currentKey = e.Key;
+                if ((Keyboard.Modifiers == ModifierKeys.Control &&
+                    e.Key != Key.O &&
+                    e.Key != Key.S &&
+                    e.Key != Key.F2 &&
+                    e.Key != Key.N &&
+                    e.Key != Key.E &&
+                    e.Key != Key.D &&
+                    e.Key != Key.H &&
+                    e.Key != Key.A) ||
+                    (Keyboard.Modifiers == ModifierKeys.Alt &&
+                    e.Key != Key.F4))
+                {
+                    textBox_Hotkey.Text = e.Key.ToString();
+                    currentKey = e.Key;
+                }
             }
             e.Handled = true;
         }

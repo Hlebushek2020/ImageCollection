@@ -86,6 +86,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Collections\Collection.cs" />
+    <Compile Include="Classes\Converters\HotkeyConverter.cs" />
     <Compile Include="Classes\ItemMovers\ItemMover.cs" />
     <Compile Include="Classes\ItemMovers\RemoveCollectionItemMover.cs" />
     <Compile Include="Classes\UI\MessageBox.cs" />
@@ -228,9 +229,6 @@
     <Resource Include="Resources\edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="TODO.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\dialog-error-64.png" />
   </ItemGroup>
   <ItemGroup>
@@ -242,5 +240,6 @@
   <ItemGroup>
     <Resource Include="Resources\dialog-warning-64.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

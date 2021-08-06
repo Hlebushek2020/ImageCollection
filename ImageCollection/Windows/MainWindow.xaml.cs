@@ -557,67 +557,73 @@ namespace ImageCollection
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+            bool isContinue = true;
+            if (CollectionStore.Settings != null)
             {
-                if (e.Key == Key.O)
+                Hotkey hotkey = new Hotkey { Modifier = Keyboard.Modifiers, Key = e.Key };
+                Dictionary<Hotkey, string> collectionHotkeys = CollectionStore.Settings.CollectionHotkeys;
+                if (comboBox_CollectionNames.SelectedItem != null &&
+                    listBox_CollectionItems.SelectedItems.Count > 0 &&
+                    collectionHotkeys.ContainsKey(hotkey))
                 {
-                    MenuItem_OpenFolder_Click(null, null);
+                    string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
+                    string toCollectionName = collectionHotkeys[hotkey];
+                    ToCollection(currentCollectionName, toCollectionName);
+                    isContinue = false;
                 }
             }
-            else if (Keyboard.Modifiers == ModifierKeys.Control)
+            if (isContinue)
             {
-                switch (e.Key)
+                if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
                 {
-                    case Key.O:
-                        MenuItem_OpenCollections_Click(null, null);
-                        break;
-                    case Key.S:
-                        MenuItem_SaveCollections_Click(null, null);
-                        break;
-                    case Key.Delete:
-                        MenuItem_RemoveCollection_Click(null, null);
-                        break;
-                    case Key.F2:
-                        MenuItem_RenameAllItemsInCollection_Click(null, null);
-                        break;
-                    case Key.N:
-                        MenuItem_CreateCollection_Click(null, null);
-                        break;
-                    case Key.E:
-                        MenuItem_EditCollectionDetails_Click(null, null);
-                        break;
-                    case Key.D:
-                        MenuItem_DistributeFolders_Click(null, null);
-                        break;
-                    case Key.H:
-                        MenuItem_CollectionHotkey_Click(null, null);
-                        break;
-                    case Key.A:
-                        MenuItem_ToCollection_Click(null, null);
-                        break;
-                    default:
-                        if (CollectionStore.Settings != null)
-                        {
-                            Dictionary<Key, string> collectionHotkeys = CollectionStore.Settings.CollectionHotkeys;
-                            if (comboBox_CollectionNames.SelectedItem != null &&
-                                listBox_CollectionItems.SelectedItems.Count > 0 &&
-                                collectionHotkeys.ContainsKey(e.Key))
-                            {
-                                string currentCollectionName = (string)comboBox_CollectionNames.SelectedItem;
-                                string toCollectionName = collectionHotkeys[e.Key];
-                                ToCollection(currentCollectionName, toCollectionName);
-                            }
-                        }
-                        break;
+                    if (e.Key == Key.O)
+                    {
+                        MenuItem_OpenFolder_Click(null, null);
+                    }
                 }
-            }
-            else if (e.Key == Key.F2)
-            {
-                MenuItem_RenameFile_Click(null, null);
-            }
-            else if (e.Key == Key.Delete)
-            {
-                MenuItem_RemoveSelectedFiles_Click(null, null);
+                else if (Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.O:
+                            MenuItem_OpenCollections_Click(null, null);
+                            break;
+                        case Key.S:
+                            MenuItem_SaveCollections_Click(null, null);
+                            break;
+                        case Key.Delete:
+                            MenuItem_RemoveCollection_Click(null, null);
+                            break;
+                        case Key.F2:
+                            MenuItem_RenameAllItemsInCollection_Click(null, null);
+                            break;
+                        case Key.N:
+                            MenuItem_CreateCollection_Click(null, null);
+                            break;
+                        case Key.E:
+                            MenuItem_EditCollectionDetails_Click(null, null);
+                            break;
+                        case Key.D:
+                            MenuItem_DistributeFolders_Click(null, null);
+                            break;
+                        case Key.H:
+                            MenuItem_CollectionHotkey_Click(null, null);
+                            break;
+                        case Key.A:
+                            MenuItem_ToCollection_Click(null, null);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else if (e.Key == Key.F2)
+                {
+                    MenuItem_RenameFile_Click(null, null);
+                }
+                else if (e.Key == Key.Delete)
+                {
+                    MenuItem_RemoveSelectedFiles_Click(null, null);
+                }
             }
         }
 
