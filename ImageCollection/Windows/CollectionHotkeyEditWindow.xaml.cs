@@ -97,9 +97,10 @@ namespace ImageCollection
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             int keyInt = (int)e.Key;
+            ModifierKeys modifier = ((ComboBoxModifierKey)comboBox_ModifierKey.SelectedItem).ValueKey;
             if ((keyInt >= 34 && keyInt <= 69) || (keyInt >= 74 && keyInt <= 83) || (keyInt >= 90 && keyInt <= 113))
             {
-                if ((Keyboard.Modifiers == ModifierKeys.Control &&
+                if ((modifier == ModifierKeys.Control &&
                     e.Key != Key.O &&
                     e.Key != Key.S &&
                     e.Key != Key.F2 &&
@@ -108,8 +109,9 @@ namespace ImageCollection
                     e.Key != Key.D &&
                     e.Key != Key.H &&
                     e.Key != Key.A) ||
-                    (Keyboard.Modifiers == ModifierKeys.Alt &&
-                    e.Key != Key.F4))
+                    (modifier == ModifierKeys.Alt &&
+                    e.Key != Key.F4) ||
+                    modifier == ModifierKeys.None)
                 {
                     textBox_Hotkey.Text = e.Key.ToString();
                     currentKey = e.Key;
@@ -134,6 +136,12 @@ namespace ImageCollection
                 textBox_Hotkey.Foreground = placeholderForeground;
                 textBox_Hotkey.Text = EnterHotkeyPlaceholder;
             }
+        }
+
+        private void СomboBox_ModifierKey_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            textBox_Hotkey.Text = string.Empty;
+            currentKey = null;
         }
     }
 }
