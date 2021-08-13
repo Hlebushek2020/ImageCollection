@@ -47,14 +47,14 @@ namespace ImageCollection
         {
             if (listBox_Hotkeys.SelectedItem != null)
             {
-                KeyValuePair<Key, string> item = (KeyValuePair<Key, string>)listBox_Hotkeys.SelectedItem;
+                KeyValuePair<Hotkey, string> item = (KeyValuePair<Hotkey, string>)listBox_Hotkeys.SelectedItem;
                 CollectionHotkeyEditWindow collectionHotkeyEdit = new CollectionHotkeyEditWindow(item.Key);
                 collectionHotkeyEdit.ShowDialog();
                 if (collectionHotkeyEdit.KeyInformation.HasValue)
                 {
                     CollectionKeyInformation keyInformation = collectionHotkeyEdit.KeyInformation.Value;
-                    Dictionary<Key, string> hotkeys = CollectionStore.Settings.CollectionHotkeys;
-                    if (hotkeys.ContainsKey(keyInformation.Key))
+                    Dictionary<Hotkey, string> hotkeys = CollectionStore.Settings.CollectionHotkeys;
+                    if (hotkeys.ContainsKey(keyInformation.Hotkey))
                     {
                         CollectionStore.Settings.SetHotkeyCollection(keyInformation);
                     }
@@ -71,8 +71,8 @@ namespace ImageCollection
         {
             if (listBox_Hotkeys.SelectedItem != null)
             {
-                KeyValuePair<Key, string> item = (KeyValuePair<Key, string>)listBox_Hotkeys.SelectedItem;
-                if (Classes.UI.MessageBox.Show($"Удалить бинд Ctrl + {item.Key}?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                KeyValuePair<Hotkey, string> item = (KeyValuePair<Hotkey, string>)listBox_Hotkeys.SelectedItem;
+                if (Classes.UI.MessageBox.Show($"Удалить бинд {item.Key}?", App.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     CollectionStore.Settings.RemoveHotkey(item.Key);
                     listBox_Hotkeys.Items.Refresh();
