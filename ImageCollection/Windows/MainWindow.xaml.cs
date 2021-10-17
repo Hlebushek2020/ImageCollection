@@ -706,6 +706,7 @@ namespace ImageCollection
                     {
                         TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.MergeCollections, new object[] { fbd.SelectedPath });
                         progressWindow.ShowDialog();
+                        ComboBox_CollectionNames_SelectionChanged(null, null);
                     }
                     else
                     {
