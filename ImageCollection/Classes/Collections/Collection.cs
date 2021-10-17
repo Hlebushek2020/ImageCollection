@@ -145,7 +145,7 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         public void RemoveIgnorRules(string item) =>
             actualItems.TryRemove(item, out _);
-            //actualItems.Remove(item);
+        //actualItems.Remove(item);
 
 
         /// <summary>

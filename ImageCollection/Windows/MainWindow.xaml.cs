@@ -695,5 +695,25 @@ namespace ImageCollection
                 collectionHotkey.ShowDialog();
             }
         }
+
+        private void MenuItem_MergeCollections_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = false })
+            {
+                if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    if (File.Exists(Path.Combine(fbd.SelectedPath, $"{CollectionStore.BaseCollectionId}.icd")))
+                    {
+                        TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.MergeCollections, new object[] { fbd.SelectedPath });
+                        progressWindow.ShowDialog();
+                    }
+                    else
+                    {
+                        Classes.UI.MessageBox.Show("Данные о коллекциях не обнаружены. Продолжение операции невозможно.",
+                        App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+        }
     }
 }

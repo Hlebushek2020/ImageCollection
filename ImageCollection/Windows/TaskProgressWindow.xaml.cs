@@ -1,16 +1,16 @@
-﻿using ImageCollection.Enums;
-using ImageCollection.Classes.Collections;
+﻿using ImageCollection.Classes.Collections;
+using ImageCollection.Classes.Settings;
+using ImageCollection.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Security.Cryptography;
-using ImageCollection.Classes.Settings;
 
 namespace ImageCollection
 {
@@ -56,6 +56,9 @@ namespace ImageCollection
                     break;
                 case TaskType.СlearImageCache:
                     currentOperation = new Task(() => СlearImageCacheAction());
+                    break;
+                case TaskType.MergeCollections:
+                    currentOperation = new Task(() => MergeCollectionsTaskAction((string)args[0]));
                     break;
             }
         }
@@ -789,6 +792,14 @@ namespace ImageCollection
                     logParagraph.Inlines.Add(run);
                 }), ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Объединение коллекций
+        /// </summary>
+        /// <param name="mergeCollectionPath">Путь к коллекциям для объединения с текущими</param>
+        public void MergeCollectionsTaskAction(string mergeCollectionPath)
+        {
         }
         #endregion
     }
