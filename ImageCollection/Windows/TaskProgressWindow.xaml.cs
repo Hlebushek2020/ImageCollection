@@ -813,12 +813,14 @@ namespace ImageCollection
                     .EnumerateFiles()
                     .Where(x => x.Extension.Equals(".icd"))
                     .Select(x => x.Name);
+                int deleteItemPath = CollectionStore.Settings.BaseDirectory.Length + 1;
                 foreach (string icdFileName in icdFiles)
                 {
                     string icdFilePath = Path.Combine(metaDirectory, icdFileName);
                     Dispatcher.Invoke((Action<string>)((string _icdFilePath) => logParagraph.Inlines.Add($"Обработка: \"{_icdFilePath}\"\r\n")), icdFilePath);
                     Collection collection = null;
                     string collectionName = null;
+                    Guid? parentId;
                     using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Open, FileAccess.Read))
                     {
                         using (BinaryReader icdReader = new BinaryReader(icdFile, Encoding.UTF8))
@@ -862,7 +864,7 @@ namespace ImageCollection
                                 // add
                                 if (icdReader.ReadBoolean())
                                 {
-                                    Guid? parentId = null;
+                                    parentId = null;
                                     // contains guid
                                     if (icdReader.ReadBoolean())
                                     {
@@ -889,20 +891,20 @@ namespace ImageCollection
                     Collection currentCollection = CollectionStore.Get(collectionName);
                     string toCollectionPath = CollectionStore.Settings.BaseDirectory;
                     bool hasDirectory = false;
-                    Guid? parentId = CollectionStore.BaseCollectionId;
-                    if (!string.IsNullOrEmpty(currentCollection.OriginalFolderName))
+                    parentId = CollectionStore.BaseCollectionId;
+                    if (!string.IsNullOrEmpty(currentCollection.OriginalFolderName) || currentCollection.Id.Equals(CollectionStore.BaseCollectionId))
                     {
-                        toCollectionPath = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollection.OriginalFolderName);
-                        hasDirectory = true;
-                    }
-                    else if (currentCollection.Id.Equals(CollectionStore.BaseCollectionId))
-                    {
+                        if (!string.IsNullOrEmpty(currentCollection.OriginalFolderName) && !currentCollection.Id.Equals(CollectionStore.BaseCollectionId))
+                        {
+                            toCollectionPath = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollection.OriginalFolderName);
+                        }
                         hasDirectory = true;
                         parentId = null;
                     }
                     foreach (KeyValuePair<string, CollectionItemMeta> item in collection.ActualItems)
                     {
                         string fromFilePath = Path.Combine(mergeCollectionPath, item.Key);
+                        Dispatcher.Invoke((Action<string>)((string _mergeItem) => logParagraph.Inlines.Add($"Обработка: \"{_mergeItem}\"")), fromFilePath);
                         string fileName = Path.GetFileName(fromFilePath);
                         string toFilePath = Path.Combine(toCollectionPath, fileName);
                         int counter = 0;
@@ -912,6 +914,7 @@ namespace ImageCollection
                             counter++;
                         }
                         File.Move(fromFilePath, toFilePath);
+                        currentCollection.AddIgnorRules(toFilePath.Remove(0, deleteItemPath), hasDirectory, parentId);
                     }
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение изменений...\r\n"));
