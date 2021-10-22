@@ -891,6 +891,7 @@ namespace ImageCollection
                         CollectionStore.Add(new Structures.CollectionInformation(collectionName, false, null, false));
                     }
                     Collection currentCollection = CollectionStore.Get(collectionName);
+                    currentCollection.IsChanged = true;
                     string toCollectionPath = CollectionStore.Settings.BaseDirectory;
                     bool hasDirectory = false;
                     parentId = CollectionStore.BaseCollectionId;
@@ -924,6 +925,7 @@ namespace ImageCollection
                         }
                     }
                 }
+                baseCollection.IsChanged = true;
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение изменений...\r\n"));
                 BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
