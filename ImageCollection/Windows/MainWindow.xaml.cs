@@ -702,16 +702,15 @@ namespace ImageCollection
             {
                 if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    if (File.Exists(Path.Combine(fbd.SelectedPath, $"{CollectionStore.BaseCollectionId}.icd")))
+                    if (File.Exists(Path.Combine(fbd.SelectedPath, CollectionStore.DataDirectoryName, $"{CollectionStore.BaseCollectionId}.icd")))
                     {
                         TaskProgressWindow progressWindow = new TaskProgressWindow(TaskType.MergeCollections, new object[] { fbd.SelectedPath });
                         progressWindow.ShowDialog();
-                        ComboBox_CollectionNames_SelectionChanged(null, null);
+                        RefreshAfterOpening();
                     }
                     else
                     {
-                        Classes.UI.MessageBox.Show("Данные о коллекциях не обнаружены. Продолжение операции невозможно.",
-                        App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        Classes.UI.MessageBox.Show("Данные о коллекциях не обнаружены. Продолжение операции невозможно.", App.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }

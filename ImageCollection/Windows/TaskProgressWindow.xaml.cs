@@ -806,14 +806,16 @@ namespace ImageCollection
                 {
                     inProgress = true;
                     progressBar_Progress.IsIndeterminate = true;
-                    logParagraph.Inlines.Add("Поиск метаданных коллекций...\r\n");
+                    logParagraph.Inlines.Add("Подготовка...\r\n");
                 });
                 string metaDirectory = Path.Combine(mergeCollectionPath, CollectionStore.DataDirectoryName);
+                int deleteItemPath = CollectionStore.Settings.BaseDirectory.Length + 1;
+                Collection baseCollection = CollectionStore.Get(CollectionStore.BaseCollectionName);
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Поиск метаданных коллекций...\r\n"));
                 IEnumerable<string> icdFiles = new DirectoryInfo(metaDirectory)
                     .EnumerateFiles()
                     .Where(x => x.Extension.Equals(".icd"))
                     .Select(x => x.Name);
-                int deleteItemPath = CollectionStore.Settings.BaseDirectory.Length + 1;
                 foreach (string icdFileName in icdFiles)
                 {
                     string icdFilePath = Path.Combine(metaDirectory, icdFileName);
@@ -914,7 +916,12 @@ namespace ImageCollection
                             counter++;
                         }
                         File.Move(fromFilePath, toFilePath);
-                        currentCollection.AddIgnorRules(toFilePath.Remove(0, deleteItemPath), hasDirectory, parentId);
+                        fileName = toFilePath.Remove(0, deleteItemPath);
+                        currentCollection.AddIgnorRules(fileName, hasDirectory, parentId);
+                        if (hasDirectory == false)
+                        {
+                            baseCollection.RemoveIgnorRules(fileName);
+                        }
                     }
                 }
                 Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение изменений...\r\n"));
