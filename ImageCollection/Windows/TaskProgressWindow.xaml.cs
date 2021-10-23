@@ -921,7 +921,7 @@ namespace ImageCollection
                         currentCollection.AddIgnorRules(fileName, hasDirectory, parentId);
                         if (hasDirectory == false)
                         {
-                            baseCollection.RemoveIgnorRules(fileName);
+                            baseCollection.AddIrrelevantItem(fileName);
                         }
                     }
                 }

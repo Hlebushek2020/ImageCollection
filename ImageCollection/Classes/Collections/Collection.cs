@@ -112,6 +112,15 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
+        /// Добавление элемента в список удаленных
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        public void AddIrrelevantItem(string item)
+        {
+            irrelevantItems.Add(item);
+        }
+
+        /// <summary>
         /// Очистка коллекции, указывающей, какие элементы были исключены из актуальных
         /// </summary>
         public bool ClearIrrelevantItems()
