@@ -8,7 +8,7 @@ namespace ImageCollection.Classes.Collections
         public Guid? Parent { get; private set; }
         public string Hash { get; set; }
         public string Description { get; set; }
-        
+
         public CollectionItemMeta(bool inCurrentFolder, Guid? parent)
         {
             InCurrentFolder = inCurrentFolder;

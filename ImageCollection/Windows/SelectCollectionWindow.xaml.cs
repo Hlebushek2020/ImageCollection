@@ -11,7 +11,7 @@ namespace ImageCollection
         private readonly string currentCollectionName;
 
         public bool IsApply { get; private set; } = false;
-        
+
         public SelectCollectionWindow(string currentCollectionName)
         {
             InitializeComponent();

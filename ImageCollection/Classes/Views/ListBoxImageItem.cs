@@ -19,7 +19,7 @@ namespace ImageCollection.Classes.Views
                 path = value;
                 OnPropertyChanged();
             }
-        } 
+        }
 
         public BitmapImage Preview
         {

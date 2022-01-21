@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ImageCollection.Enums
+﻿namespace ImageCollection.Enums
 {
     public enum TaskType : byte
     {
@@ -13,6 +7,7 @@ namespace ImageCollection.Enums
         SaveCollections,
         Distribution,
         RenameCollectionItems,
-        СlearImageCache
+        СlearImageCache,
+        MergeCollections
     }
 }

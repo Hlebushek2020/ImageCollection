@@ -112,6 +112,15 @@ namespace ImageCollection.Classes.Collections
         }
 
         /// <summary>
+        /// Добавление элемента в список удаленных
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        public void AddIrrelevantItem(string item)
+        {
+            irrelevantItems.Add(item);
+        }
+
+        /// <summary>
         /// Очистка коллекции, указывающей, какие элементы были исключены из актуальных
         /// </summary>
         public bool ClearIrrelevantItems()
@@ -145,7 +154,7 @@ namespace ImageCollection.Classes.Collections
         /// <param name="item">Элемент</param>
         public void RemoveIgnorRules(string item) =>
             actualItems.TryRemove(item, out _);
-            //actualItems.Remove(item);
+        //actualItems.Remove(item);
 
 
         /// <summary>

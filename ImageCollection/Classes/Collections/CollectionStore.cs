@@ -1,6 +1,5 @@
 ﻿using ImageCollection.Classes.ItemMovers;
 using ImageCollection.Classes.Settings;
-using ImageCollection.Classes.Views;
 using ImageCollection.Structures;
 using System;
 using System.Collections.Generic;

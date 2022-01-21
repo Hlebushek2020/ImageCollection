@@ -1,16 +1,16 @@
-﻿using ImageCollection.Enums;
-using ImageCollection.Classes.Collections;
+﻿using ImageCollection.Classes.Collections;
+using ImageCollection.Classes.Settings;
+using ImageCollection.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Security.Cryptography;
-using ImageCollection.Classes.Settings;
 
 namespace ImageCollection
 {
@@ -56,6 +56,9 @@ namespace ImageCollection
                     break;
                 case TaskType.СlearImageCache:
                     currentOperation = new Task(() => СlearImageCacheAction());
+                    break;
+                case TaskType.MergeCollections:
+                    currentOperation = new Task(() => MergeCollectionsTaskAction((string)args[0]));
                     break;
             }
         }
@@ -771,6 +774,160 @@ namespace ImageCollection
                         break;
                     }
                 }
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = false;
+                    Close();
+                });
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke((Action<string>)((valueError) =>
+                {
+                    inProgress = false;
+                    Run run = new Run(valueError)
+                    {
+                        Foreground = Brushes.Red,
+                    };
+                    logParagraph.Inlines.Add(run);
+                }), ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Объединение коллекций
+        /// </summary>
+        /// <param name="mergeCollectionPath">Путь к коллекциям для объединения с текущими</param>
+        public void MergeCollectionsTaskAction(string mergeCollectionPath)
+        {
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    inProgress = true;
+                    progressBar_Progress.IsIndeterminate = true;
+                    logParagraph.Inlines.Add("Подготовка...\r\n");
+                });
+                string metaDirectory = Path.Combine(mergeCollectionPath, CollectionStore.DataDirectoryName);
+                int deleteItemPath = CollectionStore.Settings.BaseDirectory.Length + 1;
+                Collection baseCollection = CollectionStore.Get(CollectionStore.BaseCollectionName);
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Поиск метаданных коллекций...\r\n"));
+                IEnumerable<string> icdFiles = new DirectoryInfo(metaDirectory)
+                    .EnumerateFiles()
+                    .Where(x => x.Extension.Equals(".icd"))
+                    .Select(x => x.Name);
+                foreach (string icdFileName in icdFiles)
+                {
+                    string icdFilePath = Path.Combine(metaDirectory, icdFileName);
+                    Dispatcher.Invoke((Action<string>)((string _icdFilePath) => logParagraph.Inlines.Add($"Обработка: \"{_icdFilePath}\"\r\n")), icdFilePath);
+                    Collection collection = null;
+                    string collectionName = null;
+                    Guid? parentId;
+                    using (FileStream icdFile = new FileStream(icdFilePath, FileMode.Open, FileAccess.Read))
+                    {
+                        using (BinaryReader icdReader = new BinaryReader(icdFile, Encoding.UTF8))
+                        {
+                            Dispatcher.Invoke(() => logParagraph.Inlines.Add("Чтение базовых сведений...\r\n"));
+                            Guid id = new Guid(icdReader.ReadBytes(16));
+                            collection = new Collection(id);
+                            collectionName = icdReader.ReadString();
+                            if (icdReader.ReadBoolean())
+                            {
+                                collection.Description = icdReader.ReadString();
+                            }
+                            bool ofnContains = icdReader.ReadBoolean();
+                            if (ofnContains || id == CollectionStore.BaseCollectionId)
+                            {
+                                if (ofnContains)
+                                {
+                                    collection.OriginalFolderName = icdReader.ReadString();
+                                }
+                                // get files from folder and add coll
+                                string collectionFolder = mergeCollectionPath;
+                                if (id != CollectionStore.BaseCollectionId)
+                                {
+                                    collectionFolder = Path.Combine(mergeCollectionPath, collection.OriginalFolderName);
+                                }
+                                Dispatcher.Invoke(() => logParagraph.Inlines.Add($"Получение файлов коллекции...\r\n"));
+                                IEnumerable<string> files = new DirectoryInfo(collectionFolder)
+                                    .EnumerateFiles()
+                                    .Where(x => x.Extension.Equals(".bmp") || x.Extension.Equals(".jpg") || x.Extension.Equals(".jpeg") || x.Extension.Equals(".png"))
+                                    .Select(x => x.FullName);
+                                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Добавление файлов...\r\n"));
+                                foreach (string filePath in files)
+                                {
+                                    collection.AddIgnorRules(filePath.Remove(0, mergeCollectionPath.Length + 1), true, null);
+                                }
+                            }
+                            // read icd processing
+                            Dispatcher.Invoke(() => logParagraph.Inlines.Add("Обработка актуальных и исключенных элементов...\r\n"));
+                            while (icdFile.Length != icdFile.Position)
+                            {
+                                // add
+                                if (icdReader.ReadBoolean())
+                                {
+                                    parentId = null;
+                                    // contains guid
+                                    if (icdReader.ReadBoolean())
+                                    {
+                                        parentId = new Guid(icdReader.ReadBytes(16));
+                                    }
+                                    string item = icdReader.ReadString();
+                                    collection.AddIgnorRules(item, false, parentId);
+                                }
+                                // remove
+                                else
+                                {
+                                    string item = icdReader.ReadString();
+                                    collection.Remove(item);
+                                }
+                            }
+                        }
+                    }
+                    // merge
+                    Dispatcher.Invoke((Action<string>)((string _mergeCollection) => logParagraph.Inlines.Add($"Слияние коллекции \"{_mergeCollection}\"...")), collectionName);
+                    if (!CollectionStore.Contains(collectionName))
+                    {
+                        CollectionStore.Add(new Structures.CollectionInformation(collectionName, false, null, false));
+                    }
+                    Collection currentCollection = CollectionStore.Get(collectionName);
+                    currentCollection.IsChanged = true;
+                    string toCollectionPath = CollectionStore.Settings.BaseDirectory;
+                    bool hasDirectory = false;
+                    parentId = CollectionStore.BaseCollectionId;
+                    if (!string.IsNullOrEmpty(currentCollection.OriginalFolderName) || currentCollection.Id.Equals(CollectionStore.BaseCollectionId))
+                    {
+                        if (!string.IsNullOrEmpty(currentCollection.OriginalFolderName) && !currentCollection.Id.Equals(CollectionStore.BaseCollectionId))
+                        {
+                            toCollectionPath = Path.Combine(CollectionStore.Settings.BaseDirectory, currentCollection.OriginalFolderName);
+                        }
+                        hasDirectory = true;
+                        parentId = null;
+                    }
+                    foreach (KeyValuePair<string, CollectionItemMeta> item in collection.ActualItems)
+                    {
+                        string fromFilePath = Path.Combine(mergeCollectionPath, item.Key);
+                        Dispatcher.Invoke((Action<string>)((string _mergeItem) => logParagraph.Inlines.Add($"Обработка: \"{_mergeItem}\"")), fromFilePath);
+                        string fileName = Path.GetFileName(fromFilePath);
+                        string toFilePath = Path.Combine(toCollectionPath, fileName);
+                        int counter = 0;
+                        while (File.Exists(toFilePath))
+                        {
+                            toFilePath = Path.Combine(toCollectionPath, $"{counter}{fileName}");
+                            counter++;
+                        }
+                        File.Move(fromFilePath, toFilePath);
+                        fileName = toFilePath.Remove(0, deleteItemPath);
+                        currentCollection.AddIgnorRules(fileName, hasDirectory, parentId);
+                        if (hasDirectory == false)
+                        {
+                            baseCollection.AddIrrelevantItem(fileName);
+                        }
+                    }
+                }
+                baseCollection.IsChanged = true;
+                Dispatcher.Invoke(() => logParagraph.Inlines.Add("Сохранение изменений...\r\n"));
+                BaseSaveCollectionsTaskAction();
                 Dispatcher.Invoke(() =>
                 {
                     inProgress = false;
